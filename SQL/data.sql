@@ -192,7 +192,11 @@ CREATE TABLE IF NOT EXISTS `users_things` (
 --
 DROP TABLE IF EXISTS `users_things`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `users_things` AS select `things`.`id` AS `id`,`things`.`name` AS `name`,`users`.`User_API_Key` AS `USER_API_Key`,`things`.`tag` AS `tag` from (`things` join `users`) where (`things`.`user_id` = `users`.`id`);
+CREATE
+ ALGORITHM = UNDEFINED
+ VIEW `users_things`
+ AS SELECT `things`.`id`, `name`, `USER_API_Key`,`tag` FROM `things`,`users` where `user_id`=`users`.id;
+
 
 --
 -- Index pour les tables exportées
@@ -290,6 +294,7 @@ ADD CONSTRAINT `things_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ALTER TABLE `things_channels`
 ADD CONSTRAINT `things_channels_ibfk_1` FOREIGN KEY (`thing_id`) REFERENCES `things` (`id`),
 ADD CONSTRAINT `things_channels_ibfk_2` FOREIGN KEY (`channel_id`) REFERENCES `channels` (`id`);
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
