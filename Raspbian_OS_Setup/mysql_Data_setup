@@ -1,0 +1,15 @@
+# !/bin/bash
+#
+USER=ruche
+PASSWORD=touchard72
+DB_NAME=data
+
+echo "Creation de la base $DB_NAME ..."
+mysql -e "CREATE DATABASE $DB_NAME"
+
+echo "Creation de l'utilisateur ..."
+mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO $USER@'%' IDENTIFIED BY '$PASSWORD';"
+mysql -e "FLUSH PRIVILEGES;"
+
+echo "Creation des tables ..."
+mysql -u $USER -p$PASSWORD $DB_NAME </home/pi/Aggregator/SQL/data.sql
