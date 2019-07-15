@@ -116,7 +116,7 @@
 						echo "<ul>\n";
 							while ($matalVisu = $reponse2->fetch()){
 								echo '<li class="analysis">';
-								echo '<a  href="/Ruche/MatlabVisualization?id='. $matalVisu['thing_speak_id'].'">'.$matalVisu['name']. '</a>';
+								echo '<a target="_blank" href="/Ruche/MatlabVisualization?id='. $matalVisu['thing_speak_id'].'&name='. urlencode($matalVisu['name']) .'">'.$matalVisu['name']. '</a>';
 								echo '</li>';
 							}
 						echo "</ul>\n";

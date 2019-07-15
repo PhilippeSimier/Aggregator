@@ -14,7 +14,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="scripts/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/ruche.css" />
-	<title>Matlab Visualization</title>
+	<title><?php echo $_GET['name'] ?></title>
     </head>
     <body>
 	<?php require_once 'menu.php'; ?>
