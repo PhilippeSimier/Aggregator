@@ -49,7 +49,16 @@
 
 
     // Contrôle de la clé
-    if ( $key != $ini['api']['key']) {
+	// La clé doit appartenir à un utilisateur de la table users
+	require_once('../definition.inc.php');
+	// connexion à la base
+	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+    $sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
+    $stmt = $bdd->query($sql);
+	$res =  $stmt->fetchObject();
+	
+    // si aucune ligne ne correspond  
+    if ( $res->nb == 0) {
         erreur(405, "Authorization Required", "Please provide proper authentication details." );
         return;
     }

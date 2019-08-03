@@ -30,15 +30,15 @@ require_once('../definition.inc.php');
             
             $(document).ready(function(){
                 // Requete AJAX pour afficher le niveau du signal
-				$.getJSON("/administration/getLevelSignal.php", afficheLevel);
+				$.getJSON("getLevelSignal.php", afficheLevel);
 				
 				// A function to run if the request fails.
 				$.ajaxSetup({
 					error: function (x, status, error) {
 						
 						//window.alert("message : " + error);
-						$( "#modal-contenu" ).html( "<p>Sorry error : <em>" + error + "</em></p>" );
-						$('#ModalCenter').modal('show');
+						$( "#Confirmation-contenu" ).html( "<p>Sorry error : <em>" + error + "</em></p>" );
+						$('#Confirmation').modal('show');
 					}
 				});
                 
@@ -57,13 +57,13 @@ require_once('../definition.inc.php');
 						console.log(error);
 						if (response.status == "202 Accepted"){
 							//alert("message envoyé");
-							$( "#modal-contenu" ).html( "<p>Message envoyé. <em>avec succès !</em></p>" );
-							$('#ModalCenter').modal('show');
+							$( "#Confirmation-contenu" ).html( "<p>Message envoyé. <em>avec succès !</em></p>" );
+							$('#Confirmation').modal('show');
 						}	
 						else{
 							//alert(response.message + "\n" + response.detail);
-							$( "#modal-contenu" ).html( "<p>" + response.message + " <em>" + response.detail + "</em></p>" );
-							$('#ModalCenter').modal('show');
+							$( "#Confirmation-contenu" ).html( "<p>" + response.message + " <em>" + response.detail + "</em></p>" );
+							$('#Confirmation').modal('show');
 						}
 						
 					});
@@ -95,7 +95,7 @@ require_once('../definition.inc.php');
 						<form class="form-horizontal" method="post"  id="formSMS" action="sendSMS.php">
 							<div class="form-group">
 								<label for="key" class="font-weight-bold">Key : </label>
-								<input type="text" id="key" name="key" size="26" placeholder="Enter Key here" required /><br />
+								<input type="text" id="key" name="key" size="26" placeholder="Enter Key here" required value="<?php echo $_SESSION['User_API_Key']; ?>"/><br />
 							</div>
 							<div class="form-group">
 								<label for="number" class="font-weight-bold">Number : </label>
@@ -125,8 +125,8 @@ require_once('../definition.inc.php');
 			<?php require_once '../piedDePage.php'; ?>
         </div>
 		
-		<!-- Modal -->
-		<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenter" aria-hidden="true">
+		<!-- Modal Confirmation-->
+		<div class="modal fade" id="Confirmation" tabindex="-1" role="dialog" aria-labelledby="ModalCenter" aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">
@@ -135,7 +135,7 @@ require_once('../definition.inc.php');
 				  <span aria-hidden="true">&times;</span>
 				</button>
 			  </div>
-			  <div class="modal-body" id="modal-contenu">
+			  <div class="modal-body" id="Confirmation-contenu">
 				...
 			  </div>
 			  <div class="modal-footer">
