@@ -119,6 +119,10 @@ require_once('../definition.inc.php');
 						<h2>Level Network Signal</h2>
 						<hr>
 						<span id="level"></span>
+					</div>
+					<div class="popin">
+						<a  class="btn btn-info" role="button" href="sent">Sent</a>
+						<a  class="btn btn-info" role="button" href="inbox">Inbox</a>
 					</div>	
 				</div>
 			</div> 

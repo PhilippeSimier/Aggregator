@@ -3,7 +3,7 @@
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
     @date     Juillet 2018
     @version  v1.1 - First release						
-    @details  menu /Menu pour toutes les pages du site ruche 
+    @details  menu /Menu pour toutes les pages du site Aggregator 
 ------------------------------------------------------------------------------------>
 <?php 
     require_once('definition.inc.php');

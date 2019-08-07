@@ -1,5 +1,5 @@
 <?php
-    $ini  = parse_ini_file("sendSMS.ini", true);
+   
  
     // Fonction pour renvoyer une réponse suite à une erreur 
     function erreur($httpStatus, $message, $detail){
@@ -51,43 +51,51 @@
     // Contrôle de la clé
 	// La clé doit appartenir à un utilisateur de la table users
 	require_once('../definition.inc.php');
-	// connexion à la base
+	// connexion à la base data
 	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
     $sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
     $stmt = $bdd->query($sql);
 	$res =  $stmt->fetchObject();
 	
-    // si aucune ligne ne correspond  
+    // si aucune ligne ne correspond  à la clé reçue
     if ( $res->nb == 0) {
         erreur(405, "Authorization Required", "Please provide proper authentication details." );
         return;
     }
 
-    // Contrôle du numéro de téléphone
+    // Contrôle du numéro de téléphone destinataire
     if (strlen($number)<8 || !is_numeric($number)){
         erreur(403, "Bad Request", "The request cannot be fulfilled due to bad number.");
         return;
     }
 
-    // Contrôle du message
+    // Contrôle de la longueur du message
     if (strlen($message)<1 || strlen($message)> 160){
         erreur(403, "Request Entity Too Large", "Your request is too large. Please reduce the size and try again.");
         return;
     }
-
-
-
-    $ligne  = "gammu-smsd-inject TEXT " . $number . " -text \"" . $message .  "\"";
     
-  
-    exec($ligne, $output, $return);
+	// Lecture du login de l'utilisteur dans la table users
+    $sql = sprintf("SELECT `login` FROM `users` WHERE `users`.`User_API_Key` = %s", $bdd->quote($key));
+    $stmt = $bdd->query($sql);
+	$utilisateur =  $stmt->fetchObject();
+	$creator = $utilisateur->login;
+    $message = utf8_decode($message);  
 
-    if ($return == 0){
+	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+	$sql = sprintf("INSERT INTO outbox (DestinationNumber, TextDecoded, CreatorID, Coding) VALUES ( %s, %s, %s, 'Unicode_No_Compression' )",
+		$bdd->quote($number),
+		$bdd->quote($message),
+		$bdd->quote($creator)
+	);
+	$reponse = $bdd->exec($sql);
+	
+	
+    if ($reponse !== false){
         $data = array(
                 'status' => "202 Accepted",
                 'numero' => $number,
-                'message' => $message,
-
+                'creator' => $creator,
             );
 
         header('HTTP/1.1 202 Accepted');
