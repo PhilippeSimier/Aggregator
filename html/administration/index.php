@@ -42,7 +42,7 @@ unset($_SESSION['droits']);
 			
 			<div  class="col-md-6 col-sm-6 col-xs-12">
 				<div class="popin">
-				<h2>Sign in to connected Beehive</h2>
+				<h2>Sign in to Aggregator</h2>
 				
 				  <?php if (isset($_GET["erreur"])) echo '<p style="color: #ff0000;">'.$_GET["erreur"].'</p>';
 						  

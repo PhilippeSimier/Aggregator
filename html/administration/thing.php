@@ -5,69 +5,71 @@ include "authentification/authcheck.php" ;
 require_once('../ini/ini.php');
 require_once('../definition.inc.php');
 
-//------------si des données  sont reçues on les enregistrent dans le fichier configuration.ini ---------
+//------------si des données  sont soumises on les enregistre dans la table data.things ---------
 if( !empty($_POST['envoyer'])){
-
-    //  lecture du fichier de configuration
-    $array  = parse_ini_file(CONFIGURATION, true);
-    //  Modification des valeurs pour la section [ruche]
-    $array['ruche'] = array ('id'  => $_POST['ruche_id'],
-                             'altitude' => $_POST['ruche_altitude'],
-							 'latitude' => $_POST['ruche_latitude'],
-							 'longitude' => $_POST['ruche_longitude']
-                            );
-					   
-    //  Ecriture du fichier de configuration modifié
-    $ini = new ini (CONFIGURATION);
-    $ini->ajouter_array($array);
-    $ini->ecrire(true);
+	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+	if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+		$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`) VALUES ( %s, %s, %s, %s, %s, %s, %s);"
+		              , $_POST['user_id']
+					  , $_POST['latitude']
+					  , $_POST['longitude']
+					  , $_POST['elevation']
+					  , $bdd->quote(utf8_decode($_POST['name']))
+					  , $bdd->quote($_POST['tag'])
+					  , $bdd->quote($_POST['status'])
+					  ); 
+		$bdd->exec($sql);
+		header("Location: things.php");
+		return;
+	}
+	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+		$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s WHERE `things`.`id` = %s;"
+					  , $_POST['latitude']
+					  , $_POST['longitude']
+					  , $_POST['elevation']
+					  , $bdd->quote(utf8_decode($_POST['name']))
+					  , $bdd->quote($_POST['tag'])
+					  , $bdd->quote($_POST['status'])
+					  , $_POST['id']
+					  ); 
+		$bdd->exec($sql);
+		header("Location: things.php");
+		return;
+	}
 	
-	//-------Puis on met à jour le channel sur Thing Speak--------------------------------
-	$url = "https://api.thingspeak.com/channels/" . $array['thingSpeak']['channel'] . ".json";
-	
-	$postfields  = "api_key=" . $array['thingSpeak']['userkey'];
-	$postfields .= "&latitude=" . $_POST['ruche_latitude'];
-	$postfields .= "&longitude=" . $_POST['ruche_longitude'];
-	$postfields .= "&elevation=" . $_POST['ruche_altitude'];
-	
-	
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-	CURLOPT_URL => $url, 
-	CURLOPT_RETURNTRANSFER => true,
-	CURLOPT_ENCODING => "",
-	CURLOPT_MAXREDIRS => 10,
-	CURLOPT_TIMEOUT => 30,
-	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	CURLOPT_CUSTOMREQUEST => "PUT",
-	CURLOPT_POSTFIELDS => $postfields,
-	CURLOPT_HTTPHEADER => array(
-		"Content-Type: application/x-www-form-urlencoded",
-		),
-	));
-
-	$response = curl_exec($curl);
-	$err = curl_error($curl);
-
-	curl_close($curl);
-
-	if ($err) {
-		echo "cURL Error #:" . $err;
-		exit;
-	} 
-
+    
 }
 
-// -------------- sinon lecture du fichier de configuration  -----------------------------
+// -------------- sinon lecture de la table data.things  -----------------------------
 else
 {
-   $ini  = parse_ini_file(CONFIGURATION, true);
-   
-   $_POST['ruche_id'] = $ini['ruche']['id'];
-   $_POST['ruche_altitude']  = $ini['ruche']['altitude'];
-   $_POST['ruche_latitude']  = $ini['ruche']['latitude'];
-   $_POST['ruche_longitude']  = $ini['ruche']['longitude'];
+   if (isset($_GET['id'])){
+   $bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+   $sql = sprintf("SELECT * FROM `things` WHERE `id`=%s", $bdd->quote($_GET['id']));
+   $stmt = $bdd->query($sql);
+	   if ($thing =  $stmt->fetchObject()){
+		   $_POST['action'] = "update";
+		   $_POST['id'] = $thing->id;
+		   $_POST['user_id'] = $thing->user_id;
+		   $_POST['tag'] = $thing->tag;
+		   $_POST['name'] = $thing->name;
+		   $_POST['status'] = $thing->status;
+		   $_POST['elevation']  = $thing->elevation;
+		   $_POST['latitude']  = $thing->latitude;
+		   $_POST['longitude']  = $thing->longitude;
+	   } 
+   }else {
+  	   $_POST['action'] = "insert";
+	   $_POST['id'] = 0;
+	   $_POST['user_id'] = $_SESSION['id'];
+	   $_POST['tag'] = "inconnu";
+	   $_POST['name'] = "inconnu";
+	   $_POST['status'] = "private";
+	   $_POST['elevation']  = "44";
+	   $_POST['latitude']  = "48.847849";
+	   $_POST['longitude']  = "2.335168";	   
+	   
+   }   
 
 }
 
@@ -79,7 +81,7 @@ else
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Configuration</title>
+    <title>thing</title>
     <!-- Bootstrap CSS version 4.1.1 -->
 	<link rel="stylesheet" href="/Ruche/css/bootstrap.min.css" >
     <link rel="stylesheet" href="/Ruche/css/ruche.css" />
@@ -106,18 +108,18 @@ else
 				//icon: ruche,
                 title: 'Nouvelle position'
 			});
-			$('input[name=ruche_latitude]').val(e.latLng.lat().toFixed(6));
-			$('input[name=ruche_latitude]').css("backgroundColor", "#00ff00");
-			$('input[name=ruche_longitude]').val(e.latLng.lng().toFixed(6));
-			$('input[name=ruche_longitude]').css("backgroundColor", "#00ff00");
+			$('input[name=latitude]').val(e.latLng.lat().toFixed(6));
+			$('input[name=latitude]').css("backgroundColor", "#00ff00");
+			$('input[name=longitude]').val(e.latLng.lng().toFixed(6));
+			$('input[name=longitude]').css("backgroundColor", "#00ff00");
 			// Elevation de la position 
 			map.getElevations({
 				locations : [[e.latLng.lat(),e.latLng.lng()]],
 				callback : function (result, status){
 				if (status == google.maps.ElevationStatus.OK) {
 					console.log(result["0"].elevation.toFixed(0));
-					$('input[name=ruche_altitude]').val(result["0"].elevation.toFixed(1));
-					$('input[name=ruche_altitude]').css("backgroundColor", "#00ff00");
+					$('input[name=elevation]').val(result["0"].elevation.toFixed(1));
+					$('input[name=elevation]').css("backgroundColor", "#00ff00");
 				}
 			}
 			});
@@ -130,8 +132,8 @@ else
 	
 	var	map = new GMaps({
 		div: '#map-canvas',
-		lat: <?php echo  $_POST['ruche_latitude']; ?> , 
-		lng: <?php echo  $_POST['ruche_longitude']; ?> ,
+		lat: <?php echo  $_POST['latitude']; ?> , 
+		lng: <?php echo  $_POST['longitude']; ?> ,
 		zoom : 13 ,
 		mapType : 'terrain',
 	});
@@ -140,13 +142,13 @@ else
 	
 	/************  placement d'une puce au milieu de la map ********/
 	map.addMarker({
-        lat: <?php echo  $_POST['ruche_latitude']; ?>, 
-        lng: <?php echo  $_POST['ruche_longitude']; ?>,
-        title: <?php echo '"Ruche ' . $_POST['ruche_id'] . '"'; ?>,
+        lat: <?php echo  $_POST['latitude']; ?>, 
+        lng: <?php echo  $_POST['longitude']; ?>,
+        title: <?php echo '"Tag ' . $_POST['tag'] . '"'; ?>,
 		draggable: true,
 		dragend : position,
         infoWindow: {
-          content: '<p> <?php echo "<b>Ruche " . $_POST['ruche_id'] . "</b><br />Coordonnées GPS : </br> Lat : " . $_POST['ruche_latitude'] . "<br /> Lng : " . $_POST['ruche_longitude']; ?></p>' 
+          content: '<p> <?php echo "<b>" . utf8_encode($_POST['name']) . "</b><br />Coordonnées GPS : </br> Lat : " . $_POST['latitude'] . "<br /> Lng : " . $_POST['longitude']; ?></p>' 
 		  
         }
 		
@@ -178,10 +180,10 @@ else
 				}
 				
               });
-				$('input[name=ruche_latitude]').val(latlng.lat().toFixed(6));
-				$('input[name=ruche_latitude]').css("backgroundColor", "#00ff00");
-				$('input[name=ruche_longitude]').val(latlng.lng().toFixed(6));
-				$('input[name=ruche_longitude]').css("backgroundColor", "#00ff00");
+				$('input[name=latitude]').val(latlng.lat().toFixed(6));
+				$('input[name=latitude]').css("backgroundColor", "#00ff00");
+				$('input[name=longitude]').val(latlng.lng().toFixed(6));
+				$('input[name=longitude]').css("backgroundColor", "#00ff00");
 				$('#mon_adresse').val(results["0"].formatted_address);
 				
 				// Elevation de la position 
@@ -190,8 +192,8 @@ else
 					callback : function (result, status){
 					if (status == google.maps.ElevationStatus.OK) {
 						console.log(result["0"].elevation.toFixed(0));
-						$('input[name=ruche_altitude]').val(result["0"].elevation.toFixed(1));
-						$('input[name=ruche_altitude]').css("backgroundColor", "#00ff00");
+						$('input[name=elevation]').val(result["0"].elevation.toFixed(1));
+						$('input[name=elevation]').css("backgroundColor", "#00ff00");
 					}
 					}
 				});
@@ -218,10 +220,10 @@ else
                 lng: e.latLng.lng(),
                 title: 'Nouvelle position'
 				});
-				$('input[name=ruche_latitude]').val(e.latLng.lat().toFixed(6));
-				$('input[name=ruche_latitude]').css("backgroundColor", "#00ff00");
-				$('input[name=ruche_longitude]').val(e.latLng.lng().toFixed(6));
-				$('input[name=ruche_longitude]').css("backgroundColor", "#00ff00");
+				$('input[name=latitude]').val(e.latLng.lat().toFixed(6));
+				$('input[name=latitude]').css("backgroundColor", "#00ff00");
+				$('input[name=longitude]').val(e.latLng.lng().toFixed(6));
+				$('input[name=longitude]').css("backgroundColor", "#00ff00");
 				
 				
 			}
@@ -244,38 +246,49 @@ else
 <?php require_once '../menu.php'; ?>
 
 <div class="container" style="padding-top: 65px;">
-    
-
 		
 		<div class="row">
 			<div class="col-md-3 col-sm-12 col-xs-12">
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
-						<h2>Ruche</h2>
 						
+							<input type='hidden' name='action' value="<?php  echo $_POST["action"]; ?>" />
+							<input type='hidden' name='id' value="<?php  echo $_POST["id"]; ?>" />
+							<input type='hidden' name='user_id' value="<?php  echo $_POST["user_id"]; ?>" />
 							<div class="form-group">
-								<label for="ruche_id"  class="font-weight-bold">Identifiant : </label>
-								<input type="int"  name="ruche_id" class="form-control" <?php echo 'value="' . $_POST['ruche_id'] . '"'; ?> />
+								<label for="tag"  class="font-weight-bold">Tag : </label>
+								<input type="text"  name="tag" class="form-control" value="<?php echo  $_POST['tag']; ?>" />
+							</div>
+							
+							<div class="form-group">
+								<label for="name"  class="font-weight-bold">Name : </label>
+								<input type="text"  name="name" class="form-control" value="<?php echo  utf8_encode($_POST['name']); ?>" />
+							</div>
+							
+							<div class="form-group">
+								<label for="status"  class="font-weight-bold">Status : </label>
+								<input type="text"  name="status" class="form-control" value="<?php echo  utf8_encode($_POST['status']); ?>" />
 							</div>
 
 							<div class="form-group">
 								<label for="latitude"  class="font-weight-bold">Latitude : </label>
-								<input id="latitude" type="int"  name="ruche_latitude" class="form-control" <?php echo 'value="' . $_POST['ruche_latitude'] . '"'; ?> />
+								<input id="latitude" type="int"  name="latitude" class="form-control" value="<?php echo  $_POST['latitude']; ?>" />
 							</div>
 							
 							<div class="form-group">
 								<label for="longitude"  class="font-weight-bold">Longitude : </label>
-								<input id="longitude" type="int"  name="ruche_longitude" class="form-control" <?php echo 'value="' . $_POST['ruche_longitude'] . '"'; ?> />
+								<input id="longitude" type="int"  name="longitude" class="form-control" value="<?php echo  $_POST['longitude']; ?>" />
 							</div>
 							
 							<div class="form-group">
 								<label for="altitude"  class="font-weight-bold">Altitude : </label>
-								<input id="altitude" type="int"  name="ruche_altitude" class="form-control" <?php echo 'value="' . $_POST['ruche_altitude'] . '"'; ?> />
+								<input id="altitude" type="int"  name="elevation" class="form-control" value="<?php echo  $_POST['elevation']; ?>" />
 							</div>
 							
 							<div class="form-group">
 								</br>
 								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Appliquer</button>
+								<a  class="btn btn-info" role="button" href="things">Annuler</a>
 							</div>	
 					</form>
 				</div>

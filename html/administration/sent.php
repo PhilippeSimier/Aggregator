@@ -17,6 +17,7 @@ return $chaine;
 
 // Si le formulaire à été soumis
 if(isset($_POST['btn_supprimer'])){
+	
 	// Si un élément a été sélectionné
 	if (count($_POST['table_array']) > 0){
 		$Clef=$_POST['table_array'];
@@ -30,7 +31,7 @@ if(isset($_POST['btn_supprimer'])){
 		var_dump($supp);
 		// connexion à la base
 		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
-		$sql = "DELETE FROM `inbox` WHERE `ID` IN " . $supp;
+		$sql = "DELETE FROM `sentitems` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
 	unset($_POST['table_array']);
@@ -43,7 +44,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Inbox</title>
+    <title>Sent</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -76,10 +77,8 @@ if(isset($_POST['btn_supprimer'])){
 			
 			
 			$( "#btn_supp" ).click(function() {
-				console.log("Bouton Supprimer cliquer");
 				
 				nbCaseCochees = $('input:checked').length - $('#all:checked').length;
-				
 				if(nbCaseCochees == 1) 
 					message = "1 message sera supprimé.";
 				else
@@ -89,7 +88,7 @@ if(isset($_POST['btn_supprimer'])){
 					
 					$.confirm({
 						theme: 'bootstrap',
-						title: 'Confirmation!',
+						title: 'Confirmation !',
 						content: message,
 						buttons: {
 							cancel: {
@@ -100,23 +99,24 @@ if(isset($_POST['btn_supprimer'])){
 								text: 'Confirmer', // text for button
 								btnClass: 'btn-blue', // class for the button
 								action: function () {
-									$( "#supprimer" ).submit(); // soumission du formulaire
+								$( "#supprimer" ).submit(); // soumission du formulaire
 								}
-							}				 		
+							}
+					 		
 						}
 					});
 				
 				}
 				else{
 					$.alert({
-					theme: 'bootstrap',	
+					theme: 'bootstrap',
 					title: 'Alert!',
 					content: "Vous n'avez sélectionné aucun message !"
 					});
 			
 				}
 			});
-			// Action sur le bouton lire
+			
 			$( "#btn_lire" ).click(function() {
 				console.log("Bouton lire cliqué");
 				
@@ -135,7 +135,7 @@ if(isset($_POST['btn_supprimer'])){
 					});
 				}else{
 				
-					var url = "../api/lireSMS.php?key=azerty&id=" + checkbox_val[0] + "&folder=inbox"
+					var url = "../api/lireSMS.php?key=azerty&id=" + checkbox_val[0] + "&folder=sent"
 					$.get(url, function(data, status){
 						if (status == "success")
 							console.log(data);
@@ -144,9 +144,10 @@ if(isset($_POST['btn_supprimer'])){
 								content: data.text + "<br/><br/>" + data.date,
 							});
 					});
-				}		
-				
+					
+				}
 			});
+			
 			// Action sur le bouton ecrire
 			$( "#btn_ecrire" ).click(function() {
 				console.log("Bouton ecrire cliqué");
@@ -172,6 +173,7 @@ if(isset($_POST['btn_supprimer'])){
 								var message = this.$content.find('#message').val();
 								var number = this.$content.find('#number').val();
 								var form_data = this.$content.find('.formName').serialize();
+								
 								if(!message || isNaN(number)){
 									$.alert('provide a valid number and message');
 									return false;
@@ -212,15 +214,10 @@ if(isset($_POST['btn_supprimer'])){
 						});
 					}
 				});
-				
-				
-				
-				
 			});
 			
 		});	
 	
-		
 		
 		
 	</script>
@@ -237,12 +234,12 @@ if(isset($_POST['btn_supprimer'])){
 			<?php
 							include('paginator.class.php');
 						    $pages = new Paginator;
-							$pages->default_ipp = 10;  // 10 lignes par page
+							$pages->default_ipp = 12;  // 12 lignes par page
 							
 							// connexion à la base
 							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
 							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `inbox`"; 
+							$sql = "SELECT COUNT(*) as nb FROM `sentitems`"; 
 							$stmt = $bdd->query($sql);
 							$res =  $stmt->fetchObject();
 							$pages->items_total = $res->nb;
@@ -273,23 +270,23 @@ if(isset($_POST['btn_supprimer'])){
 							<th>Date Time</th>
 							<th>To</th>
 							<th>Body</th>
-							
+							<th>Creator</th>
 							
 						  </tr>
 						</thead>
 						<tbody>
 							
 							<?php
-								$sql = "SELECT `ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ". $pages->limit;
+								$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ". $pages->limit;
 								
 								$stmt = $bdd->query($sql);
 								
 								while ($message =  $stmt->fetchObject()){
 									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>";
-									echo "<td>" . $message->ReceivingDateTime . "</td>";
-									echo "<td>" . $message->SenderNumber . "</td>";
+									echo "<td>" . $message->SendingDateTime . "</td>";
+									echo "<td>" . $message->DestinationNumber . "</td>";
 									echo "<td>" . utf8_encode(reduire($message->TextDecoded)) . "</td>";
-									echo "</tr>";
+									echo "<td>" . $message->CreatorId . "</td></tr>";
 									
 								}
 							?>
@@ -298,8 +295,7 @@ if(isset($_POST['btn_supprimer'])){
 					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
 					<button id="btn_lire" type="button" class="btn btn-info">Lire</button>
 					<button id="btn_ecrire" type="button" class="btn btn-info">Ecrire</button>
-					<a  class="btn btn-info" role="button" href="sent">SMS Envoyés</a>
-					
+					<a  class="btn btn-info" role="button" href="inbox">SMS Reçus</a>
 					
 					</form>	
 				</div>
