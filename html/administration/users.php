@@ -155,6 +155,7 @@ if(isset($_POST['btn_supprimer'])){
 						'<input type="password" id="conf_pwd" name="conf_pwd" size="30"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
+						'<input type="hidden" id="key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
 						'</form>',
 						buttons: {
 							formSubmit: {
