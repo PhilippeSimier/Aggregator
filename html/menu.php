@@ -49,7 +49,8 @@
 					echo '<div class="dropdown-menu">';
 					if ($_SESSION['login'] == "root"){
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">Users</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/things">All things</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/baseDeDonnees">Database</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/infoSystem">System info</a>';

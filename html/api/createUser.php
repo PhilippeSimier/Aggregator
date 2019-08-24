@@ -1,4 +1,6 @@
 <?php
+    // Contrôle des variables de sessions
+	include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
 	require_once('biblio.php');	

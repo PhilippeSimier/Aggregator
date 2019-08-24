@@ -4,10 +4,28 @@ include "authentification/authcheck.php" ;
 
 require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+
+function faireSelectUsers($bdd , $user_id){
+	
+	$sql = "SELECT id,login FROM `users`";
+	$stmt = $bdd->query($sql);
+	echo '<div class="form-group"><label for="tag"  class="font-weight-bold">User : </label>';
+	echo '<select class="form-control" name="user_id">';
+	while ($thing =  $stmt->fetchObject()){
+		if ($thing->id == $user_id)
+			echo "<option selected value='" . $thing->id . "'>" . $thing->login . "</option>" ;
+        else
+			echo "<option value='" . $thing->id . "'>" . $thing->login . "</option>" ;	
+	}
+    echo "</select>";
+    echo "</div>";	
+	
+}	
 
 //------------si des données  sont soumises on les enregistre dans la table data.things ---------
 if( !empty($_POST['envoyer'])){
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+	
 	if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
 		$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`) VALUES ( %s, %s, %s, %s, %s, %s, %s);"
 		              , $_POST['user_id']
@@ -23,13 +41,14 @@ if( !empty($_POST['envoyer'])){
 		return;
 	}
 	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-		$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s WHERE `things`.`id` = %s;"
+		$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s WHERE `things`.`id` = %s;"
 					  , $_POST['latitude']
 					  , $_POST['longitude']
 					  , $_POST['elevation']
 					  , $bdd->quote(utf8_decode($_POST['name']))
 					  , $bdd->quote($_POST['tag'])
 					  , $bdd->quote($_POST['status'])
+					  , $_POST['user_id']
 					  , $_POST['id']
 					  ); 
 		$bdd->exec($sql);
@@ -44,7 +63,7 @@ if( !empty($_POST['envoyer'])){
 else
 {
    if (isset($_GET['id'])){
-   $bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+ 
    $sql = sprintf("SELECT * FROM `things` WHERE `id`=%s", $bdd->quote($_GET['id']));
    $stmt = $bdd->query($sql);
 	   if ($thing =  $stmt->fetchObject()){
@@ -254,7 +273,12 @@ else
 						
 							<input type='hidden' name='action' value="<?php  echo $_POST["action"]; ?>" />
 							<input type='hidden' name='id' value="<?php  echo $_POST["id"]; ?>" />
-							<input type='hidden' name='user_id' value="<?php  echo $_POST["user_id"]; ?>" />
+							<?php
+								if($_SESSION['id'] == 0)
+									faireSelectUsers($bdd, $_POST["user_id"] );
+								else
+									echo "<input type='hidden' name='user_id' value='".  $_POST["user_id"]. "' />"; 
+							?>
 							<div class="form-group">
 								<label for="tag"  class="font-weight-bold">Tag : </label>
 								<input type="text"  name="tag" class="form-control" value="<?php echo  $_POST['tag']; ?>" />
@@ -267,7 +291,10 @@ else
 							
 							<div class="form-group">
 								<label for="status"  class="font-weight-bold">Status : </label>
-								<input type="text"  name="status" class="form-control" value="<?php echo  utf8_encode($_POST['status']); ?>" />
+								<select class="form-control" name="status">
+									<option <?php if ($_POST['status'] == "private") echo "selected" ?> value="private">private</option>
+									<option <?php if ($_POST['status'] == "public") echo "selected" ?> value="public">public</option>
+								</select>
 							</div>
 
 							<div class="form-group">

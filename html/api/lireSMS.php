@@ -5,7 +5,7 @@
  
     // Contrôle de la présence des paramètres key id folder en GET ou POST
 	$key    = obtenir("key");
-    $id     = obtenir("id");
+    $id     = obtenir("id", FILTER_VALIDATE_INT);
     $folder = obtenir("folder"); 
 	
 	// connexion à la base smsd

@@ -5,6 +5,7 @@ include "authentification/authcheck.php" ;
 
 require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+require_once('../api/biblio.php');
 
 // Fonction pour éliser une chaîne de caractères
 function reduire( $chaine ){
@@ -14,6 +15,8 @@ function reduire( $chaine ){
 return $chaine;	
 }
 
+// connexion à la base
+	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -28,8 +31,7 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 		
-		// connexion à la base
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+
 		$sql = "DELETE FROM `users` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
 	}
@@ -225,7 +227,7 @@ if(isset($_POST['btn_supprimer'])){
 					'</div>' +
 					'<div class="form-group">' +
 					'<label class="col-sm-4 control-label">API Key : </label>' +
-					'<input type="text" id="User_API_Key" name="User_API_Key" size="30" placeholder="Api Key"  /><br />' +				
+					'<input type="text" id="User_API_Key" name="User_API_Key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
 					'</div>' +
 					'<div class="form-group">' +
 					'<label class="col-sm-4 control-label">Passwd : </label>' +
@@ -298,6 +300,105 @@ if(isset($_POST['btn_supprimer'])){
 			
 			
 			});
+			
+			$( "#btn_key" ).click(function() {
+				console.log("Generate New API Key clicked");
+				
+				// Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("id = " + checkbox_val[0]);
+					$.confirm({
+						theme: 'bootstrap',
+						closeIcon: true, 
+						columnClass: 'col-md-6 col-md-offset-3',
+						title: 'Generate New API Key',
+						content: '' +
+						'<form action="" class="user form-horizontal">' +
+						
+						'<div class="form-group">' +
+						'<label class="col-sm-4 control-label">API Key : </label>' +
+						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
+						'</div>' +
+						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
+						'<input type="hidden" id="User_API_Key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
+						'</form>',
+						buttons: {
+							formSubmit: {
+								text: 'Appliquer',
+								btnClass: 'btn-blue',
+								action: function () {
+									
+									var User_API_Key = this.$content.find('#User_API_Key').val();
+									var form_data = this.$content.find('.user').serialize();
+									
+									if(!key){
+										$.alert('provide a valid User API Key');
+										return false;
+									}
+									
+									console.log(' form_data : ' + form_data);
+									
+									$.getJSON( '../api/changeKey.php' , form_data, function( response,status, error ) {
+										console.log("status : " + status);
+										console.log("reponse : " +response);
+										console.log("error : " +error);
+										if (response.status == "202 Accepted"){
+											console.log("message Accepted");
+											$.dialog({
+												title: "Info",
+												content: "Message Accepted"
+											});
+											setTimeout( function(){window.location = 'users'}, 5000); 								
+										}	
+										else{
+											$.dialog({
+												title: "Erreur",
+												content: response.message + " <em>" + response.detail + "</em>"
+											});
+										}
+									});	
+								}
+							},
+							cancel: function () {
+								//close
+							},
+						},
+						onContentReady: function () {
+							// bind to events
+							var jc = this;
+							this.$content.find('form').on('submit', function (e) {
+								// if the user submits the form by pressing enter in the field.
+								e.preventDefault();
+								jc.$$formSubmit.trigger('click'); // reference the button and click it
+							});
+						}
+					});
+				}	
+			
+			
+			});
+			
+			
 		});	
 	
 		
@@ -381,11 +482,12 @@ if(isset($_POST['btn_supprimer'])){
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-secondary">Changer Password</button>
+					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
+					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
 					<?php
 					if ($_SESSION['login'] == "root"){
-						echo '<button id="btn_add" type="button" class="btn btn-secondary">Ajouter</button>';
+						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add User</button>';
 					}	
 					?>					
 					</form>	

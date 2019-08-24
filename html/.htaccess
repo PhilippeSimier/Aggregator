@@ -1,3 +1,4 @@
 RewriteEngine On
 RewriteRule ^([a-zA-Z0-9\-\_]+)$ $1.php
 RewriteRule administration/([a-zA-Z0-9\-\_]+)$ administration/$1.php
+RewriteRule api/([a-zA-Z0-9\-\_]+)$ api/$1.php
