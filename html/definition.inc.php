@@ -11,6 +11,6 @@
     define ("SERVEUR","127.0.0.1");
 
     // base de données pour les organisations ESR72
-    define ("BASE","data");
-	define ("BASESMS","smsd");
+    define ("BASE","data;charset=utf8");
+	define ("BASESMS","smsd;charset=utf8");
 ?>

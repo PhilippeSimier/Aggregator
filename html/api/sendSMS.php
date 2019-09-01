@@ -33,7 +33,7 @@
     $stmt = $bdd->query($sql);
 	$utilisateur =  $stmt->fetchObject();
 	$creator = $utilisateur->login;
-    $message = utf8_decode($message);  
+    $message = $message;  
 
 	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
 	$sql = sprintf("INSERT INTO outbox (DestinationNumber, TextDecoded, CreatorID, Coding) VALUES ( %s, %s, %s, 'Unicode_No_Compression' )",

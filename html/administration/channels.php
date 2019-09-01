@@ -3,7 +3,6 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
@@ -15,8 +14,6 @@ function reduire( $chaine ){
 return $chaine;	
 }
 
-// connexion à la base
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -31,8 +28,12 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 		
-
-		$sql = "DELETE FROM `users` WHERE `id` IN " . $supp;
+		var_dump($supp);
+		// connexion à la base
+		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+		$sql = "DELETE FROM `feeds` WHERE `id_channel` IN " . $supp;
+		$bdd->exec($sql);
+		$sql = "DELETE FROM `channels` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
 	}
 	unset($_POST['table_array']);
@@ -45,7 +46,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Users</title>
+    <title>Channels</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -78,7 +79,7 @@ if(isset($_POST['btn_supprimer'])){
 			
 			
 			$( "#btn_supp" ).click(function() {
-				console.log("Bouton Supprimer cliquer");
+				console.log("Bouton Supprimer cliqué");
 				
 				nbCaseCochees = $('input:checked').length - $('#all:checked').length;
 				console.log(nbCaseCochees);
@@ -139,42 +140,79 @@ if(isset($_POST['btn_supprimer'])){
 					});
 				}
 				if(checkbox_val.length == 1){
-					console.log("id = " + checkbox_val[0]);
-					
+					console.log("channel.php?id" + checkbox_val[0]);
+					window.location = 'channel?id='+checkbox_val[0];
+				}
+			});
+			
+			$( "#btn_csv" ).click(function() {
+				console.log("Bouton download CSV cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("../api/feedsCSV.php?channelId" + checkbox_val[0]);
+					window.location = '../api/feedsCSV?channelId='+checkbox_val[0];
+				}
+			});
+			
+			$( "#btn_clear" ).click(function() {
+				console.log("Bouton download Clear cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("../api/clearChannel.php?channelId" + checkbox_val[0]);
 					$.confirm({
 						theme: 'bootstrap',
-						closeIcon: true, 
-						columnClass: 'col-md-6 col-md-offset-3',
-						title: 'Change Password',
-						content: '' +
-						'<form action="" class="passwd form-horizontal">' +
-						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Passwd : </label>' +
-						'<input type="password" id="pwd" name="pwd" size="30"  /><br />' +				
-						'</div>' +
-						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Confirm Passwd : </label>' +
-						'<input type="password" id="conf_pwd" name="conf_pwd" size="30"  /><br />' +				
-						'</div>' +
-						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
-						'<input type="hidden" id="key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
-						'</form>',
+						title: 'Confirm!',
+						content: 'Are you sure you want to clear the channel id <b>' + checkbox_val[0] + '</b> ?',
 						buttons: {
-							formSubmit: {
-								text: 'Appliquer',
-								btnClass: 'btn-blue',
+							confirm: {
+								text: 'Confirmation', // text for button
+								btnClass: 'btn-blue', // class for the button
 								action: function () {
-									var pwd = this.$content.find('#pwd').val();
-									var conf_pwd = this.$content.find('#conf_pwd').val();
-									var form_data = this.$content.find('.passwd').serialize();
-																	
-									if (pwd != conf_pwd){
-										$.alert('passwd and Confirm Passwd');
-										return false;
-									}
-									console.log(' form_data : ' + form_data);
+									console.log("Action clear confirmée");
 									
-									$.getJSON( '../api/changePwd.php' , form_data, function( response,status, error ) {
+									$.getJSON( '../api/clearChannel.php' , 'channelId='+checkbox_val[0], function( response,status, error ) {
 										console.log("status : " + status);
 										console.log("reponse : " +response);
 										console.log("error : " +error);
@@ -182,7 +220,7 @@ if(isset($_POST['btn_supprimer'])){
 											console.log("message Accepted");
 											$.dialog({
 												title: "Info",
-												content: "Change Accepted"
+												content: "Clear Accepted"
 											});	
 										}	
 										else{
@@ -192,20 +230,16 @@ if(isset($_POST['btn_supprimer'])){
 											});
 										}
 									});	
-								}
+									
+									
+									
+									
+								}	
 							},
-							cancel: function () {
-								//close
-							},
-						},
-						onContentReady: function () {
-							// bind to events
-							var jc = this;
-							this.$content.find('form').on('submit', function (e) {
-								// if the user submits the form by pressing enter in the field.
-								e.preventDefault();
-								jc.$$formSubmit.trigger('click'); // reference the button and click it
-							});
+					 		cancel: {
+								text: 'Annuler', // text for button
+								action: function () {}
+							}
 						}
 					});
 				}
@@ -213,94 +247,13 @@ if(isset($_POST['btn_supprimer'])){
 			
 			$( "#btn_add" ).click(function() {
 				console.log("Bouton Ajouter cliqué");
-				
-				$.confirm({
-					theme: 'bootstrap',
-					closeIcon: true, 
-					columnClass: 'col-md-6 col-md-offset-3',
-					title: 'Add user',
-					content: '' +
-					'<form action="" class="user form-horizontal">' +
-					'<div class="form-group">' +
-					'<label class="col-sm-4 control-label">Login : </label>' +
-					'<input type="text" id="login" name="login" size="30" placeholder="Login"  /><br />' +
-					'</div>' +
-					'<div class="form-group">' +
-					'<label class="col-sm-4 control-label">API Key : </label>' +
-					'<input type="text" id="User_API_Key" name="User_API_Key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
-					'</div>' +
-					'<div class="form-group">' +
-					'<label class="col-sm-4 control-label">Passwd : </label>' +
-					'<input type="password" id="pwd" name="pwd" size="30"  /><br />' +				
-					'</div>' +
-					'<div class="form-group">' +
-					'<label class="col-sm-4 control-label">Confirm Passwd : </label>' +
-					'<input type="password" id="conf_pwd" name="conf_pwd" size="30"  /><br />' +				
-					'</div>' +
-					'<input type="hidden" id="key" name="key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
-					'</form>',
-					buttons: {
-						formSubmit: {
-							text: 'Appliquer',
-							btnClass: 'btn-blue',
-							action: function () {
-								var login = this.$content.find('#login').val();
-								var User_API_Key = this.$content.find('#User_API_Key').val();
-								var pwd = this.$content.find('#pwd').val();
-								var conf_pwd = this.$content.find('#conf_pwd').val();
-								var form_data = this.$content.find('.user').serialize();
-								
-								if(!login || !User_API_Key){
-									$.alert('provide a valid login and API Key');
-									return false;
-								}
-								
-								if (pwd != conf_pwd){
-									$.alert('passwd and Confirm Passwd');
-									return false;
-								}
-								console.log(' form_data : ' + form_data);
-								
-								$.getJSON( '../api/createUser.php' , form_data, function( response,status, error ) {
-									console.log("status : " + status);
-									console.log("reponse : " +response);
-									console.log("error : " +error);
-									if (response.status == "202 Accepted"){
-										console.log("message Accepted");
-										$.dialog({
-											title: "Info",
-											content: "Message Accepted"
-										});
-										window.location = 'users'
-										
-									}	
-									else{
-										$.dialog({
-											title: "Erreur",
-											content: response.message + " <em>" + response.detail + "</em>"
-										});
-									}
-								});	
-							}
-						},
-						cancel: function () {
-							//close
-						},
-					},
-					onContentReady: function () {
-						// bind to events
-						var jc = this;
-						this.$content.find('form').on('submit', function (e) {
-							// if the user submits the form by pressing enter in the field.
-							e.preventDefault();
-							jc.$$formSubmit.trigger('click'); // reference the button and click it
-						});
-					}
-				});
+				window.location = 'channel'
 			
 			
 			});
 			
+			
+	
 			$( "#btn_key" ).click(function() {
 				console.log("Generate New API Key clicked");
 				
@@ -333,11 +286,11 @@ if(isset($_POST['btn_supprimer'])){
 						columnClass: 'col-md-6 col-md-offset-3',
 						title: 'Generate New API Key',
 						content: '' +
-						'<form action="" class="user form-horizontal">' +
+						'<form action="" class="channel form-horizontal">' +
 						
 						'<div class="form-group">' +
 						'<label class="col-sm-4 control-label">API Key : </label>' +
-						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
+						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = genererChaineAleatoire(). "'"; ?> +'"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
 						'<input type="hidden" id="User_API_Key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
@@ -349,26 +302,26 @@ if(isset($_POST['btn_supprimer'])){
 								action: function () {
 									
 									var User_API_Key = this.$content.find('#User_API_Key').val();
-									var form_data = this.$content.find('.user').serialize();
+									var form_data = this.$content.find('.channel').serialize();
 									
 									if(!key){
-										$.alert('provide a valid User API Key');
+										$.alert('provide a valid Write API Key');
 										return false;
 									}
 									
 									console.log(' form_data : ' + form_data);
 									
-									$.getJSON( '../api/changeKey.php' , form_data, function( response,status, error ) {
+									$.getJSON( '../api/changeWriteAPIKey.php' , form_data, function( response,status, error ) {
 										console.log("status : " + status);
 										console.log("reponse : " +response);
 										console.log("error : " +error);
-										if (response.status == "202 Accepted"){
+										if (response.status == "200 OK"){
 											console.log("message Accepted");
 											$.dialog({
 												title: "Info",
-												content: "Message Accepted"
+												content: "message Accepted"
 											});
-											setTimeout( function(){window.location = 'users'}, 5000); 								
+											setTimeout( function(){window.location = 'channels'}, 5000); 								
 										}	
 										else{
 											$.dialog({
@@ -398,10 +351,7 @@ if(isset($_POST['btn_supprimer'])){
 			
 			});
 			
-			
-		});	
-	
-		
+		});
 		
 	</script>
     
@@ -417,16 +367,16 @@ if(isset($_POST['btn_supprimer'])){
 			<?php
 							include('paginator.class.php');
 						    $pages = new Paginator;
-							$pages->default_ipp = 10;  // 10 lignes par page
+							$pages->default_ipp = 12;  // 12 lignes par page
 							
 							// connexion à la base
 							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
 							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `users`";
-							if ($_SESSION['login'] == "root")
+							$sql = "SELECT COUNT(*) as nb FROM `users_channels`";
+							if ($_SESSION['id'] == 0)
 										$sql .= " where 1";
-						    else
-								        $sql .= " where login = '" . $_SESSION['login'] ."'";
+						    else   
+								        $sql .= " where user_id = '" . $_SESSION['id'] ."'";
 							$stmt = $bdd->query($sql);
 							$res =  $stmt->fetchObject();
 							$pages->items_total = $res->nb;
@@ -450,52 +400,52 @@ if(isset($_POST['btn_supprimer'])){
 				
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
-					<table class="table table-striped">
+					<table class="table table-striped table-sm">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>Login</th>
-							<th>API Key</th>
-							<th>Last sign in</th>
-							<th>Count</th>
+							<th>id</th>
+							<th>Name</th>
+							<th>tags</th>
+							<th>Write API Key</th>
+							<th>Last entry id</th>
+							<th>Last write entry</th>
 						  </tr>
 						</thead>
 						<tbody>
 							
 							<?php
-								$sql = "SELECT * FROM `users`";
-                                if ($_SESSION['login'] == "root")
+								$sql = "SELECT * FROM `users_channels`";
+                                if ($_SESSION['id'] == 0)
 										$sql .= " where 1";	
 								else	
-								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `login` ". $pages->limit;
+								        $sql .= " where user_id = '" . $_SESSION['id'] . "'";
+								$sql .= " order by `tags` ". $pages->limit;
 								
 								$stmt = $bdd->query($sql);
 								
-								while ($thing =  $stmt->fetchObject()){
-									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . $thing->login . "</td>";
-									echo "<td>" . $thing->User_API_Key . "</td>";
-									echo "<td>" . $thing->last_sign_in_at . "</td>";
-									echo "<td>" . $thing->sign_in_count . "</td>";								
+								while ($channel =  $stmt->fetchObject()){
+									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>";
+									echo "<td>" . $channel->id . "</td>";
+									echo "<td>" . $channel->name . "</td>";  
+									echo "<td>" . $channel->tags . "</td>";
+									echo "<td>" . $channel->write_api_key . "</td>";
+									echo "<td>" . $channel->last_entry_id . "</td>";
+									echo "<td>" . $channel->last_write_at . "</td>";
+									echo "</tr>";								
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
+					
+					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
+					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
-					<?php
-					if ($_SESSION['login'] == "root"){
-						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add User</button>';
-					}	
-					?>					
+					<button id="btn_csv" type="button" class="btn btn-secondary">Download CSV</button>
+					<button id="btn_clear" type="button" class="btn btn-danger">Clear all feed</button>
+					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
 					</form>	
 				</div>
-				
-			
-			
-			
 	
 		</div>
 		<?php require_once '../piedDePage.php'; ?>

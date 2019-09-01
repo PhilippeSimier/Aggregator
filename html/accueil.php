@@ -4,6 +4,7 @@
     session_start();
 	require_once('definition.inc.php');
 
+
 ?>
 
 <html>
@@ -38,16 +39,27 @@
 						});
 						
 						<?php
-						$bdd = new PDO('mysql:host=127.0.0.1;dbname=data;charset=utf8', 'ruche', 'touchard72');
-						$reponse = $bdd->query('SELECT * FROM `things`');
-						while ($thing = $reponse->fetch()){
+						require_once('definition.inc.php');
+						// connexion à la base data
+						$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+						
+						if (!isset($_SESSION['id'])) // Personne n'est connecté donc objet publique
+							$sql = 'SELECT * FROM `things` where status = "public";';
+						else if ($_SESSION['id'] != 0)
+							$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
+						else   // C'est root qui est connecté, tous les objets sont affichés
+							$sql = "SELECT * FROM `things`";
+							
+						$reponse = $bdd->query($sql);
+	
+						while ($thing = $reponse->fetchObject()){
 								echo 'map.addMarker({'; 
-									echo 'lat:' . $thing['latitude'] . ",\n";
-									echo 'lng:' . $thing['longitude'] . ",\n";
-									echo 'title: "' . $thing['name'] . "\",\n";
+									echo 'lat:' . $thing->latitude . ",\n";
+									echo 'lng:' . $thing->longitude . ",\n";
+									echo 'title: "' . $thing->name . "\",\n";
 									echo "infoWindow: {\n";
-									echo 'content: "<p> <b>' . $thing['name'] . '</b><br />Coordonnées GPS : </br> Lat : ' . $thing['latitude'];
-                                    echo '<br /> Lng : ' . $thing['longitude'] . '</p>"' ;
+									echo 'content: "<p> <b>' . $thing->name . '</b><br />Coordonnées GPS : </br> Lat : ' . $thing->latitude;
+                                    echo '<br /> Lng : ' . $thing->longitude . '</p>"' ;
 									echo "}\n";
 								echo "});\n";
 								
@@ -61,91 +73,81 @@
 
 	<body>
 		<?php require_once 'menu.php'; ?>
-		<div class="container" style="padding-top: 65px;">
+		<div class="container" style="padding-top: 75px;">
 			<div class="row">
 				<div class="col-md-4 col-sm-12 col-xs-12">
-				
-				<ul class="file-tree popin">
-				<?php
-					function listerCanal($userkey, $tag){
-									$url = "https://api.thingspeak.com/channels.json?api_key=" . $userkey . "&tag=" . $tag;
-									$curl = curl_init();
-
-									curl_setopt_array($curl, array(
-										  CURLOPT_URL => $url,
-										  CURLOPT_RETURNTRANSFER => true,
-										  CURLOPT_ENCODING => "",
-										  CURLOPT_MAXREDIRS => 10,
-										  CURLOPT_TIMEOUT => 30,
-										  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-										  CURLOPT_CUSTOMREQUEST => "GET",
-										  CURLOPT_HTTPHEADER => array(
-											"cache-control: no-cache"
-										  ),
-									));
-
-									$response = curl_exec($curl);
-									$err = curl_error($curl);
-
-									curl_close($curl);
-
-									if ($err) {
-										echo "cURL Error #:" . $err;
-									} else {
-										$channels = json_decode($response);
-										$count = count($channels);
-										
-											echo '<li id="11" class="folder-data"><a href="#">Data visualisation</a>';
-											echo '<ul id="channel">';
-											for ($i = 0; $i < $count; $i++) {
-												echo '<li>';
-												echo '<a class="channels" href="https://api.thingspeak.com/channels/' . $channels[$i]->{'id'} . '/feed.json?results=0" target="_blank" >' . $channels[$i]->{'name'} . "</a>\n";
-												echo '</li>';
-											}
-											echo '</ul>';
-											echo '</li>';
-										
+				<div class="popin" style="margin: 0px; padding : 4px;">
+					<ul class="file-tree ">
+					<?php
+						
+						function listerChannels($bdd, $tags){
+							
+							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `tags`='. $bdd->quote($tags);
+							
+							if ($bdd->query($sql)->fetchObject()->nb > 0){
+								$sql = 'SELECT * FROM `channels` WHERE `tags`='.  $bdd->quote($tags);
+								$reponse = $bdd->query($sql);
+								echo '<li  class="folder-data"><a href="#">Data visualisation</a>';
+								echo "<ul id=\"channel\">\n";
+									while($channel = $reponse->fetchObject()){
+										echo '<li>';
+										echo '<a class="channels" href="https://api.thingspeak.com/channels/' . $channel->id . '/feed.json?results=0" target="_blank" >' . $channel->name . "</a>\n";
+										echo '</li>';								
 									}
-					
-					}
-					
-					function listerMatlabVisu($bdd, $id){
-						$sql = 'SELECT * FROM `Matlab_Visu` WHERE `things_id`='. $id;
-						$reponse2 = $bdd->query($sql);
-						echo '<li id="11" class="folder-matlab"><a href="#">Data Analysis</a>';
-						echo "<ul>\n";
-							while ($matalVisu = $reponse2->fetch()){
-								echo '<li class="analysis">';
-								echo '<a target="_blank" href="/Ruche/MatlabVisualization?id='. $matalVisu['thing_speak_id'].'&name='. urlencode($matalVisu['name']) .'">'.$matalVisu['name']. '</a>';
-								echo '</li>';
-							}
-						echo "</ul>\n";
-						echo "</li>\n";
-					}
-					
-					try{
-						$bdd = new PDO('mysql:host=127.0.0.1;dbname=data;charset=utf8', 'ruche', 'touchard72');
-						$reponse = $bdd->query('SELECT * FROM `users_things`');
-						while ($thing = $reponse->fetch()){
-								echo '<li class="folder-root">	<a href="#">' . $thing['name'] . '</a>'; 
-									echo '<ul>';
-									listerCanal($thing['USER_API_Key'], $thing['tag']);
-									listerMatlabVisu($bdd, $thing['id']);
-									echo '</ul>';
-								echo '</li>';
 								
+								echo "</ul>\n";
+								echo "</li>\n";
+							}
+						}	
+						
+						function listerMatlabVisu($bdd, $id){
+							
+							$sql = 'SELECT count(*) as nb FROM `Matlab_Visu` WHERE `things_id`='. $id;					
+							if ($bdd->query($sql)->fetchObject()->nb > 0){
+								$sql = 'SELECT * FROM `Matlab_Visu` WHERE `things_id`='. $id;
+								$reponse2 = $bdd->query($sql);
+								echo '<li  class="folder-matlab"><a href="#">Data Analysis</a>';
+								echo "<ul>\n";
+									while ($matalVisu = $reponse2->fetchObject()){
+										echo '<li class="analysis">';
+										echo '<a target="_blank" href="/Ruche/MatlabVisualization?id='. $matalVisu->thing_speak_id.'&name='. urlencode($matalVisu->name) .'">'.$matalVisu->name. '</a>';
+										echo '</li>';
+									}
+								echo "</ul>\n";
+								echo "</li>\n";
+							}	
 						}
-						$reponse->closeCursor();
-					}
-					catch (Exception $e){
-						echo "erreur BDD";
-						die('Erreur : ' . $e->getMessage());
-					}
-					?>								
-				</ul>
+						
+						try{
+							if (!isset($_SESSION['id']))
+								$sql = 'SELECT * FROM `things` where status = "public";';
+							else if ($_SESSION['id'] != 0)
+								$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
+							else   // C'est root qui est connecté
+								$sql = "SELECT * FROM `things`";
+							
+							$reponse = $bdd->query($sql);
+							while ($thing = $reponse->fetchObject()){
+									echo '<li class="folder-root ' .$thing->class .'">	<a href="#">' . $thing->name . '</a>'; 
+										echo '<ul>';
+										listerChannels($bdd, $thing->tag);
+										listerMatlabVisu($bdd, $thing->id);
+										echo '</ul>';
+									echo '</li>';
+									
+							}
+							$reponse->closeCursor();
+						}
+						catch (Exception $e){
+							echo "erreur BDD";
+							die('Erreur : ' . $e->getMessage());
+						}
+						?>								
+					</ul>
+				</div>
 				</div>
 				<div class="col-md-8 col-sm-12 col-xs-12">
-					<div class="popin">
+					<div class="popin" style="margin: 0px;">
 					<div  id="map-canvas" style = "height: 500px; width: 100%;" ></div>
 					</div>
 				</div>

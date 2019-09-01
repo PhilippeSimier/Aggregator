@@ -39,6 +39,12 @@ La requête suivante met à jours le champ **status** dans la table **things** p
 ```sql
 UPDATE `data`.`things` SET `status` = 'public' WHERE `things`.`id` = 1;
 ```
+Retirer 2 heures à un champ datetime **DATE_SUB**
+```sql
+UPDATE `feeds` SET `date`= DATE_SUB(`date`, INTERVAL 2 HOUR) WHERE id_channel = 539387;
+```
+
+
 ## Créer une vue
 Une vue est considérée comme une table virtuelle car elle n'a pas d’existence propre.
 Une vue est créée à partir d'une requête de définition. 
@@ -64,7 +70,24 @@ MariaDB [data]> SELECT * FROM `users_things`;
 
 ```
 
+## Créer un déclencheur
 
+Un déclencheur (trigger) peut être considéré comme une action (requête ou programme) associé à un événement particulier sur la base. (action sur un table). C'est l'événement de mise à jour de la table qui lance automatiquement le code programmé dans le déclencheur.
+```sql
+CREATE TRIGGER after_insert_feeds AFTER INSERT
+ON feeds FOR EACH ROW
+
+UPDATE `channels` 
+SET `last_entry_id`= (SELECT count(*) FROM `feeds` WHERE `id_channel` = NEW.id_channel) , 
+`last_write_at`=NOW() 
+WHERE `id` = NEW.id_channel;
+```
+Après chaque **insertion** dans la table **feeds** les champs *last_entry_id* et *last_write_id* de la table **channels** sont mis à jours.
+
+### Supprimer le trigger
+```sql
+DROP TRIGGER after_insert_feeds
+```
 
 ### Changelog
 

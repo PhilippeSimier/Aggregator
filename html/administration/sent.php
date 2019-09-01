@@ -285,7 +285,7 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>";
 									echo "<td>" . $message->SendingDateTime . "</td>";
 									echo "<td>" . $message->DestinationNumber . "</td>";
-									echo "<td>" . utf8_encode(reduire($message->TextDecoded)) . "</td>";
+									echo "<td>" . reduire($message->TextDecoded) . "</td>";
 									echo "<td>" . $message->CreatorId . "</td></tr>";
 									
 								}

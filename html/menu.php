@@ -2,7 +2,7 @@
     @fichier  menu.php							    		
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
     @date     Juillet 2018
-    @version  v1.1 - First release						
+    @version  v1.2 - First release						
     @details  menu /Menu pour toutes les pages du site Aggregator 
 ------------------------------------------------------------------------------------>
 <?php 
@@ -52,9 +52,9 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/baseDeDonnees">Database</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/infoSystem">System info</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/battery">Battery</a>';
+						//echo '<a class="dropdown-item" href="/Ruche/administration/baseDeDonnees">Database</a>';
+						//echo '<a class="dropdown-item" href="/Ruche/administration/infoSystem">System info</a>';
+						//echo '<a class="dropdown-item" href="/Ruche/administration/battery">Battery</a>';
 					}	
 					else{
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">My Account</a>';

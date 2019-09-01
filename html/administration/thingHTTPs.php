@@ -3,8 +3,8 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+require_once('../api/biblio.php');
 
 // Fonction pour éliser une chaîne de caractères
 function reduire( $chaine ){
@@ -31,7 +31,7 @@ if(isset($_POST['btn_supprimer'])){
 		var_dump($supp);
 		// connexion à la base
 		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-		$sql = "DELETE FROM `things` WHERE `id` IN " . $supp;
+		$sql = "DELETE FROM `thinghttps` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
 	}
 	unset($_POST['table_array']);
@@ -44,7 +44,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Things</title>
+    <title>Apps - thingHTTP - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -138,21 +138,23 @@ if(isset($_POST['btn_supprimer'])){
 					});
 				}
 				if(checkbox_val.length == 1){
-					console.log("thing.php?id" + checkbox_val[0]);
-					window.location = 'thing?id='+checkbox_val[0];
+					console.log("thingHTTP?id" + checkbox_val[0]);
+					window.location = 'thingHTTP?id='+checkbox_val[0];
 				}
 			});
 			
 			$( "#btn_add" ).click(function() {
 				console.log("Bouton Ajouter cliqué");
-				window.location = 'thing'
+				window.location = 'thingHTTP'
 			
 			
 			});
 			
-		});	
+			
 	
-		
+			
+			
+		});
 		
 	</script>
     
@@ -173,11 +175,11 @@ if(isset($_POST['btn_supprimer'])){
 							// connexion à la base
 							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
 							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `login_things`";
-							if ($_SESSION['login'] == "root")
+							$sql = "SELECT COUNT(*) as nb FROM `thinghttps`";
+							if ($_SESSION['id'] == 0)
 										$sql .= " where 1";
-						    else
-								        $sql .= " where login = '" . $_SESSION['login'] ."'";
+						    //else   a terminer
+							//	        $sql .= " where id_user = '" . $_SESSION['id'] ."'";
 							$stmt = $bdd->query($sql);
 							$res =  $stmt->fetchObject();
 							$pages->items_total = $res->nb;
@@ -205,45 +207,40 @@ if(isset($_POST['btn_supprimer'])){
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
+							<th>id</th>
 							<th>Name</th>
-							<th>Tag</th>
-							<th>Access</th>
-							<th>Author</th>
-							<th>Local IP</th>
+							<th>Created</th>
+							<th>Method</th>
 						  </tr>
 						</thead>
 						<tbody>
 							
 							<?php
-								$sql = "SELECT * FROM `login_things`";
-                                if ($_SESSION['login'] == "root")
-										$sql .= " where 1";	
-								else	
-								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `name` ". $pages->limit;
+								$sql = "SELECT * FROM `thinghttps`";
+                                if ($_SESSION['id'] == 0)
+										$sql .= " where 1 ";	
+								//else	
+								//        $sql .= " where login = '" . $_SESSION['login'] . "'";
+								$sql .= " order by `created_at` ". $pages->limit;
 								
 								$stmt = $bdd->query($sql);
 								
-								while ($thing =  $stmt->fetchObject()){
-									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . reduire($thing->name) . "</td>";
-									echo "<td>" . $thing->tag . "</td>";
-									echo "<td>" . $thing->status . "</td>";
-									echo "<td>" . $thing->login . "</td>";
-									echo "<td>" . $thing->local_ip_address . "</td>";
+								while ($thingHTTP =  $stmt->fetchObject()){
+									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thingHTTP->id]' value='$thingHTTP->id' ></td>";
+									echo "<td>" . $thingHTTP->id . "</td>";
+									echo "<td>" . $thingHTTP->name . "</td>";  // utf8_encode($thingHTTP->name)
+									echo "<td>" . $thingHTTP->created_at . "</td>";
+									echo "<td>" . $thingHTTP->Method . "</td>";
+									echo "</tr>";								
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
-					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
+					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
+					<button id="btn_mod" type="button" class="btn btn-secondary">Modifier</button>
+					<button id="btn_add" type="button" class="btn btn-secondary">Ajouter</button>
 					</form>	
 				</div>
-				
-			
-			
-			
 	
 		</div>
 		<?php require_once '../piedDePage.php'; ?>

@@ -27,28 +27,32 @@ function faireSelectUsers($bdd , $user_id){
 if( !empty($_POST['envoyer'])){
 	
 	if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-		$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`) VALUES ( %s, %s, %s, %s, %s, %s, %s);"
+		$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s);"
 		              , $_POST['user_id']
 					  , $_POST['latitude']
 					  , $_POST['longitude']
 					  , $_POST['elevation']
-					  , $bdd->quote(utf8_decode($_POST['name']))
+					  , $bdd->quote($_POST['name'])
 					  , $bdd->quote($_POST['tag'])
 					  , $bdd->quote($_POST['status'])
+					  , $bdd->quote($_POST['local_ip_address'])
+					  , $bdd->quote($_POST['class'])
 					  ); 
 		$bdd->exec($sql);
 		header("Location: things.php");
 		return;
 	}
 	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-		$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s WHERE `things`.`id` = %s;"
+		$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s  WHERE `things`.`id` = %s;"
 					  , $_POST['latitude']
 					  , $_POST['longitude']
 					  , $_POST['elevation']
-					  , $bdd->quote(utf8_decode($_POST['name']))
+					  , $bdd->quote($_POST['name'])
 					  , $bdd->quote($_POST['tag'])
 					  , $bdd->quote($_POST['status'])
 					  , $_POST['user_id']
+					  , $bdd->quote($_POST['local_ip_address'])
+					  , $bdd->quote($_POST['class'])
 					  , $_POST['id']
 					  ); 
 		$bdd->exec($sql);
@@ -76,6 +80,9 @@ else
 		   $_POST['elevation']  = $thing->elevation;
 		   $_POST['latitude']  = $thing->latitude;
 		   $_POST['longitude']  = $thing->longitude;
+		   $_POST['local_ip_address']  = $thing->local_ip_address;
+		   $_POST['class'] = $thing->class;
+		   
 	   } 
    }else {
   	   $_POST['action'] = "insert";
@@ -86,7 +93,9 @@ else
 	   $_POST['status'] = "private";
 	   $_POST['elevation']  = "44";
 	   $_POST['latitude']  = "48.847849";
-	   $_POST['longitude']  = "2.335168";	   
+	   $_POST['longitude']  = "2.335168";
+	   $_POST['local_ip_address']  = "";
+	   $_POST['class'] = "";
 	   
    }   
 
@@ -167,7 +176,7 @@ else
 		draggable: true,
 		dragend : position,
         infoWindow: {
-          content: '<p> <?php echo "<b>" . utf8_encode($_POST['name']) . "</b><br />Coordonnées GPS : </br> Lat : " . $_POST['latitude'] . "<br /> Lng : " . $_POST['longitude']; ?></p>' 
+          content: '<p> <?php echo "<b>" . $_POST['name'] . "</b><br />Coordonnées GPS : </br> Lat : " . $_POST['latitude'] . "<br /> Lng : " . $_POST['longitude']; ?></p>' 
 		  
         }
 		
@@ -286,7 +295,7 @@ else
 							
 							<div class="form-group">
 								<label for="name"  class="font-weight-bold">Name : </label>
-								<input type="text"  name="name" class="form-control" value="<?php echo  utf8_encode($_POST['name']); ?>" />
+								<input type="text"  name="name" class="form-control" value="<?php echo  $_POST['name']; ?>" />
 							</div>
 							
 							<div class="form-group">
@@ -310,6 +319,16 @@ else
 							<div class="form-group">
 								<label for="altitude"  class="font-weight-bold">Altitude : </label>
 								<input id="altitude" type="int"  name="elevation" class="form-control" value="<?php echo  $_POST['elevation']; ?>" />
+							</div>
+							
+							<div class="form-group">
+								<label for="local_ip_address"  class="font-weight-bold">Local IP : </label>
+								<input id="local_ip_address" type="text"  name="local_ip_address" class="form-control" value="<?php echo  $_POST['local_ip_address']; ?>" />
+							</div>
+							
+							<div class="form-group">
+								<label for="local_ip_address"  class="font-weight-bold">Class : </label>
+								<input id="local_ip_address" type="text"  name="class" class="form-control" value="<?php echo  $_POST['class']; ?>" />
 							</div>
 							
 							<div class="form-group">

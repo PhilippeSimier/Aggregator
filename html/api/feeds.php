@@ -39,16 +39,16 @@
 			
 		$channel = array(
 			'id' => intval($result->id),
-			'name' => utf8_encode($result->name),
+			'name' => $result->name,
 		);
-		if ($result->field1 != "") $channel['field1'] = utf8_encode($result->field1);
-		if ($result->field2 != "") $channel['field2'] = utf8_encode($result->field2);
-		if ($result->field3 != "") $channel['field3'] = utf8_encode($result->field3);
-		if ($result->field4 != "") $channel['field4'] = utf8_encode($result->field4);
-		if ($result->field5 != "") $channel['field5'] = utf8_encode($result->field5);
-		if ($result->field6 != "") $channel['field6'] = utf8_encode($result->field6);
-		if ($result->field7 != "") $channel['field7'] = utf8_encode($result->field7);
-		if ($result->field8 != "") $channel['field8'] = utf8_encode($result->field8);
+		if ($result->field1 != "") $channel['field1'] = $result->field1;
+		if ($result->field2 != "") $channel['field2'] = $result->field2;
+		if ($result->field3 != "") $channel['field3'] = $result->field3;
+		if ($result->field4 != "") $channel['field4'] = $result->field4;
+		if ($result->field5 != "") $channel['field5'] = $result->field5;
+		if ($result->field6 != "") $channel['field6'] = $result->field6;
+		if ($result->field7 != "") $channel['field7'] = $result->field7;
+		if ($result->field8 != "") $channel['field8'] = $result->field8;
 		
 		
 		// Lecture des valeurs enregistrées dans la table feeds

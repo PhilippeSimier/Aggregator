@@ -63,14 +63,36 @@
 }
 
 /* répertoire ruche */
-.file-list .folder-root:before{
+.file-list .ruche:before{
     color:#FFD04E;
     content: "\f187";
 }
 /* Répertoire ruche ouverte */
-.file-list .folder-root.open:before{
+.file-list .ruche.open:before{
     content: "\f187";
 }
+
+/* répertoire weather */
+.file-list .weather:before{
+    color:#FFD04E;
+    content: "\f185";
+}
+/* Répertoire weather ouverte */
+.file-list .weather.open:before{
+    content: "\f185";
+}
+
+/* répertoire objet */
+.file-list .objet:before{
+    color:#FFD04E;
+    content: "\f1b2";
+}
+/* Répertoire objet ouvert */
+.file-list .objet.open:before{
+    content: "\f1b2";
+}
+
+
 li.folder-root ul{
     transition: all .3s ease-in-out;
     overflow:hidden;
