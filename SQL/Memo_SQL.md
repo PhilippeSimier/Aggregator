@@ -89,6 +89,61 @@ Après chaque **insertion** dans la table **feeds** les champs *last_entry_id* e
 DROP TRIGGER after_insert_feeds
 ```
 
+## Définir la timezone
+
+Afficher l'heure courante:
+```sql
+MariaDB [(none)]> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2019-09-03 09:42:22 |
++---------------------+
+1 row in set (0.00 sec)
+```
+pour configurer **@@global.time_zone variable**
+
+Cette variable a pour  valeur par défaut  **SYSTEM**, ce qui indique que mariadb defini le même fuseau horaire que le système d'exploitation. 
+```sql
+MariaDB [(none)]> SET @@global.time_zone = '+00:00';
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> SELECT @@global.time_zone;
++--------------------+
+| @@global.time_zone |
++--------------------+
+| +00:00             |
++--------------------+
+1 row in set (0.00 sec)
+```
+pour configurer **@@session.time_zone**
+```sql
+MariaDB [(none)]> SET @@session.time_zone = "+00:00";
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> SELECT @@session.time_zone;
++---------------------+
+| @@session.time_zone |
++---------------------+
+| +00:00              |
++---------------------+
+1 row in set (0.00 sec)
+```
+A partir de maintenant, la fonction **now()** renvoie la date et l'heure UTC
+```sql
+MariaDB [(none)]> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2019-09-03 07:44:33 |
++---------------------+
+1 row in set (0.01 sec)
+```
+###Afficher l'historique des commandes
+```
+root@dmz:~# tail .mysql_history
+```
+
 ### Changelog
 
  **10/06/2019 :** Ajout de Authentification SSH par clés . 
