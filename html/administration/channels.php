@@ -431,7 +431,7 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<td>" . $channel->tags . "</td>";
 									echo "<td>" . $channel->write_api_key . "</td>";
 									echo "<td>" . $channel->last_entry_id . "</td>";
-									echo "<td>" . $channel->last_write_at . "</td>";
+									echo "<td>" . ObtenirDateTimeLocal($channel->last_write_at, "Europe/Paris") . "</td>";
 									echo "</tr>";								
 								}
 							?>

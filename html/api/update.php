@@ -65,6 +65,11 @@
 	$flag = true;
 	//connexion à la base data
 	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+
+    // selection de la timezone UTC pour la session
+	$sql = "SET @@session.time_zone = \"+00:00\"";
+	$stmt = $bdd->exec($sql);
+
 	
 	$channel = obtenirChannel($bdd, $api_key);
 	

@@ -101,13 +101,7 @@
         }			
     }
 	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	// Fonction pour generer une chaine aléatoire
 	// Retourne la chaine générée
@@ -136,5 +130,16 @@
 			$res =  $stmt->fetchObject();
 		}while($res->nb != 0);
 		return $key;	
-	}	
+	}
+
+    // Fonction pour convertir un dateTime UTC en localTime
+	function ObtenirDateTimeLocal($datetime, $timeZone) {
+		if ($datetime != ""){
+			$date = new DateTime($datetime, new DateTimeZone('UTC'));
+			$date->setTimezone(new \DateTimeZone($timeZone));
+			return $date->format('Y-m-d H:i:s');
+		}
+		return "";
+	}
+	
 ?>
