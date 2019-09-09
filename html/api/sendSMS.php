@@ -1,7 +1,23 @@
 <?php
-   
+	/** Send a SMS with HTTP GET or POST
+	    Parameters : 
+		    key     (Required) User_API_Key Key for this specific service.
+			number  (Required)  Phone Number 
+			message (Required)  message
+			
+		reponse :
+			The response is a JSON object  for example:
+
+				{
+				  "status": "202 Accepted",
+				  "numero": "+3361234567",
+				  "creator": "philippe",			  
+				}
+	
+	**/   
  
     require_once('biblio.php');
+	require_once('../definition.inc.php');
 	
 	// Contrôle de la présence des paramètres key number message en GET ou POST
 	$key     = obtenir("key");
@@ -11,13 +27,13 @@
     
     // Contrôle de la clé
 	// La clé doit appartenir à un utilisateur de la table users
-	require_once('../definition.inc.php');
+	
 	// connexion à la base data
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+	$bdd = connexionBD(BASE);
 	controlerkey($bdd, $key);
 
     // Contrôle du numéro de téléphone destinataire
-    if (strlen($number)<8 || !is_numeric($number)){
+    if (strlen($number)<10 || !is_numeric($number)){
         envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad number.");
         return;
     }
@@ -35,7 +51,8 @@
 	$creator = $utilisateur->login;
     $message = $message;  
 
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+	// Connexion à la base SMS
+	$bdd = connexionBD(BASESMS);
 	$sql = sprintf("INSERT INTO outbox (DestinationNumber, TextDecoded, CreatorID, Coding) VALUES ( %s, %s, %s, 'Unicode_No_Compression' )",
 		$bdd->quote($number),
 		$bdd->quote($message),

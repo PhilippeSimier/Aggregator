@@ -3,7 +3,6 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
@@ -16,8 +15,10 @@ return $chaine;
 }
 
 // connexion à la base
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-
+    
+	$bdd = connexionBD(BASE, $_SESSION['time_zone']);
+	
+	
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
 	// Si un élément a été sélectionné création de la liste des id à supprimer
@@ -38,18 +39,15 @@ if(isset($_POST['btn_supprimer'])){
 	unset($_POST['table_array']);
 	unset($_GET['page']);
 	unset($_GET['ipp']);
-
 }
-
 ?>
 
 <html>
 <head>
-    <title>Users</title>
+    <title>Users - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    
     <!-- Bootstrap CSS version 4.1.1 -->
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
@@ -60,9 +58,7 @@ if(isset($_POST['btn_supprimer'])){
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
 	<script >
 		$(document).ready(function(){
-			
-			
-			
+	
 			function cocherTout(etat)
 			{
 			  var cases = document.getElementsByTagName('input');   // on recupere tous les INPUT
@@ -301,6 +297,36 @@ if(isset($_POST['btn_supprimer'])){
 			
 			});
 			
+			$( "#btn_typeZone" ).click(function() {
+				console.log("Bouton Time Zone cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("timeZone.php?id" + checkbox_val[0]);
+					window.location = 'timeZone?id='+checkbox_val[0];
+				}
+			});
+			
 			$( "#btn_key" ).click(function() {
 				console.log("Generate New API Key clicked");
 				
@@ -401,10 +427,7 @@ if(isset($_POST['btn_supprimer'])){
 			
 		});	
 	
-		
-		
-	</script>
-    
+	</script>   
  </head>
 
  <body>
@@ -419,8 +442,7 @@ if(isset($_POST['btn_supprimer'])){
 						    $pages = new Paginator;
 							$pages->default_ipp = 10;  // 10 lignes par page
 							
-							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+							
 							// Comptage des lignes dans la table 
 							$sql = "SELECT COUNT(*) as nb FROM `users`";
 							if ($_SESSION['login'] == "root")
@@ -433,9 +455,6 @@ if(isset($_POST['btn_supprimer'])){
 							$pages->mid_range = 9;
 							$pages->paginate();  
 
-
-							
-							
 							echo '<div class="row marginTop">';
                             echo '<div class="col-sm-12 paddingLeft pagerfwt">';
 							if($pages->items_total > 0) { 
@@ -443,10 +462,7 @@ if(isset($_POST['btn_supprimer'])){
 								echo $pages->display_total();
 							}
 							echo '</div>';
-							
-			
 			?>
-			
 				
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
@@ -456,6 +472,7 @@ if(isset($_POST['btn_supprimer'])){
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
 							<th>Login</th>
 							<th>API Key</th>
+							<th>Time Zone</th>
 							<th>Last sign in</th>
 							<th>Count</th>
 						  </tr>
@@ -476,6 +493,7 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$thing->id]' value='$thing->id' ></td>";
 									echo "<td>" . $thing->login . "</td>";
 									echo "<td>" . $thing->User_API_Key . "</td>";
+									echo "<td>" . $thing->time_zone . "</td>";
 									echo "<td>" . $thing->last_sign_in_at . "</td>";
 									echo "<td>" . $thing->sign_in_count . "</td>";								
 								}
@@ -484,6 +502,7 @@ if(isset($_POST['btn_supprimer'])){
 					</table>
 					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
 					<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
+					<button id="btn_typeZone" type="button" class="btn btn-warning">Change Time Zone</button>
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
 					<?php
 					if ($_SESSION['login'] == "root"){
@@ -492,17 +511,9 @@ if(isset($_POST['btn_supprimer'])){
 					?>					
 					</form>	
 				</div>
-				
-			
-			
-			
-	
 		</div>
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
-
-	
-	
 </body>
 </html>
 	

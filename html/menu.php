@@ -1,7 +1,7 @@
 <!----------------------------------------------------------------------------------
     @fichier  menu.php							    		
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
-    @date     Juillet 2018
+    @date     Septembre 2019
     @version  v1.2 - First release						
     @details  menu /Menu pour toutes les pages du site Aggregator 
 ------------------------------------------------------------------------------------>
@@ -51,6 +51,7 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">Users</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTP</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
 						//echo '<a class="dropdown-item" href="/Ruche/administration/baseDeDonnees">Database</a>';
 						//echo '<a class="dropdown-item" href="/Ruche/administration/infoSystem">System info</a>';
@@ -60,6 +61,7 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">My Account</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">My things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">My Channels</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">My ThingHTTP</a>';
 					}	
 					
 					

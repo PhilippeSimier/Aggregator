@@ -14,6 +14,8 @@ function reduire( $chaine ){
 return $chaine;	
 }
 
+// connexion à la base
+$bdd = connexionBD(BASE, $_SESSION['time_zone']);
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -26,18 +28,14 @@ if(isset($_POST['btn_supprimer'])){
 			if($supp!="("){$supp.=",";}
 			$supp.=$selectValue;
 		}
-		$supp .= ")";
-		
-		var_dump($supp);
-		// connexion à la base
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+		$supp .= ")";	
+
 		$sql = "DELETE FROM `thinghttps` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
 	}
 	unset($_POST['table_array']);
 	unset($_GET['page']);
 	unset($_GET['ipp']);
-
 }
 
 ?>
@@ -143,15 +141,41 @@ if(isset($_POST['btn_supprimer'])){
 				}
 			});
 			
+			// Bouton Add
 			$( "#btn_add" ).click(function() {
 				console.log("Bouton Ajouter cliqué");
-				window.location = 'thingHTTP'
-			
-			
+				window.location = 'thingHTTP'			
 			});
-			
-			
-	
+			// Bouton send
+			$( "#btn_send" ).click(function() {
+				console.log("Bouton Send cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun thinghttp !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs thinghttps !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("send_request?id" + checkbox_val[0]);
+					window.location = 'send_request?id='+checkbox_val[0];
+				}
+			});			
 			
 			
 		});
@@ -171,24 +195,19 @@ if(isset($_POST['btn_supprimer'])){
 							include('paginator.class.php');
 						    $pages = new Paginator;
 							$pages->default_ipp = 10;  // 10 lignes par page
-							
-							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+
 							// Comptage des lignes dans la table 
 							$sql = "SELECT COUNT(*) as nb FROM `thinghttps`";
 							if ($_SESSION['id'] == 0)
 										$sql .= " where 1";
-						    //else   a terminer
-							//	        $sql .= " where id_user = '" . $_SESSION['id'] ."'";
+						    else   
+								        $sql .= " where `user_id` = " . $_SESSION['id'];
 							$stmt = $bdd->query($sql);
 							$res =  $stmt->fetchObject();
 							$pages->items_total = $res->nb;
 							$pages->mid_range = 9;
 							$pages->paginate();  
 
-
-							
-							
 							echo '<div class="row marginTop">';
                             echo '<div class="col-sm-12 paddingLeft pagerfwt">';
 							if($pages->items_total > 0) { 
@@ -196,8 +215,6 @@ if(isset($_POST['btn_supprimer'])){
 								echo $pages->display_total();
 							}
 							echo '</div>';
-							
-			
 			?>
 			
 				
@@ -219,26 +236,27 @@ if(isset($_POST['btn_supprimer'])){
 								$sql = "SELECT * FROM `thinghttps`";
                                 if ($_SESSION['id'] == 0)
 										$sql .= " where 1 ";	
-								//else	
-								//        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `created_at` ". $pages->limit;
+								else	
+								        $sql .= " where `user_id` = " . $_SESSION['id'];
+								$sql .= " order by `id` ". $pages->limit;
 								
 								$stmt = $bdd->query($sql);
 								
 								while ($thingHTTP =  $stmt->fetchObject()){
 									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thingHTTP->id]' value='$thingHTTP->id' ></td>";
 									echo "<td>" . $thingHTTP->id . "</td>";
-									echo "<td>" . $thingHTTP->name . "</td>";  // utf8_encode($thingHTTP->name)
+									echo "<td>" . $thingHTTP->name . "</td>";
 									echo "<td>" . $thingHTTP->created_at . "</td>";
-									echo "<td>" . $thingHTTP->Method . "</td>";
+									echo "<td>" . $thingHTTP->method . "</td>";
 									echo "</tr>";								
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-secondary">Modifier</button>
-					<button id="btn_add" type="button" class="btn btn-secondary">Ajouter</button>
+					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_mod" type="button" class="btn btn-secondary">Setting</button>
+					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
+					<button id="btn_send" type="button" class="btn btn-secondary">Send</button>
 					</form>	
 				</div>
 	

@@ -3,8 +3,9 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
+//require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+require_once('../api/biblio.php');
 
 function reduire( $chaine ){
 	
@@ -13,7 +14,6 @@ function reduire( $chaine ){
 	}
 return $chaine;	
 }
-
 
 // Si le formulaire à été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -28,9 +28,9 @@ if(isset($_POST['btn_supprimer'])){
 			$supp.=$selectValue;
 		}
 		$supp .= ")";
-		var_dump($supp);
+
 		// connexion à la base
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+		$bdd = connexionBD(BASESMS, $_SESSION['time_zone']);
 		$sql = "DELETE FROM `sentitems` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
@@ -237,7 +237,7 @@ if(isset($_POST['btn_supprimer'])){
 							$pages->default_ipp = 12;  // 12 lignes par page
 							
 							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+							$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
 							// Comptage des lignes dans la table 
 							$sql = "SELECT COUNT(*) as nb FROM `sentitems`"; 
 							$stmt = $bdd->query($sql);
@@ -277,6 +277,8 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
+								
+								
 								$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ". $pages->limit;
 								
 								$stmt = $bdd->query($sql);

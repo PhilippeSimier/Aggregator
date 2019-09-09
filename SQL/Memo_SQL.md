@@ -139,6 +139,21 @@ MariaDB [(none)]> select now();
 +---------------------+
 1 row in set (0.01 sec)
 ```
+
+## Remplir les tables de fuseaux horaires
+
+La procédure d'installation de MySQL crée les tables de fuseau horaire, **mais ne les charge pas**. Pour le faire manuellement, utilisez la ligne de commande suivante.
+
+```bash
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+```
+A partir de maintenant il est possible de définir le fuseau horaire à partir de son nom.
+```sql
+mysql> SET @@session.time_zone = "Europe/Paris";
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
 ###Afficher l'historique des commandes
 ```
 root@dmz:~# tail .mysql_history

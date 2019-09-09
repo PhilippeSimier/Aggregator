@@ -4,7 +4,7 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
-$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+$bdd = connexionBD(BASE);
 
 // Fonction pour créer le sélecteur tag 
 // Le tag d'un canal fait référence au tag d'un objet

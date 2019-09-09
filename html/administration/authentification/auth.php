@@ -53,11 +53,15 @@
         $_SESSION['login'] 		 = $utilisateur->login;
 		$_SESSION['id']			 = $utilisateur->id;
 		$_SESSION['User_API_Key']= $utilisateur->User_API_Key;
+		$_SESSION['time_zone']   = $utilisateur->time_zone;
         $_SESSION['droits'] 	 = 1;
        
 	// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
-        
-        $sql = "UPDATE `users` SET `last_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = $utilisateur->id LIMIT 1" ;
+	
+		$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
+        $stmt = $bdd->query($sql);
+		
+        $sql = "UPDATE `users` SET `current_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
         $stmt = $bdd->query($sql);
 
 	// Incrémentation du compteur de session

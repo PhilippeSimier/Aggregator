@@ -5,27 +5,17 @@
    
 	require_once('../definition.inc.php');
 	require_once('biblio.php');
-
-	try
-	{
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-	}
-	catch (Exception $ex)
-	{
-		die('<br />Pb connexion serveur BD : ' . $ex->getMessage());
-	}
+	
+	// Connexion à la base avec session heure UTC
+	$bdd = connexionBD(BASE, "+00:00");
 
 	// Lecture des paramétres obligatoires
 	$channelId = obtenir("channelId", FILTER_VALIDATE_INT);
 	
 	// Lecture des paramétres facultatifs
 	$results   = facultatif("results", "8000", FILTER_VALIDATE_INT);
-
-    // selection de la timezone UTC pour la session
-	$sql = "SET @@session.time_zone = \"+00:00\"";
-	$stmt = $bdd->exec($sql);
 	
-	// // Lecture des valeurs enregistrées dans la table feeds
+	// Lecture des valeurs enregistrées dans la table feeds
 	$sql = "SELECT * FROM `feeds` WHERE `id_channel`=" . $channelId;
     $nom_fichier = "channel_". $channelId . ".csv";
 

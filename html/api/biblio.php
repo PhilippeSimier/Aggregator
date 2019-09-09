@@ -14,6 +14,26 @@
         exit();		
     }
 	
+	// Fonction pour obtenir la connexion à la BD
+	//¨Paramètre le nom de la base
+	// Retourne un objet bdd
+	// avec selection de la timeZone pour la session.
+	// Si time_zone est vide alors UTC +00:00
+	function connexionBD($base, $time_zone = '+00:00') {
+		try 
+		{
+			$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE);
+			// selection de la timezone UTC pour la session
+			$sql = "SET @@session.time_zone = ". $bdd->quote($time_zone);
+			$stmt = $bdd->exec($sql);
+		} 
+		catch (Exception $ex) 
+		{
+		   envoyerErreur('503','Service Unavailable',$ex->getMessage());       	   
+		}
+		return $bdd;
+	}
+	
 	// Fonction pour vérifier la présence d'un paramètre en GET ou POST
 	// Si le paramètre n'est pas présent ou ne correspond pas au type demandé 
 	// alors la valeur NULL est retournée

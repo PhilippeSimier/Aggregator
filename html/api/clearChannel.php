@@ -18,15 +18,20 @@
 	 
 	if($nb > 0){
 		
-		$data = array(
-                'status' => "202 Accepted",
-				'channel' => $channelId, 
-				
-            );
+		$sql = sprintf("UPDATE `channels` SET `last_write_at`= NULL,`last_entry_id`= NULL WHERE `id`= %s",
+			   $channelId);
+		$nb = $bdd->exec($sql);
+		
+        if($nb > 0){		
+			$data = array(
+					'status' => "202 Accepted",
+					'channel' => $channelId, 
+				);
 
-        header('HTTP/1.1 202 Accepted');
-        header('content-type:application/json');
-        echo json_encode($data);
+			header('HTTP/1.1 202 Accepted');
+			header('content-type:application/json');
+			echo json_encode($data);
+		}	
 	}
    
 

@@ -14,6 +14,8 @@ function reduire( $chaine ){
 return $chaine;	
 }
 
+// connexion à la base
+$bdd = connexionBD(BASE, $_SESSION['time_zone']);
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -28,9 +30,7 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 		
-		var_dump($supp);
-		// connexion à la base
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+		
 		$sql = "DELETE FROM `feeds` WHERE `id_channel` IN " . $supp;
 		$bdd->exec($sql);
 		$sql = "DELETE FROM `channels` WHERE `id` IN " . $supp;
@@ -46,7 +46,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Channels</title>
+    <title>Channels - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -222,6 +222,7 @@ if(isset($_POST['btn_supprimer'])){
 												title: "Info",
 												content: "Clear Accepted"
 											});	
+											window.location = 'channels'
 										}	
 										else{
 											$.dialog({
@@ -369,8 +370,7 @@ if(isset($_POST['btn_supprimer'])){
 						    $pages = new Paginator;
 							$pages->default_ipp = 12;  // 12 lignes par page
 							
-							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+							
 							// Comptage des lignes dans la table 
 							$sql = "SELECT COUNT(*) as nb FROM `users_channels`";
 							if ($_SESSION['id'] == 0)
@@ -415,6 +415,7 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
+																
 								$sql = "SELECT * FROM `users_channels`";
                                 if ($_SESSION['id'] == 0)
 										$sql .= " where 1";	
@@ -431,7 +432,7 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<td>" . $channel->tags . "</td>";
 									echo "<td>" . $channel->write_api_key . "</td>";
 									echo "<td>" . $channel->last_entry_id . "</td>";
-									echo "<td>" . ObtenirDateTimeLocal($channel->last_write_at, "Europe/Paris") . "</td>";
+									echo "<td>" . $channel->last_write_at . "</td>";
 									echo "</tr>";								
 								}
 							?>

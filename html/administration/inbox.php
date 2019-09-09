@@ -3,8 +3,8 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+require_once('../api/biblio.php');
 
 function reduire( $chaine ){
 	
@@ -27,9 +27,9 @@ if(isset($_POST['btn_supprimer'])){
 			$supp.=$selectValue;
 		}
 		$supp .= ")";
-		var_dump($supp);
+
 		// connexion à la base
-		$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+		$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
 		$sql = "DELETE FROM `inbox` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
@@ -43,7 +43,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Inbox</title>
+    <title>Inbox - SMS</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -240,7 +240,7 @@ if(isset($_POST['btn_supprimer'])){
 							$pages->default_ipp = 10;  // 10 lignes par page
 							
 							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+							$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
 							// Comptage des lignes dans la table 
 							$sql = "SELECT COUNT(*) as nb FROM `inbox`"; 
 							$stmt = $bdd->query($sql);
