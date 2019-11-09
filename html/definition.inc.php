@@ -13,4 +13,8 @@
 	
 	// Définition de la précision d'affichage
 	define ("PRECISION",3);
+	
+	// Définition de l'utilisateur smtp
+	define ("SMTPUSER", "philippe.simier.pro@gmail.com");
+	define ("SMTPPWD", "Jelbroet2020!");
 ?>

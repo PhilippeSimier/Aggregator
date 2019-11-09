@@ -1,5 +1,5 @@
-<?php 
- 
+<?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
@@ -7,37 +7,33 @@ use PHPMailer\PHPMailer\SMTP;
 require 'phpMailer/Exception.php';
 require 'phpMailer/PHPMailer.php';
 require 'phpMailer/SMTP.php';
-
-//require 'vendor/autoload.php';
+require_once('definition.inc.php');
 
 // Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
 try {
     //Server settings
-	
-	$mail->Host = 'smtp.domaine.fr';
-	$mail->isSMTP();
-	$mail->SMTPAuth   = false;
-	$mail->Port = 25; // Par défaut
-	
-/**	
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-    $mail->isSMTP();                                            // Send using SMTP
-    $mail->Host       = 'smtp1.example.com';                    // Set the SMTP server to send through
-    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-    $mail->Username   = 'philaure@wanadoo.fr';                     // SMTP username
-    $mail->Password   = 'Jelbroet72!';                               // SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
-    $mail->Port       = 587;                                    // TCP port to connect to
-**/
+
+	$mail->Host = 'smtp.gmail.com';   // Set the SMTP server to send through
+	$mail->isSMTP();                  // Send using SMTP
+	$mail->SMTPAuth   = true; 	  // Enable SMTP authentication
+	$mail->Port = 587; // Par défaut 587 ou 465
+
+    $mail->SMTPDebug = SMTP::DEBUG_SERVER;       // Enable verbose debug output
+
+    $mail->Username   = SMTPUSER;   // SMTP username
+    $mail->Password   = SMTPPWD;    // SMTP password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;    // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
+
+
     //Recipients
-    $mail->setFrom('philaure@wanadoo.fr', 'Philippe SIMIER');
-	$mail->addAddress('philippe.simier@ac-nantes.fr', 'Philippe SIMIER');  
-    
+    $mail->setFrom('philippe.simier.pro@gmail.com', 'Philippe SIMIER');
+    $mail->addAddress('philaure@wanadoo.fr', 'Philippe SIMIER');
+
 
     // Attachments
-    //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+    $mail->addAttachment('README.md');         // Add attachments
     //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
 
     // Content
@@ -51,5 +47,5 @@ try {
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }
- 
+
 ?>
