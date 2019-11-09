@@ -14,7 +14,7 @@
 		echo $objet->send_request();
 	}
 	//catch exception
-	catch(Exception $e) {
-		envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+	catch(thingHTTPException $e) {
+		envoyerErreur(500, $e->getMessage(), $e->getMessage());
 	}
 ?>

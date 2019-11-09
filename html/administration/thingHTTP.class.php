@@ -1,4 +1,10 @@
 <?php
+
+// La classe thingHTTPException hérite de la classe Exception
+class thingHTTPException extends Exception {
+}
+
+
 class thingHTTP
 {
    // Constructeur
@@ -40,7 +46,7 @@ class thingHTTP
 			else{
 				// La requète retourne un objet vide !!
 				$this->curl = NULL;
-				throw new Exception("Constructor thingHTTP Error");
+				throw new thingHTTPException("Constructor thingHTTP Error",1);
 			}	
     }   
 
@@ -63,6 +69,7 @@ class thingHTTP
 		if ($this->curl != NULL){
 			$this->response = curl_exec($this->curl);
 			$this->err = curl_error($this->curl);
+			if ($this->err != "") throw new thingHTTPException($this->err,2);
 			return $this->response;
 		}
     }

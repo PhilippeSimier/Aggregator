@@ -1,16 +1,16 @@
 <?PHP
 
-    // Ce Fichier contient la definition des constantes
-	// définition du fichier de configuration.ini
+    // Ce fichier contient la definition des constantes
 
-	define ("CONFIGURATION","/opt/Ruche/etc/configuration.ini");
-	define ("BATTERY","/opt/Ruche/etc/battery.ini");
-	
+    // connexion à la BDD data	et smsd
 	define ("UTILISATEUR","ruche");
     define ("PASSE","touchard72");
     define ("SERVEUR","127.0.0.1");
 
-    // base de données pour les organisations ESR72
+    // base de données Aggregator
     define ("BASE","data;charset=utf8");
 	define ("BASESMS","smsd;charset=utf8");
+	
+	// Définition de la précision d'affichage
+	define ("PRECISION",3);
 ?>

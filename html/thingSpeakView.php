@@ -2,7 +2,7 @@
     session_start();
 	
 	require_once('definition.inc.php');
-    $ini  = parse_ini_file(CONFIGURATION, true);
+    
 ?>
 <!DOCTYPE html>
 <html>
@@ -27,7 +27,7 @@
     
 	// placez votre numéro de canal ThingSpeak, votre nom de canal et vos clés d'API ici.
     var channelKeys =[];
-    channelKeys.push({channelNumber:<?php if (isset($_GET['channel'])) { echo $_GET['channel']; } else {echo $ini['ruche']['id'];} ?>, 
+    channelKeys.push({channelNumber:<?php if (isset($_GET['channel'])) { echo $_GET['channel']; } else {echo 00001;} ?>, 
 	                  name:'<?php if (isset($_GET['name'])) { echo $_GET['name']; } else { echo "thing"; }; ?>',
 					  key:'<?php if (isset($_GET['key'])) { echo $_GET['key']; }; ?>',
                       fieldList:[<?php if (isset($_GET['field0'])) { echo "{field:".$_GET['field0'].",axis:'P'}"; } else { echo "{field:1,axis:'P'}"; }; 
@@ -230,7 +230,7 @@ $(document).ready(function(){
 			
 			borderColor: '#4b85b7',
 			backgroundColor: '#edf1c8',
-			valueDecimals: <?php echo $ini['balance']['precision']; ?>,
+			valueDecimals: <?php echo PRECISION; ?>,
 			xDateFormat: '%A %e %B à  %Hh%M'
 			
 		},

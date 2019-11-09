@@ -3,7 +3,6 @@
 <?php
     session_start();
     require_once('definition.inc.php');
-    $ini  = parse_ini_file(CONFIGURATION, true);
 ?>
 
 <html>
