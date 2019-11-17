@@ -16,7 +16,7 @@ class Paginator{
 	var $querystring;
 	var $ipp_array;
 
-	function Paginator()
+	function __construct()
 	{
 		$this->current_page = 1;
 		$this->mid_range = 7;
