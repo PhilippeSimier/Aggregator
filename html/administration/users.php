@@ -52,12 +52,25 @@ if(isset($_POST['btn_supprimer'])){
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
+	<link rel="stylesheet" href="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+	<link rel="stylesheet" href="../css/dataTables.css" />
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
+	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
 	<script >
 		$(document).ready(function(){
+
+		    let options = {
+                dom: 'ptlf',
+                pagingType: "simple_numbers",
+                lengthMenu: [5, 10, 15, 20, 40],
+                pageLength: 10,
+                order: [[1, 'desc']],
+                
+            };
+			$('#tableau').DataTable(options);
 	
 			function cocherTout(etat)
 			{
@@ -435,38 +448,10 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin">
 			
-			<div class="col-md-12 col-sm-12 col-xs-12">
-			
-			<?php
-							include('paginator.class.php');
-						    $pages = new Paginator;
-							$pages->default_ipp = 10;  // 10 lignes par page
-							
-							
-							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `users`";
-							if ($_SESSION['login'] == "root")
-										$sql .= " where 1";
-						    else
-								        $sql .= " where login = '" . $_SESSION['login'] ."'";
-							$stmt = $bdd->query($sql);
-							$res =  $stmt->fetchObject();
-							$pages->items_total = $res->nb;
-							$pages->mid_range = 9;
-							$pages->paginate();  
-
-							echo '<div class="row marginTop">';
-                            echo '<div class="col-sm-12 paddingLeft pagerfwt">';
-							if($pages->items_total > 0) { 
-								echo $pages->display_pages();
-								echo $pages->display_total();
-							}
-							echo '</div>';
-			?>
-				
+			<div class="col-md-12 col-sm-12 col-xs-12">	
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
-					<table class="table table-striped">
+					<table id="tableau" class="display"  class="table table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
@@ -485,7 +470,7 @@ if(isset($_POST['btn_supprimer'])){
 										$sql .= " where 1";	
 								else	
 								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `login` ". $pages->limit;
+								$sql .= " order by `login` ";
 								
 								$stmt = $bdd->query($sql);
 								

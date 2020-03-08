@@ -55,14 +55,26 @@ if(isset($_POST['btn_supprimer'])){
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
+	<link rel="stylesheet" href="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+	<link rel="stylesheet" href="../css/dataTables.css" />	
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
+	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+	
 	<script >
 		$(document).ready(function(){
 			
-			
+			let options = {
+                dom: 'ptlf',
+                pagingType: "simple_numbers",
+                lengthMenu: [5, 10, 15, 20, 40],
+                pageLength: 10,
+                order: [[1, 'desc']],
+                
+            };
+			$('#tableau').DataTable(options);		
 			
 			function cocherTout(etat)
 			{
@@ -362,45 +374,10 @@ if(isset($_POST['btn_supprimer'])){
 	<?php require_once '../menu.php'; 	?>
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin">
-			
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			
-			<?php
-							include('paginator.class.php');
-						    $pages = new Paginator;
-							$pages->default_ipp = 12;  // 12 lignes par page
-							
-							
-							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `users_channels`";
-							if ($_SESSION['id'] == 0)
-										$sql .= " where 1";
-						    else   
-								        $sql .= " where user_id = '" . $_SESSION['id'] ."'";
-							$stmt = $bdd->query($sql);
-							$res =  $stmt->fetchObject();
-							$pages->items_total = $res->nb;
-							$pages->mid_range = 9;
-							$pages->paginate();  
-
-
-							
-							
-							echo '<div class="row marginTop">';
-                            echo '<div class="col-sm-12 paddingLeft pagerfwt">';
-							if($pages->items_total > 0) { 
-								echo $pages->display_pages();
-								echo $pages->display_total();
-							}
-							echo '</div>';
-							
-			
-			?>
-			
-				
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
-					<table class="table table-striped table-sm">
+					<table id="tableau" class="table display table-striped table-sm">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
@@ -413,15 +390,13 @@ if(isset($_POST['btn_supprimer'])){
 						  </tr>
 						</thead>
 						<tbody>
-							
-							<?php
-																
+							<?php					
 								$sql = "SELECT * FROM `users_channels`";
                                 if ($_SESSION['id'] == 0)
 										$sql .= " where 1";	
 								else	
 								        $sql .= " where user_id = '" . $_SESSION['id'] . "'";
-								$sql .= " order by `tags` ". $pages->limit;
+								$sql .= " order by `tags` ";
 								
 								$stmt = $bdd->query($sql);
 								
@@ -447,13 +422,10 @@ if(isset($_POST['btn_supprimer'])){
 					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
 					</form>	
 				</div>
-	
+			</div>
 		</div>
 		<?php require_once '../piedDePage.php'; ?>
-	</div>
-
-	
-	
+	</div>	
 </body>
 </html>
 	

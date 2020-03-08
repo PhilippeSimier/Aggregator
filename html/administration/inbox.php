@@ -52,13 +52,27 @@ if(isset($_POST['btn_supprimer'])){
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
+	<link rel="stylesheet" href="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+	<link rel="stylesheet" href="../css/dataTables.css" />
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
+	<!--<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>-->
+	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+	
 	<script >
 		$(document).ready(function(){
 			
+		    let options = {
+                dom: 'ptlf',
+                pagingType: "simple_numbers",
+                lengthMenu: [5, 10, 15, 20, 40],
+                pageLength: 10,
+                order: [[1, 'desc']],
+                
+            };
+			$('#tableau').DataTable(options);
 			
 			
 			function cocherTout(etat)
@@ -211,20 +225,10 @@ if(isset($_POST['btn_supprimer'])){
 							jc.$$formSubmit.trigger('click'); // reference the button and click it
 						});
 					}
-				});
-				
-				
-				
-				
-			});
-			
+				});				
+			});			
 		});	
-	
-		
-		
-		
-	</script>
-    
+	</script> 
  </head>
 
  <body>
@@ -232,64 +236,32 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin">
 			
-			<div class="col-md-12 col-sm-12 col-xs-12">
-			
-			<?php
-							include('paginator.class.php');
-						    $pages = new Paginator;
-							$pages->default_ipp = 10;  // 10 lignes par page
-							
-							// connexion à la base
-							$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
-							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `inbox`"; 
-							$stmt = $bdd->query($sql);
-							$res =  $stmt->fetchObject();
-							$pages->items_total = $res->nb;
-							$pages->mid_range = 9;
-							$pages->paginate();  
-
-
-							
-							
-							echo '<div class="row marginTop">';
-                            echo '<div class="col-sm-12 paddingLeft pagerfwt">';
-							if($pages->items_total > 0) { 
-								echo $pages->display_pages();
-								echo $pages->display_total();
-							}
-							echo '</div>';
-							
-			
-			?>
-			
-				
+			<div class="col-md-12 col-sm-12 col-xs-12">			
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
-					<table class="table table-striped table-sm">
+					<table id="tableau" class="display table table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
 							<th>Date Time</th>
 							<th>To</th>
-							<th>Body</th>
-							
-							
+							<th>Body</th>														
 						  </tr>
 						</thead>
 						<tbody>
 							
 							<?php
-								$sql = "SELECT `ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ". $pages->limit;
+								$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
+								$sql = "SELECT `ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ";
 								
 								$stmt = $bdd->query($sql);
 								
 								while ($message =  $stmt->fetchObject()){
-									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>";
-									echo "<td>" . $message->ReceivingDateTime . "</td>";
-									echo "<td>" . $message->SenderNumber . "</td>";
-									echo "<td>" . reduire($message->TextDecoded) . "</td>";
-									echo "</tr>";
+									echo "<tr>\n    <td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>\n";
+									echo "    <td>" . $message->ReceivingDateTime . "</td>\n";
+									echo "    <td>" . $message->SenderNumber . "</td>\n";
+									echo "    <td>" . reduire($message->TextDecoded) . "</td>\n";
+									echo "</tr>\n";
 									
 								}
 							?>
@@ -303,10 +275,7 @@ if(isset($_POST['btn_supprimer'])){
 					
 					</form>	
 				</div>
-				
-			
-			
-			
+			</div>
 	
 		</div>
 		<?php require_once '../piedDePage.php'; ?>

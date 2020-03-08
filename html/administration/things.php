@@ -3,8 +3,9 @@
 <?php
 include "authentification/authcheck.php" ;
 
-require_once('../ini/ini.php');
+//require_once('../ini/ini.php');
 require_once('../definition.inc.php');
+require_once('../api/biblio.php');
 
 // Fonction pour éliser une chaîne de caractères
 function reduire( $chaine ){
@@ -14,6 +15,9 @@ function reduire( $chaine ){
 return $chaine;	
 }
 
+// connexion à la base
+    
+	$bdd = connexionBD(BASE, $_SESSION['time_zone']);
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -53,13 +57,26 @@ if(isset($_POST['btn_supprimer'])){
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
+	<link rel="stylesheet" href="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+	<link rel="stylesheet" href="../css/dataTables.css" />	
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
+	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+	
 	<script >
 		$(document).ready(function(){
-			
+
+		    let options = {
+                dom: 'ptlf',
+                pagingType: "simple_numbers",
+                lengthMenu: [5, 10, 15, 20, 40],
+                pageLength: 10,
+                order: [[1, 'desc']],
+                
+            };
+			$('#tableau').DataTable(options);			
 			
 			
 			function cocherTout(etat)
@@ -164,44 +181,9 @@ if(isset($_POST['btn_supprimer'])){
 		<div class="row popin">
 			
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			
-			<?php
-							include('paginator.class.php');
-						    $pages = new Paginator;
-							$pages->default_ipp = 10;  // 10 lignes par page
-							
-							// connexion à la base
-							$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-							// Comptage des lignes dans la table 
-							$sql = "SELECT COUNT(*) as nb FROM `login_things`";
-							if ($_SESSION['login'] == "root")
-										$sql .= " where 1";
-						    else
-								        $sql .= " where login = '" . $_SESSION['login'] ."'";
-							$stmt = $bdd->query($sql);
-							$res =  $stmt->fetchObject();
-							$pages->items_total = $res->nb;
-							$pages->mid_range = 9;
-							$pages->paginate();  
-
-
-							
-							
-							echo '<div class="row marginTop">';
-                            echo '<div class="col-sm-12 paddingLeft pagerfwt">';
-							if($pages->items_total > 0) { 
-								echo $pages->display_pages();
-								echo $pages->display_total();
-							}
-							echo '</div>';
-							
-			
-			?>
-			
-				
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
-					<table class="table table-striped">
+					<table id="tableau"  class="display table table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
@@ -215,12 +197,14 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
+								
+								
 								$sql = "SELECT * FROM `login_things`";
                                 if ($_SESSION['login'] == "root")
 										$sql .= " where 1";	
 								else	
 								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `name` ". $pages->limit;
+								$sql .= " order by `name` ";
 								
 								$stmt = $bdd->query($sql);
 								
@@ -240,17 +224,10 @@ if(isset($_POST['btn_supprimer'])){
 					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
 					</form>	
 				</div>
-				
-			
-			
-			
-	
+			</div>	
 		</div>
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
-
-	
-	
 </body>
 </html>
 	
