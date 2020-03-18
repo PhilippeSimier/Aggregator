@@ -57,7 +57,7 @@ if(isset($_POST['btn_supprimer'])){
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
-	<link rel="stylesheet" href="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+	<link rel="stylesheet" href="/Ruche/css/datatables.min.css"/>	
 	<link rel="stylesheet" href="../css/dataTables.css" />	
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -73,7 +73,7 @@ if(isset($_POST['btn_supprimer'])){
                 pagingType: "simple_numbers",
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
-                order: [[1, 'desc']],
+                order: [[1, 'asc']],
                 
             };
 			$('#tableau').DataTable(options);			

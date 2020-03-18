@@ -1,4 +1,11 @@
 <?php
+    /** fichier		 : biblio.php
+	    description  : Ensemble de fonctions pour simplifier l'écriture des API http
+	    author       : Philippe SIMIER Lycée Touchard Le Mans
+		
+		
+			 	
+	**/
   
     // Fonction pour renvoyer une réponse suite à une erreur 
 	// Cette fonction tue (termine) l'éxécution du script
@@ -160,6 +167,20 @@
 			return $date->format('Y-m-d H:i:s');
 		}
 		return "";
+	}
+	
+	// Fonction pour remplacer les valeurs null par nan
+    function nan($valeur){
+	if($valeur == null)
+		return "nan";
+	else 
+		return $valeur;
+    }
+
+    // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
+    function formatDate($date){
+		$dt = new DateTime($date);
+        return $dt->format('Y-m-d\TH-i-s\Z');
 	}
 	
 ?>
