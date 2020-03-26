@@ -63,17 +63,18 @@ $(document).ready(function () {
         loadThingSpeakChannel(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
     }
 
-    // Charge les 336 points les plus récents (chargement initial rapide) une semaine
+    // Charge les 434 points les plus récents (chargement initial rapide) une semaine
     // à partir d'un canal ThingSpeak dans un tableau data[]
     // retourne le tableau data[]
     function loadThingSpeakChannel(channelIndex, channelNumber, key, fieldList) {
 
-        // Lire les 2500 données de tous les champs d'un canal avec HTTP GET  
+        // Lire les 434 données de tous les champs d'un canal avec HTTP GET  
 		// appel de la méthode feeds.json
 		// offset = 0 pour le décalage du fuseau horaire donc temps UTC
 		
 		
-		let url = 'https://www.thingspeak.com/channels/' + channelNumber + '/feeds.json?offset=0&results=336';
+		let url = urlAggregator + '/channels/' + channelNumber + '/feeds.json?offset=0&results=434';
+		console.log('url : ' + url);
 		if (key !== ""){
 			url += '&key=' + key + '&callback=?';
 		}else{
@@ -81,7 +82,7 @@ $(document).ready(function () {
 		}		
         $.getJSON(url, function (data)
         {
-            console.log(data.channel.name);
+            //console.log(data.channel.name);
 
             // si pas d'accès
             if (data === '-1') {
@@ -105,7 +106,7 @@ $(document).ready(function () {
                 }
                 fieldList[fieldIndex].name = eval("data.channel.field" + fieldList[fieldIndex].field);
             }
-            console.log('getJSON field name:', fieldList[0].name);
+            //console.log('getJSON field name:', fieldList[0].name);
             // Nom du graphique
             channelKeys[channelIndex].name = data.channel.name;
             // Titre de la page
@@ -117,8 +118,8 @@ $(document).ready(function () {
             channelKeys[channelIndex].fieldList = fieldList;
             channelKeys[channelIndex].loaded = true;
             channelsLoaded++;
-            console.log('channels Loaded:', channelsLoaded);
-            console.log('channel index:', channelIndex);
+            //console.log('channels Loaded:', channelsLoaded);
+            //console.log('channel index:', channelIndex);
             // Quand toutes les cannaux sont chargées
             if (channelsLoaded === channelKeys.length) {
                 createChart();
@@ -135,9 +136,8 @@ $(document).ready(function () {
      * @returns {undefined}
      */
     let latency = function () {
-		console.log('fonction latency');
+		
         setInterval(function () {
-			console.log('fonction setInterval');
             if (document.getElementById("Update").checked)
             {
                 for (let channelIndex = 0; channelIndex < channelKeys.length; channelIndex++)  // iterate through each channel
@@ -145,7 +145,7 @@ $(document).ready(function () {
                     (function (channelIndex)
                     {
                         // Obtenir la dernière data à partir du service WEB
-						let url  = 'https://www.thingspeak.com/channels/' + channelKeys[channelIndex].channelNumber;
+						let url  = urlAggregator + '/channels/' + channelKeys[channelIndex].channelNumber;
 							url += '/feeds/last.json?offset=0';
 							if (channelKeys[channelIndex].key !== ""){
 								url += '&key=' + channelKeys[channelIndex].key + '&jsonCallback=?';
@@ -316,7 +316,7 @@ $(document).ready(function () {
             for (let fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++)  // pour chaque champs
             {
 
-                console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
+                //console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
                 let nameSerie = channelKeys[channelIndex].fieldList[fieldIndex].name;
                 let id = 'ID' + fieldIndex + channelIndex * 10;
 
@@ -367,10 +367,9 @@ $(document).ready(function () {
 
         // ajoute l'historique
 
-        console.log('Nb de Channels: ', channelKeys.length);
+        // console.log('Nb de Channels: ', channelKeys.length);
         for (let channelIndex = 0; channelIndex < channelKeys.length; channelIndex++)  // pour chaque canal
         {
-            console.log('channelIndex: ', channelIndex);
             loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, 1);
         }
     }
@@ -422,19 +421,17 @@ function loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoad
             first_Date.setTime(fieldList[i].data[0][0]);
     }
     let end = first_Date.toJSON();
-    console.log('earliest date :', end);
-    console.log('channelIndex :', channelIndex);
-    console.log('numLoads :', numLoads);
+    //console.log('earliest date :', end);
     // get the Channel data with a webservice call 
 	
-	let url = 'https://www.thingspeak.com/channels/' + channelNumber + '/feeds.json?offset=0&start=2018-01-20T00:00:00&end=' + end;
+	let url = urlAggregator + '/channels/' + channelNumber + '/feeds.json?offset=0&start=2018-01-20T00:00:00&end=' + end;
 	if (key !== ""){
 		url += '&key=' + key + '&callback=?';
 	}else{
 		url += '&callback=?';
 	}
 	
-	
+	console.log('url : ' + url);
     $.getJSON( url, function (data)
     {
         // if no access
@@ -465,7 +462,7 @@ function loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoad
         }
         channelKeys[channelIndex].fieldList = fieldList;
         dynamicChart.redraw();
-        console.log('channel index:', channelIndex);
+        //console.log('channel index:', channelIndex);
         numLoads++;
         if (numLoads < maxLoads) {
             loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoads, maxLoads);

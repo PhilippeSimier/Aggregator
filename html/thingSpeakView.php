@@ -31,6 +31,10 @@
 					   if (isset($_GET['field6'])) { echo ",{field:".$_GET['field6'].",axis:'O'}"; };
 					   if (isset($_GET['field7'])) { echo ",{field:".$_GET['field7'].",axis:'O'}"; };
 				     ?>]});
+	let urlAggregator = "https://www.thingspeak.com";
+	//let urlAggregator = "https://philippes.ddns.net/Ruche";
+	//let urlAggregator =   "http://touchardinforeseau.servehttp.com/Ruche"
+	
 	</script>
 	<script src="scripts/channelView.js" type="text/javascript"></script>
 	

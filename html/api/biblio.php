@@ -16,6 +16,7 @@
                 'detail' => $detail
         );
         header('HTTP/1.1 ' . $httpStatus . ' ' . $message);
+		header('Access-Control-Allow-Origin: *');
         header('content-type:application/json');
 		echo json_encode($data);  
         exit();		

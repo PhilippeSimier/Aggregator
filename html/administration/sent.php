@@ -210,6 +210,15 @@ if(isset($_POST['btn_supprimer'])){
 											content: response.message + " <em>" + response.detail + "</em>"
 										});
 									}
+									
+								}).fail(function(response,status, error) {
+									console.log("status : " + status);
+									console.log("reponse : " + response.detail);
+									console.log("error : " + error);
+									$.dialog({
+										title: "Erreur",
+										content: error
+									});
 								});	
 							}
 						},

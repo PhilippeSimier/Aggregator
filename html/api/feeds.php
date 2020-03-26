@@ -1,17 +1,22 @@
 <?php
-    /** fichier		 : feeds.php
-	    description  : Read data from all fields in a channel with HTTP GET or POST
-	    author       : Philippe SIMIER Lycée Touchard Le Mans
+    /** fichier		     : feeds.php
+	    description      : Lecture des données pour tous les champs d'un canal avec HTTP GET
+	    author           : Philippe SIMIER Lycée Touchard Le Mans
+		version          : 1.0 du 31 mars 2020
 		
-		réécriture   : RewriteRule ^channels/([0-9]+)/feeds.([a-zA-Z]+)$   api/feeds.php?channelId=$1&type=$2 [QSA]
-		url          : channels/539387/feeds.json?callback=mafonction&offset=0&results=2
-		url	réécrite : api/feeds.php?channelId=539387&type=json&callback=mafonction&offset=0&results=2
+		réécriture       : RewriteRule ^channels/([0-9]+)/feeds.([a-zA-Z]+)$   api/feeds.php?channelId=$1&type=$2 [QSA]
+		endpoint         : channels/<channelId>/feeds.<type>
+		endpoint réécrit : api/feeds.php?channelId=539387&type=json
 		
 	    Parameters : 
 			channelId (Required) Channel ID for the channel of interest.
 			type      (Required) le type de sortie JSON CSV
 			results   (Optional) Number of entries to retrieve. The maximum number is 8000
-			 	
+			callback  (Optional) le nom de la fonction de retour JSONP
+			start	  (Optional) la date de départ
+			end	      (Optional) la date de fin
+				
+		Retour :  les données au format json ou csv suivant la demande
 	**/
 	
 	require_once('../definition.inc.php');
@@ -24,14 +29,25 @@
 		
 	// Lecture des paramétres facultatifs
 	$results   = facultatif("results", "8000", FILTER_VALIDATE_INT);
+	$callback  = facultatif("callback", NULL);
+	$start     = facultatif("start", NULL);
+	$end       = facultatif("end", NULL);
 
 	// Connexion à la base avec session heure UTC
 	$bdd = connexionBD(BASE, "+00:00");
-
+	
+	// construction de la requête SQL pour obtenir les valeurs enregistrées dans la table feeds
+	$sql = "SELECT * FROM `feeds` where `id_channel` = ". $channelId;
+	if ($start !== NULL and $end !== NULL){
+		$sql .= " and `date` between '" . $start . "' and '" . $end. "'";
+	}	
+    $sql .= " ORDER BY `id` DESC limit " . $results;
+    
+	// Mise en forme des données 
 	if ($type == "json"){
 		// Lecture des informations correspondant au channel dans la table channels
-		$sql = "SELECT * FROM `channels` WHERE `id` = " . $channelId;
-		$stmt = $bdd->query($sql);
+		$sqlChannels = "SELECT * FROM `channels` WHERE `id` = " . $channelId;
+		$stmt = $bdd->query($sqlChannels);
 		if ($result =  $stmt->fetchObject()){
 				
 			$channel = array(
@@ -46,10 +62,6 @@
 			if ($result->field6 != "") $channel['field6'] = $result->field6;
 			if ($result->field7 != "") $channel['field7'] = $result->field7;
 			if ($result->field8 != "") $channel['field8'] = $result->field8;
-			
-			
-			// Lecture des valeurs enregistrées dans la table feeds
-			$sql = "SELECT * FROM `feeds` where `id_channel` = ". $channelId . " ORDER BY `id` DESC limit " . $results;
 			
 			$stmt = $bdd->query($sql);
 			$feeds = array();
@@ -76,16 +88,17 @@
 			
 			header("Access-Control-Allow-Origin: *");
 			header('Content-type: application/json');
-			
+			if ($callback !== NULL){ 	
+			    echo $callback . '('; 
+			}
 			echo json_encode($output);
+			if ($callback !== NULL){ 	echo ')'; }
 		}else{
 			echo "-1";
 		}
     }
     if($type == "csv"){
-		
-		// Lecture des valeurs enregistrées dans la table feeds
-		$sql = "SELECT * FROM `feeds` where `id_channel` = ". $channelId . " ORDER BY `date` DESC limit " . $results;
+
 		$nom_fichier = "channel_". $channelId . ".csv";
 
 		header('Content-Type: application/csv-tab-delimited-table');
