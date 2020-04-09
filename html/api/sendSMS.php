@@ -19,7 +19,7 @@
  
     require_once('biblio.php');
 	require_once('../definition.inc.php');
-	$quota = 100;
+  
 	
 	// Contrôle de la présence des paramètres key number message en GET ou POST
 	$key     = obtenir("key");
@@ -58,26 +58,50 @@
     }
     
 	
-	// Lecture du login de l'utilisteur dans la table users
-    $sql = sprintf("SELECT `login` FROM `users` WHERE `users`.`User_API_Key` = %s", $bdd->quote($key));
+	// Lecture du login, quotaSMS et delaySMS pour l'utilisteur dans la table users
+    $sql = sprintf("SELECT * FROM `users` WHERE `users`.`User_API_Key` = %s", $bdd->quote($key));
     $stmt = $bdd->query($sql);
 	$utilisateur =  $stmt->fetchObject();
 	$creator = $utilisateur->login;
+	$quota = $utilisateur->quotaSMS;   // Nb de sms pouvant être envoyé par jour
+	$delay = $utilisateur->delaySMS;   // delai entre deux envois consécutifs pour le même utilisateur
+	
+	
     $message = $message;  
 
 	// Connexion à la base SMS 
 	$bdd = connexionBD(BASESMS);
 	
-	// Contrôle du nombre de messages envoyés au cours des derniers 24h
+	// Contrôle du nombre de messages envoyés au cours des dernières 24h
 	$sql = sprintf("SELECT count(*) AS nb FROM `sentitems` WHERE `CreatorID` = %s AND DATE(`SendingDateTime`) = DATE( NOW() )", $bdd->quote($creator));
 	$stmt = $bdd->query($sql);
 	$res =  $stmt->fetchObject();
-	if ($res->nb > $quota){
+	if ($res->nb >= $quota){
 		envoyerErreur(406, "daily quota exceeded", "You have exceeded your daily quota");
 		return;
 	}	
+
+	// Contrôle du delai entre deux envois consécutifs
+	// Le message précedent est-il envoyé
+	$sql = sprintf("SELECT count(*) as nb FROM `outbox` where `CreatorID` = %s", $bdd->quote($creator));
+	$stmt = $bdd->query($sql);
+	$res =  $stmt->fetchObject();
+	if ($res->nb > 0){
+		envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
+		return;
+	}
+	// Si oui depuis plus de delay secondes ?
+	$sql = sprintf("SELECT count(*) as nb FROM `sentitems` where `CreatorID` = %s and `SendingDateTime` > DATE_SUB(NOW(), INTERVAL %s SECOND);",
+		$bdd->quote($creator), $delay			
+	);
+	$stmt = $bdd->query($sql);
+	$res =  $stmt->fetchObject();
+	if ($res->nb > 0){
+		envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
+		return;
+	}
 	
-	
+	// Tout est OK on envoie
 	$sql = sprintf("INSERT INTO outbox (DestinationNumber, TextDecoded, CreatorID, Coding) VALUES ( %s, %s, %s, %s )",
 		$bdd->quote($number),
 		$bdd->quote($message),
@@ -93,7 +117,7 @@
                 'numero' => $number,
                 'creator' => $creator,
 				'message' => $message,
-				'encodage' => "Default_No_Compression"
+				'encodage' => $encodage
             );
 
         header('HTTP/1.1 202 Accepted');

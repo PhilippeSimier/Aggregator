@@ -184,4 +184,14 @@
         return $dt->format('Y-m-d\TH-i-s\Z');
 	}
 	
-?>
+	// Fonction pour convertir tous les caractères éligibles en entités HTML
+	// Et limité la longueur de la chaîne
+	function reduire( $chaine ){	
+	if ( strlen($chaine) > 60){	
+		$retour = htmlentities(substr( $chaine, 0, 60) . '...');
+	}else{
+		$retour =  htmlentities($chaine);
+	}	
+	
+	return $retour;	
+	}

@@ -6,13 +6,6 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
-// Fonction pour éliser une chaîne de caractères
-function reduire( $chaine ){
-	if ( strlen($chaine) > 60){
-		$chaine = substr( $chaine, 0, 60) . '...';	
-	}
-return $chaine;	
-}
 
 // connexion à la base
     
@@ -68,6 +61,7 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}]
                 
             };
 			$('#tableau').DataTable(options);
@@ -437,6 +431,36 @@ if(isset($_POST['btn_supprimer'])){
 			
 			});
 			
+			$( "#btn_setting" ).click(function() {
+				console.log("Bouton setting cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					console.log("user?id" + checkbox_val[0]);
+					window.location = 'user?id='+checkbox_val[0];
+				}
+			});
+			
 			
 		});	
 	
@@ -491,7 +515,8 @@ if(isset($_POST['btn_supprimer'])){
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
 					<?php
 					if ($_SESSION['login'] == "root"){
-						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add User</button>';
+						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add</button> ';
+						echo '<button id="btn_setting" type="button" class="btn btn-secondary">Setting</button>';
 					}	
 					?>					
 					</form>	

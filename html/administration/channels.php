@@ -6,14 +6,6 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
-// Fonction pour éliser une chaîne de caractères
-function reduire( $chaine ){
-	if ( strlen($chaine) > 60){
-		$chaine = substr( $chaine, 0, 60) . '...';	
-	}
-return $chaine;	
-}
-
 // connexion à la base
 $bdd = connexionBD(BASE, $_SESSION['time_zone']);
 
@@ -72,6 +64,7 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}]
                 
             };
 			$('#tableau').DataTable(options);		

@@ -62,6 +62,7 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">My things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">My Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">My ThingHTTP</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/sent">My SMS</a>';
 					}	
 					
 					

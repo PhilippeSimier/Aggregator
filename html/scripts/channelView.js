@@ -88,7 +88,9 @@ $(document).ready(function () {
             if (data === '-1') {
                 $('#chart-container').append('This channel is not public.  To embed charts, the channel must be public or a read key must be specified.');
                 console.log('Thingspeak Data Loading Error');
+				return;
             }
+			
             for (let fieldIndex = 0; fieldIndex < fieldList.length; fieldIndex++)  // iterate through each field
             {
                 fieldList[fieldIndex].data = []; // creation  
@@ -330,17 +332,17 @@ $(document).ready(function () {
                     name: nameSerie});
                 
             }
-            // pour chaque champs création des séries EMA
+            // pour chaque champs création des séries smoothed
             for (let fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++)  
             {
                 let nameSerie = channelKeys[channelIndex].fieldList[fieldIndex].name;
-                let nameSerieSMA = nameSerie + ' Ema';
+                let nameSerieSMA = 'Smoothed ' + nameSerie;
                 let id = 'ID' + fieldIndex + channelIndex * 10;
                 chartOptions.series.push({
                     yAxis: channelKeys[channelIndex].fieldList[fieldIndex].axis,
                     type: 'ema',
                     linkedTo: id,
-                    opacity: 0.6,
+                    opacity: 0.7,
                     dashStyle: 'ShortDash',
                     name: nameSerieSMA,
                     color: couleurs[fieldIndex],
@@ -370,7 +372,10 @@ $(document).ready(function () {
         // console.log('Nb de Channels: ', channelKeys.length);
         for (let channelIndex = 0; channelIndex < channelKeys.length; channelIndex++)  // pour chaque canal
         {
-            loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, 1);
+			// si le premier chargement est complet soit 434 valeurs alors loadChannelHistory
+            if(channelKeys[channelIndex].fieldList[0].data.length === 434){
+			   loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, 1);
+			}   
         }
     }
 
@@ -390,6 +395,52 @@ $(document).ready(function () {
             }
         }
     });
+	
+	/**
+     * Fonction pour afficher la fenêtre modale Setting Filter.
+     * @returns {undefined}
+     */
+	
+	$("#filter").click(function(){	
+		console.log("afficher Modal");
+		$("#ModalCenter").modal('show');
+		
+	});
+	
+	/**
+     * Fonction pour paramétrer la période du filtrage pour les series ema ou sma.
+     * @returns {undefined}
+     */
+	$("#period").change(function() {
+		let periode = document.getElementById("period").value;
+		console.log("period : " + periode);
+		for (let index = 0; index < dynamicChart.series.length; index++)
+		{
+			if (dynamicChart.series[index].type === "ema" || dynamicChart.series[index].type === "sma")
+					dynamicChart.series[index].update({params: {
+						index: 3,
+                        period: periode
+                    }});
+		}			
+	});	
+	
+	/**
+     * Fonction pour changer le type du filtrage.
+     * @returns {undefined}
+     */
+	$("#type").change(function() {
+		let type = document.getElementById("type").value;
+		console.log("Type : " + type);
+		for (let index = 0; index < dynamicChart.series.length; index++)
+		{
+			if (dynamicChart.series[index].type === "ema" || dynamicChart.series[index].type === "sma")
+					dynamicChart.series[index].update({type: type});
+		}			
+	});	
+
+
+	
+	
 
     /**
      *  Fonction pour charger plus de données pour

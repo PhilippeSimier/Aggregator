@@ -27,7 +27,7 @@
                 'status' => "202 Accepted",
 				'date' => $message->dateTime, 
                 'number' => $message->number,
-				'text' => $message->text
+				'text' => htmlentities($message->text)
             );
 
         header('HTTP/1.1 202 Accepted');

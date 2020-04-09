@@ -6,13 +6,9 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/biblio.php');
 
-function reduire( $chaine ){
-	
-	if ( strlen($chaine) > 60){
-		$chaine = substr( $chaine, 0, 60) . '...';	
-	}
-return $chaine;	
-}
+
+//  Ceci est une fct du modele SMS
+$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
 
 // Si le formulaire à été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -28,8 +24,6 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 
-		// connexion à la base
-		$bdd = connexionBD(BASESMS, $_SESSION['time_zone']);
 		$sql = "DELETE FROM `sentitems` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
@@ -38,6 +32,14 @@ if(isset($_POST['btn_supprimer'])){
 	unset($_GET['ipp']);
 
 }
+
+if ($_SESSION['login'] == "root"){		
+		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ";
+}else{
+		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` where `CreatorId` = '".$_SESSION['login']."' order by `SendingDateTime` desc ";
+}
+	
+$stmt = $bdd->query($sql);	
 
 ?>
 
@@ -58,7 +60,6 @@ if(isset($_POST['btn_supprimer'])){
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
-	<!--<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>-->
 	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
 	
 	
@@ -71,6 +72,7 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}]
                 
             };
 			$('#tableau').DataTable(options);
@@ -113,6 +115,7 @@ if(isset($_POST['btn_supprimer'])){
 								btnClass: 'btn-blue', // class for the button
 								action: function () {
 								$( "#supprimer" ).submit(); // soumission du formulaire
+								
 								}
 							}
 					 		
@@ -203,6 +206,7 @@ if(isset($_POST['btn_supprimer'])){
 											title: "Info",
 											content: "Message Accepted"
 										});
+										setTimeout( function(){window.location = 'sent'}, 10000);
 									}	
 									else{
 										$.dialog({
@@ -248,7 +252,7 @@ if(isset($_POST['btn_supprimer'])){
 
  <body>
 	<?php require_once '../menu.php'; 	?>
-	<div class="container" style="padding-top: 65px;">
+	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row popin">
 			
 			<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -268,12 +272,7 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
-								
-								$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
-								$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ";
-								
-								$stmt = $bdd->query($sql);
-								
+															
 								while ($message =  $stmt->fetchObject()){
 									echo "<tr>\n    <td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>\n";
 									echo "    <td>" . $message->SendingDateTime . "</td>\n";
