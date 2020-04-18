@@ -2,9 +2,9 @@
 include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
-$bdd = connexionBD(BASE);
+$bdd = Api::connexionBD(BASE);
 
 // Fonction pour créer le sélecteur tag 
 // Le tag d'un canal fait référence au tag d'un objet
@@ -21,7 +21,7 @@ function faireSelectTags($bdd , $thing_tag){
 			echo "<option value='" . $thing->tag . "'>" . $thing->tag . "</option>" ;	
 	}
     echo "</select>";
-    
+   
 }
 
 //------------si des données  sont soumises on les enregistre dans la table data.channels ---------
@@ -40,7 +40,7 @@ if( !empty($_POST['envoyer'])){
 					  , $bdd->quote($_POST['field8'])
 					  , $bdd->quote($_POST['status'])
 					  , $bdd->quote($_POST['tags'])
-					  , $bdd->quote(genererKey($bdd))
+					  , $bdd->quote(Api::genererKey($bdd))
 					  ); 	
 		$bdd->exec($sql);
 		header("Location: channels.php");

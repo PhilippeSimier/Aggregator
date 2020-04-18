@@ -4,12 +4,13 @@
 	include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-	require_once('biblio.php');	
+	require_once('Api.php');	
 	
 	// Lecture des paramétres obligatoires
-	$channelId = obtenir("channelId", FILTER_VALIDATE_INT);
+	$channelId = Api::obtenir("channelId", FILTER_VALIDATE_INT);
 
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+	// Connexion à la base avec session heure UTC
+	$bdd = Api::connexionBD(BASE, "+00:00");
 	
 	$sql = sprintf("DELETE FROM `data`.`feeds` WHERE `feeds`.`id_channel` = %s",
 	       $channelId);
@@ -33,8 +34,4 @@
 			echo json_encode($data);
 		}	
 	}
-   
-
-
-
 ?>

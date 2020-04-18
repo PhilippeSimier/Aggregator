@@ -2,12 +2,12 @@
 	include "authentification/authcheck.php" ;
 
 	require_once('../definition.inc.php');
-	require_once('../api/biblio.php');
+	require_once('../api/Api.php');
 	include('thingHTTP.class.php');
 
 	// connexion à la base
-	$bdd = connexionBD(BASE, $_SESSION['time_zone']);
-	$id  = obtenir("id", FILTER_VALIDATE_INT);
+	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+	$id  = Api::obtenir("id", FILTER_VALIDATE_INT);
 	
 	try{
 		$objet = new thingHTTP($bdd,$id);
@@ -15,6 +15,6 @@
 	}
 	//catch exception
 	catch(thingHTTPException $e) {
-		envoyerErreur(500, $e->getMessage(), $e->getMessage());
+		Api::envoyerErreur(500, $e->getMessage(), $e->getMessage());
 	}
 ?>

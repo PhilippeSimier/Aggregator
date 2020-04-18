@@ -1,40 +1,50 @@
-<!DOCTYPE html>
-
 <?php
 include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
 
 // connexion à la base
     
-	$bdd = connexionBD(BASE, $_SESSION['time_zone']);
-	
+	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+
+// Lecture du paramètre facultatif allow
+// Si allow n'est pas présent alors affichage des utilisateurs autorisés 
+	$allow = Api::facultatif("allow", "1");
+// construction du titre de la page	
+	if ($allow && $_SESSION['droits'] > 1) 
+		$title =  "Users"; 
+	else 
+		$title = "Suspended Users";
+    if 	($_SESSION['droits'] == 1) 
+		$title = "My Account";
 	
 // Si le formulaire a été soumis
-if(isset($_POST['btn_supprimer'])){
-	// Si un élément a été sélectionné création de la liste des id à supprimer
+if(isset($_POST['action'])){
+	if ($_POST['action'] == "Suspending") $status = 0;
+	if ($_POST['action'] == "Cancel") $status = 1;
+
+	// Si un élément a été sélectionné création de la liste des id à mettre à jour
 	if (count($_POST['table_array']) > 0){
 		$Clef=$_POST['table_array'];
-		$supp = "(";
+		$selection= "(";
 		foreach($Clef as $selectValue)
 		{
-			if($supp!="("){$supp.=",";}
-			$supp.=$selectValue;
+			if( $selection != "(" ){$selection .= ",";}
+			$selection .= $selectValue;
 		}
-		$supp .= ")";
-		
+		$selection .= ")";
 
-		$sql = "DELETE FROM `users` WHERE `id` IN " . $supp;
+		$sql = "UPDATE `data`.`users` SET `allow` = " . $status . " WHERE `users`.`id` IN " . $selection;
 		$bdd->exec($sql);
+		
 	}
-	unset($_POST['table_array']);
-	unset($_GET['page']);
-	unset($_GET['ipp']);
+	
 }
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
     <title>Users - Aggregator</title>
@@ -80,8 +90,8 @@ if(isset($_POST['btn_supprimer'])){
 			});
 			
 			
-			$( "#btn_supp" ).click(function() {
-				console.log("Bouton Supprimer cliquer");
+			$( "#action" ).click(function() {
+				console.log("Bouton Disable cliqué");
 				
 				nbCaseCochees = $('input:checked').length - $('#all:checked').length;
 				console.log(nbCaseCochees);
@@ -90,7 +100,7 @@ if(isset($_POST['btn_supprimer'])){
 					$.confirm({
 						theme: 'bootstrap',
 						title: 'Confirm!',
-						content: 'Confirmez-vous la suppression de ' + nbCaseCochees + ' objet(s) ?',
+						content: 'Confirmez-vous la désactivation de ' + nbCaseCochees + ' utilisateur(s) ?',
 						buttons: {
 							confirm: {
 								text: 'Confirmation', // text for button
@@ -111,11 +121,13 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "You haven't selected any user!"
 					});
 			
 				}
 			});
+			
+			
 			
 			$( "#btn_mod" ).click(function() {
 				console.log("Bouton modifier cliqué");
@@ -131,14 +143,14 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "You haven't selected any user!"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
+					content: "You have selected several users!"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -230,7 +242,7 @@ if(isset($_POST['btn_supprimer'])){
 					'</div>' +
 					'<div class="form-group">' +
 					'<label class="col-sm-4 control-label">API Key : </label>' +
-					'<input type="text" id="User_API_Key" name="User_API_Key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
+					'<input type="text" id="User_API_Key" name="User_API_Key" size="30" value="' + <?php echo "'".$key = Api::genererKey($bdd). "'"; ?> +'"  /><br />' +				
 					'</div>' +
 					'<div class="form-group">' +
 					'<label class="col-sm-4 control-label">Passwd : </label>' +
@@ -318,14 +330,14 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "You haven't selected any user!"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
+					content: "You have selected several users!"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -348,14 +360,14 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "You haven't selected any user!"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
+					content: "You have selected several users!"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -370,14 +382,14 @@ if(isset($_POST['btn_supprimer'])){
 						
 						'<div class="form-group">' +
 						'<label class="col-sm-4 control-label">API Key : </label>' +
-						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = genererKey($bdd). "'"; ?> +'"  /><br />' +				
+						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = Api::genererKey($bdd). "'"; ?> +'"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
 						'<input type="hidden" id="User_API_Key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
 						'</form>',
 						buttons: {
 							formSubmit: {
-								text: 'Appliquer',
+								text: 'Apply',
 								btnClass: 'btn-blue',
 								action: function () {
 									
@@ -445,14 +457,14 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "You haven't selected any user!"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
+					content: "You have selected several users!"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -470,12 +482,14 @@ if(isset($_POST['btn_supprimer'])){
  <body>
 	<?php require_once '../menu.php'; 	?>
 	<div class="container" style="padding-top: 65px;">
-		<div class="row popin">
+		<div class="row popin card">
 			
 			<div class="col-md-12 col-sm-12 col-xs-12">	
+				<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="display"  class="table table-striped">
+					
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
@@ -490,8 +504,10 @@ if(isset($_POST['btn_supprimer'])){
 							
 							<?php
 								$sql = "SELECT * FROM `users`";
-                                if ($_SESSION['login'] == "root")
-										$sql .= " where 1";	
+                                if ($_SESSION['droits'] > 1){
+										$sql .= " where allow = ";
+										$sql .= $allow;
+								}		
 								else	
 								        $sql .= " where login = '" . $_SESSION['login'] . "'";
 								$sql .= " order by `login` ";
@@ -509,21 +525,30 @@ if(isset($_POST['btn_supprimer'])){
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+
 					<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
 					<button id="btn_typeZone" type="button" class="btn btn-warning">Change Time Zone</button>
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
 					<?php
-					if ($_SESSION['login'] == "root"){
+					if ($_SESSION['droits'] > 1){
+						if ($allow == 0)
+							echo ' <input id="action" name="action" value="Cancel" class="btn btn-danger" readonly > ';
+						else
+							echo ' <input id="action" name="action" value="Suspending" class="btn btn-danger" readonly > ';
+						
 						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add</button> ';
 						echo '<button id="btn_setting" type="button" class="btn btn-secondary">Setting</button>';
+						if ( ! $allow) 	echo ' <a href="users?allow=1" class="btn btn-secondary" role="button" >Users</a>';
+						if ($allow) echo ' <a href="users?allow=0" class="btn btn-secondary" role="button" >Suspended Users</a>';
 					}	
 					?>					
 					</form>	
 				</div>
+			</div>
 		</div>
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
+	
 </body>
 </html>
 	

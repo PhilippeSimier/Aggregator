@@ -17,26 +17,26 @@
 				}
 	**/   
  
-    require_once('biblio.php');
-	require_once('../definition.inc.php');
+    require_once('../definition.inc.php');
+	require_once('Api.php');
   
 	
 	// Contrôle de la présence des paramètres key number message en GET ou POST
-	$key     = obtenir("key");
-    $number  = obtenir("number");
-    $message = obtenir("message"); 
+	$key     = Api::obtenir("key");
+    $number  = Api::obtenir("number");
+    $message = Api::obtenir("message"); 
 
     
     // Contrôle de la clé
 	// La clé doit appartenir à un utilisateur de la table users
 	
 	// connexion à la base data
-	$bdd = connexionBD(BASE);
-	controlerkey($bdd, $key);
+	$bdd = Api::connexionBD(BASE);
+	Api::controlerkey($bdd, $key);
 
     // Contrôle du numéro de téléphone destinataire
     if (strlen($number)<10 || !is_numeric($number)){
-        envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad number.");
+        Api::envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad number.");
         return;
     }
 	
@@ -53,7 +53,7 @@
 
     // Contrôle de la longueur du message
     if (strlen($message)<1 || strlen($message)> $longueurMax){
-        envoyerErreur(403, "Request Entity Too Large", "Your message is too large. Please reduce the size and try again.");
+        Api::envoyerErreur(403, "Request Entity Too Large", "Your message is too large. Please reduce the size and try again.");
         return;
     }
     
@@ -70,14 +70,14 @@
     $message = $message;  
 
 	// Connexion à la base SMS 
-	$bdd = connexionBD(BASESMS);
+	$bdd = Api::connexionBD(BASESMS);
 	
 	// Contrôle du nombre de messages envoyés au cours des dernières 24h
 	$sql = sprintf("SELECT count(*) AS nb FROM `sentitems` WHERE `CreatorID` = %s AND DATE(`SendingDateTime`) = DATE( NOW() )", $bdd->quote($creator));
 	$stmt = $bdd->query($sql);
 	$res =  $stmt->fetchObject();
 	if ($res->nb >= $quota){
-		envoyerErreur(406, "daily quota exceeded", "You have exceeded your daily quota");
+		Api::envoyerErreur(406, "daily quota exceeded", "You have exceeded your daily quota");
 		return;
 	}	
 
@@ -87,7 +87,7 @@
 	$stmt = $bdd->query($sql);
 	$res =  $stmt->fetchObject();
 	if ($res->nb > 0){
-		envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
+		Api::envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
 		return;
 	}
 	// Si oui depuis plus de delay secondes ?
@@ -97,7 +97,7 @@
 	$stmt = $bdd->query($sql);
 	$res =  $stmt->fetchObject();
 	if ($res->nb > 0){
-		envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
+		Api::envoyerErreur(429, "Too Many Requests", "Wait before making another request.");
 		return;
 	}
 	
@@ -129,5 +129,5 @@
 		echo "\n";
     }
     else{
-        envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
     }

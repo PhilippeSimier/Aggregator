@@ -34,7 +34,7 @@
 	**/
 
 	require_once('../definition.inc.php');
-	require_once('biblio.php');	
+	require_once('Api.php');	
 
     // fonction pour obtenir la date UTC	
 	function ObtenirDateUTC(){
@@ -45,33 +45,29 @@
 	
 	
     // Lecture des paramètres obligatoires
-	$api_key = obtenir("api_key");
+	$api_key = Api::obtenir("api_key");
 	
 	// Lecture des paramètres facultatifs
-	$val1 = verifier("field1", FILTER_VALIDATE_FLOAT);
-	$val2 = verifier("field2", FILTER_VALIDATE_FLOAT);
-	$val3 = verifier("field3", FILTER_VALIDATE_FLOAT);
-	$val4 = verifier("field4", FILTER_VALIDATE_FLOAT);
-	$val5 = verifier("field5", FILTER_VALIDATE_FLOAT);
-	$val6 = verifier("field6", FILTER_VALIDATE_FLOAT);
-	$val7 = verifier("field7", FILTER_VALIDATE_FLOAT);
-	$val8 = verifier("field8", FILTER_VALIDATE_FLOAT);
-	$status = verifier("status");
-	$lat  = verifier("lat"   , FILTER_VALIDATE_FLOAT);
-	$long = verifier("long"  , FILTER_VALIDATE_FLOAT);
-	$elevation = verifier("elevation", FILTER_VALIDATE_FLOAT);
-	$date = facultatif("created_at", ObtenirDateUTC());
+	$val1      = Api::verifier("field1", FILTER_VALIDATE_FLOAT);
+	$val2      = Api::verifier("field2", FILTER_VALIDATE_FLOAT);
+	$val3      = Api::verifier("field3", FILTER_VALIDATE_FLOAT);
+	$val4      = Api::verifier("field4", FILTER_VALIDATE_FLOAT);
+	$val5      = Api::verifier("field5", FILTER_VALIDATE_FLOAT);
+	$val6      = Api::verifier("field6", FILTER_VALIDATE_FLOAT);
+	$val7      = Api::verifier("field7", FILTER_VALIDATE_FLOAT);
+	$val8      = Api::verifier("field8", FILTER_VALIDATE_FLOAT);
+	$status    = Api::verifier("status");
+	$lat       = Api::verifier("lat"   , FILTER_VALIDATE_FLOAT);
+	$long      = Api::verifier("long"  , FILTER_VALIDATE_FLOAT);
+	$elevation = Api::verifier("elevation", FILTER_VALIDATE_FLOAT);
+	$date      = Api::facultatif("created_at", ObtenirDateUTC());
 	
 	$flag = true;
 	//connexion à la base data
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-
-    // selection de la timezone UTC pour la session
-	$sql = "SET @@session.time_zone = \"+00:00\"";
-	$stmt = $bdd->exec($sql);
-
 	
-	$channel = obtenirChannel($bdd, $api_key);
+	$bdd = Api::connexionBD(BASE, "+00:00");
+		
+	$channel = Api::obtenirChannel($bdd, $api_key);
 	
 	$colonnes =  "(`id_channel`";
 	$valeurs  =  " VALUES (". $channel->id;
@@ -96,7 +92,7 @@
 	
 	// si flag est resté à true alors il n'y avait rien à sauvegarder donc erreur 421
 	if ($flag) 
-		envoyerErreur(421, "No Action Performed", "The server attempted to process your request, but has no action to perform."); 
+		Api::envoyerErreur(421, "No Action Performed", "The server attempted to process your request, but has no action to perform."); 
 	
     $sql = "INSERT INTO `feeds` " . $colonnes . $valeurs;	
 	
@@ -126,11 +122,7 @@
         echo json_encode($data);
 	}
 	else{
-        envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
     }
-   
-
-
-
-
+ 
 ?>

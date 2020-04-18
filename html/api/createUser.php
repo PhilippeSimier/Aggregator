@@ -3,48 +3,53 @@
 	include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-	require_once('biblio.php');	
+	require_once('Api.php');	
 	
-	// Contrôle de la présence des paramètres key login User_API_Key pwd conf_pwd en GET ou POST
-	$key       = obtenir("key");
-    $login     = obtenir("login");
-    $User_API_Key = obtenir("User_API_Key");
-    $pwd	   = obtenir("pwd");
-	$conf_pwd  = obtenir("conf_pwd");
+	// Contrôle de la présence des paramètres requis
+	$key          = Api::obtenir("key");
+    $login        = Api::obtenir("login");
+    $User_API_Key = Api::obtenir("User_API_Key");
+    $pwd	      = Api::obtenir("pwd");
+	$conf_pwd     = Api::obtenir("conf_pwd");
   
-
 	// la variable conf_pwd doit être la même que pwd
 	if($conf_pwd != $pwd){
-        envoyerErreur(403, "Bad Request", "The pwd and conf_pwd is not the same." );
+        Api::envoyerErreur(403, "Bad Request", "The pwd and conf_pwd is not the same." );
         return;		
 	}	
 	
 	// Tous les paramètres sont présents on fait le travail
 		
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+	$bdd = Api::connexionBD(BASE);
 	
 	// Contrôle de la clé
-	// La clé doit appartenir à l'utilisateur root de la table users
+	// La clé doit appartenir à un utilisateur ayant les droits d'administrateur
 	
-    $sql = sprintf("SELECT  login FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
+    $sql = sprintf("SELECT * FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
 	
     $stmt = $bdd->query($sql);
 	if (!($res =  $stmt->fetchObject())){
-		erreur(405, "Authorization Required", "Please provide proper authentication details." );
+		Api::envoyerErreur(405, "Authorization Required", "Please provide proper authentication details." );
         return;
 	}	
 	
-    // si le login ne correspond pas à root
-    if ( $res->login != 'root') {
-        erreur(406, "Authorization Required", "Please provide proper authentication details." );
+    // si les droits ne correspondent pas à administrateur
+    if ( $res->droits < 2) {
+        Api::envoyerErreur(406, "Authorization Required", "Please provide proper authentication details." );
         return;
     }
 	
-	$sql = sprintf("INSERT INTO `users` (`login`, `encrypted_password`, `User_API_Key`, `Created_at`, `sign_in_count`) VALUES (%s, %s, %s, CURRENT_TIMESTAMP, '0')",
+    // Générer un grain de sel
+	$salt = Api::genererChaineAleatoire(20);
+
+	
+	$sql = sprintf("INSERT INTO `users` (`login`, `encrypted_password`, `password_salt`, `User_API_Key`, `Created_at`, `sign_in_count`) VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP, '0')",
 		$bdd->quote($login),
-		$bdd->quote(md5($pwd)),
+		$bdd->quote(hash('sha256', $pwd . $salt)),
+		$bdd->quote($salt),
 		$bdd->quote($User_API_Key)
 	);
+	
 	
 	$nb = $bdd->exec($sql);
 	 
@@ -61,10 +66,7 @@
         echo json_encode($data);
 	}
 	else{
-        erreur(500, "Internal Server Error", "Internal Server Error");
+        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
     }
-	
-	
 
-	
 ?>	

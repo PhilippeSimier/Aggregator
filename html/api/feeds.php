@@ -20,21 +20,21 @@
 	**/
 	
 	require_once('../definition.inc.php');
-	require_once('biblio.php');	
+	require_once('Api.php');	
 	
-    
+   
 	// Lecture des paramétres obligatoires
-	$channelId = obtenir("channelId", FILTER_VALIDATE_INT);
-	$type = obtenir("type");
+	$channelId = Api::obtenir("channelId", FILTER_VALIDATE_INT);
+	$type      = Api::obtenir("type");
 		
 	// Lecture des paramétres facultatifs
-	$results   = facultatif("results", "8000", FILTER_VALIDATE_INT);
-	$callback  = facultatif("callback", NULL);
-	$start     = facultatif("start", NULL);
-	$end       = facultatif("end", NULL);
+	$results   = Api::facultatif("results", "8000", FILTER_VALIDATE_INT);
+	$callback  = Api::facultatif("callback", NULL);
+	$start     = Api::facultatif("start", NULL);
+	$end       = Api::facultatif("end", NULL);
 
 	// Connexion à la base avec session heure UTC
-	$bdd = connexionBD(BASE, "+00:00");
+	$bdd = Api::connexionBD(BASE, "+00:00");
 	
 	// construction de la requête SQL pour obtenir les valeurs enregistrées dans la table feeds
 	$sql = "SELECT * FROM `feeds` where `id_channel` = ". $channelId;
@@ -70,14 +70,14 @@
 						'created_at' => formatDate($feed->date),
 						'entry_id' => intval($feed->id), 
 					);	
-				if ($result->field1 != "") $data['field1'] = nan($feed->field1);
-				if ($result->field2 != "") $data['field2'] = nan($feed->field2);
-				if ($result->field3 != "") $data['field3'] = nan($feed->field3);
-				if ($result->field4 != "") $data['field4'] = nan($feed->field4);
-				if ($result->field5 != "") $data['field5'] = nan($feed->field5);
-				if ($result->field6 != "") $data['field6'] = nan($feed->field6);	
-				if ($result->field7 != "") $data['field7'] = nan($feed->field7);	
-				if ($result->field8 != "") $data['field8'] = nan($feed->field8);			
+				if ($result->field1 != "") $data['field1'] = Api::nan($feed->field1);
+				if ($result->field2 != "") $data['field2'] = Api::nan($feed->field2);
+				if ($result->field3 != "") $data['field3'] = Api::nan($feed->field3);
+				if ($result->field4 != "") $data['field4'] = Api::nan($feed->field4);
+				if ($result->field5 != "") $data['field5'] = Api::nan($feed->field5);
+				if ($result->field6 != "") $data['field6'] = Api::nan($feed->field6);	
+				if ($result->field7 != "") $data['field7'] = Api::nan($feed->field7);	
+				if ($result->field8 != "") $data['field8'] = Api::nan($feed->field8);			
 				array_push($feeds, $data);							
 			}
 			
@@ -110,14 +110,14 @@
 		while ($data = $stmt->fetchObject()){
 				echo $data->date." UTC,";
 				echo $data->id.",";
-				echo nan($data->field1).",";
-				echo nan($data->field2).",";
-				echo nan($data->field3).",";
-				echo nan($data->field4).",";
-				echo nan($data->field5).",";
-				echo nan($data->field6).",";
-				echo nan($data->field7).",";
-				echo nan($data->field8).",";
+				echo Api::nan($data->field1).",";
+				echo Api::nan($data->field2).",";
+				echo Api::nan($data->field3).",";
+				echo Api::nan($data->field4).",";
+				echo Api::nan($data->field5).",";
+				echo Api::nan($data->field6).",";
+				echo Api::nan($data->field7).",";
+				echo Api::nan($data->field8).",";
 				echo $data->latitude.",";
 				echo $data->longitude.",";
 				echo $data->elevation.",";			

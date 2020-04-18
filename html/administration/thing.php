@@ -1,10 +1,14 @@
 <?php
 include "authentification/authcheck.php" ;
 	
-
-require_once('../ini/ini.php');
 require_once('../definition.inc.php');
-$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
+require_once('../api/Api.php');
+
+// connexion à la base
+    
+	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+	$title = "Thing";
+
 
 function faireSelectUsers($bdd , $user_id){
 	

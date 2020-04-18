@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-
 <?php
 include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
 // connexion à la base
-$bdd = connexionBD(BASE, $_SESSION['time_zone']);
+$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+$title = "ThingHTTPs";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -25,13 +24,10 @@ if(isset($_POST['btn_supprimer'])){
 		$sql = "DELETE FROM `thinghttps` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
 	}
-	unset($_POST['table_array']);
-	unset($_GET['page']);
-	unset($_GET['ipp']);
 }
-
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
     <title>Apps - thingHTTP - Aggregator</title>
@@ -192,8 +188,9 @@ if(isset($_POST['btn_supprimer'])){
  <body>
 	<?php require_once '../menu.php'; 	?>
 	<div class="container" style="padding-top: 65px;">
-		<div class="row popin">	
+		<div class="row popin card">	
 			<div class="col-md-12 col-sm-12 col-xs-12">
+			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped">
@@ -210,7 +207,7 @@ if(isset($_POST['btn_supprimer'])){
 							
 							<?php
 								$sql = "SELECT * FROM `thinghttps`";
-                                if ($_SESSION['id'] == 0)
+                                if ($_SESSION['droits'] > 1)
 										$sql .= " where 1 ";	
 								else	
 								        $sql .= " where `user_id` = " . $_SESSION['id'];

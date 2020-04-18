@@ -1,15 +1,16 @@
 <?php
+    include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-    require_once('biblio.php');	
+    require_once('Api.php');	
  
     // Contrôle de la présence des paramètres key id folder en GET ou POST
-	$key    = obtenir("key");
-    $id     = obtenir("id", FILTER_VALIDATE_INT);
-    $folder = obtenir("folder"); 
+	$key    = Api::obtenir("key");
+    $id     = Api::obtenir("id", FILTER_VALIDATE_INT);
+    $folder = Api::obtenir("folder"); 
 	
 	// connexion à la base smsd
-	$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASESMS, UTILISATEUR,PASSE);
+	$bdd = Api::connexionBD(BASESMS, $_SESSION['time_zone']);
 
 	if ($folder == "sent")
 		$sql = "SELECT `SendingDateTime` as dateTime,`DestinationNumber` as number,`TextDecoded` as text,`ID` FROM `sentitems` where id = ".$id. " order by SequencePosition";
@@ -19,7 +20,7 @@
 	if (isset($sql))
 		$stmt = $bdd->query($sql);
 	else
-		envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+		Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
 	 
 	if($message =  $stmt->fetchObject()){
 		
@@ -35,7 +36,6 @@
         echo json_encode($data);
 	}
 	else{
-        envoyerErreur(500, "Internal Server Error", "Internal Server Error");
-    }
-	
+        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+    }	
 ?>	

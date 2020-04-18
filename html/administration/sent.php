@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-
 <?php
 include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
 
 //  Ceci est une fct du modele SMS
-$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
+$bdd = Api::connexionBD(BASESMS,$_SESSION['time_zone']);
+$title = "SMS sent";
 
 // Si le formulaire à été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -27,13 +26,9 @@ if(isset($_POST['btn_supprimer'])){
 		$sql = "DELETE FROM `sentitems` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
-	unset($_POST['table_array']);
-	unset($_GET['page']);
-	unset($_GET['ipp']);
-
 }
 
-if ($_SESSION['login'] == "root"){		
+if ($_SESSION['droits'] > 1){		
 		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ";
 }else{
 		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` where `CreatorId` = '".$_SESSION['login']."' order by `SendingDateTime` desc ";
@@ -43,9 +38,11 @@ $stmt = $bdd->query($sql);
 
 ?>
 
+
+<!DOCTYPE html>
 <html>
 <head>
-    <title>SMS-Sent</title>
+    <title><?php echo $title ?></title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -253,8 +250,8 @@ $stmt = $bdd->query($sql);
  <body>
 	<?php require_once '../menu.php'; 	?>
 	<div class="container" style="padding-top: 65px; max-width: 90%;">
-		<div class="row popin">
-			
+		<div class="row popin card">
+			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
 			<div class="col-md-12 col-sm-12 col-xs-12">	
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
@@ -277,17 +274,17 @@ $stmt = $bdd->query($sql);
 									echo "<tr>\n    <td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>\n";
 									echo "    <td>" . $message->SendingDateTime . "</td>\n";
 									echo "    <td>" . $message->DestinationNumber . "</td>\n";
-									echo "    <td>" . reduire($message->TextDecoded) . "</td>\n";
+									echo "    <td>" . Api::reduire($message->TextDecoded) . "</td>\n";
 									echo "    <td>" . $message->CreatorId . "</td>\n</tr>\n";
 									
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
-					<button id="btn_lire" type="button" class="btn btn-info">Lire</button>
-					<button id="btn_ecrire" type="button" class="btn btn-info">Ecrire</button>
-					<a  class="btn btn-info" role="button" href="inbox">SMS Reçus</a>
+					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_lire" type="button" class="btn btn-info">Read</button>
+					<button id="btn_ecrire" type="button" class="btn btn-info">Write</button>
+					<a  class="btn btn-info" role="button" href="inbox">SMS Received</a>
 					
 					</form>	
 				</div>			

@@ -1,19 +1,16 @@
 <!----------------------------------------------------------------------------------
-    @fichier  piedDePage.php							    		
+    @fichier  support/piedDePage.php							    		
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
-    @date     Juillet 2018
+    @date     Avril 2020
     @version  v1.0 - First release						
-    @details  pied de page pour le site web ruche 
+    @details  pied de page pour le support du site Aggregator
 ------------------------------------------------------------------------------------>
 	<footer>
 		<br /><br />
         <hr>
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<p><a href = "<?php 
-				$tab = explode('/', $_SERVER['PHP_SELF'], 3);
-				echo "support/" . $tab[2]; 
-				?>">Aggregator - docs for this page</a></p>
+				<p> Aggregator - Support </p>
 			</div>
 		
 			<div class="col-md-6 col-sm-6 col-xs-12">

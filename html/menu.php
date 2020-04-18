@@ -1,13 +1,13 @@
 <!----------------------------------------------------------------------------------
     @fichier  menu.php							    		
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
-    @date     Septembre 2019
-    @version  v1.2 - First release						
+    @date     Avril 2020
+    @version  v1.3 - First release						
     @details  menu /Menu pour toutes les pages du site Aggregator 
 ------------------------------------------------------------------------------------>
 <?php 
     require_once('definition.inc.php');
-    $ini  = parse_ini_file(CONFIGURATION, true);
+    
 ?>
 
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -47,27 +47,21 @@
 						echo $_SESSION['login']; 
 					echo '</a>';
 					echo '<div class="dropdown-menu">';
-					if ($_SESSION['login'] == "root"){
+					if ($_SESSION['droits'] > 1){
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">Users</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTP</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
-						//echo '<a class="dropdown-item" href="/Ruche/administration/baseDeDonnees">Database</a>';
-						//echo '<a class="dropdown-item" href="/Ruche/administration/infoSystem">System info</a>';
-						//echo '<a class="dropdown-item" href="/Ruche/administration/battery">Battery</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/failed_login">Failed login</a>';
 					}	
 					else{
 						echo '<a class="dropdown-item" href="/Ruche/administration/users">My Account</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/things">My things</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/channels">My Channels</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">My ThingHTTP</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/sent">My SMS</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTP</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
 					}	
-					
-					
-					
-					
 					
 					echo '<a class="dropdown-item" href="/Ruche/administration/signout" id="nav-sign-in">Sign Out</a>';
 					echo '</div>';

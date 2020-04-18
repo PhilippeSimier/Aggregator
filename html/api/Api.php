@@ -1,15 +1,18 @@
 <?php
-    /** fichier		 : biblio.php
+    /** fichier		 : Api.php
 	    description  : Ensemble de fonctions pour simplifier l'écriture des API http
 	    author       : Philippe SIMIER Lycée Touchard Le Mans
 		
 		
 			 	
 	**/
+	
+class Api
+{
   
     // Fonction pour renvoyer une réponse suite à une erreur 
 	// Cette fonction tue (termine) l'éxécution du script
-    function envoyerErreur($httpStatus, $message, $detail){
+    static function envoyerErreur($httpStatus, $message, $detail){
         $data = array(
                 'status' => $httpStatus,
                 'message' => $message,
@@ -27,7 +30,7 @@
 	// Retourne un objet bdd
 	// avec selection de la timeZone pour la session.
 	// Si time_zone est vide alors UTC +00:00
-	function connexionBD($base, $time_zone = '+00:00') {
+	static function connexionBD($base, $time_zone = '+00:00') {
 		try 
 		{
 			$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE);
@@ -51,7 +54,7 @@
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT
 	
-    function verifier($key, $filter_flag = FILTER_DEFAULT){
+    static function verifier($key, $filter_flag = FILTER_DEFAULT){
 		$valeur = filter_input(INPUT_GET, $key, $filter_flag);
 		if($valeur === NULL || $valeur === FALSE){
 			$valeur = filter_input(INPUT_POST, $key, $filter_flag);
@@ -70,10 +73,10 @@
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT
 	
-    function obtenir($key, $filter_flag = FILTER_DEFAULT){
-        $valeur = verifier( $key, $filter_flag);
+    static function obtenir($key, $filter_flag = FILTER_DEFAULT){
+        $valeur = Api::verifier( $key, $filter_flag);
 		if ($valeur === NULL)
-		    envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad syntax.");	
+		    Api::envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad syntax.");	
 		else
 			return $valeur;			
 	}
@@ -86,8 +89,8 @@
 	// FILTER_VALIDATE_EMAIL
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT 
-	function facultatif($key, $default, $filter_flag = FILTER_DEFAULT){
-		$valeur = verifier( $key, $filter_flag);
+	static function facultatif($key, $default, $filter_flag = FILTER_DEFAULT){
+		$valeur = Api::verifier( $key, $filter_flag);
 		if ($valeur === NULL)
 				return $default;
 		else
@@ -99,14 +102,14 @@
 	// Fonction pour contrôler la présence de la clé dans la table users
 	// Retourne true si la clé appartient à un utilisateur présent dans la table users
 	// Sinon tue le script et envoie un message d'erreur 405
-    function controlerkey($bdd, $key){
+    static function controlerkey($bdd, $key){
 		$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
 		$stmt = $bdd->query($sql);
 		$res =  $stmt->fetchObject();
 	
 		// si aucune ligne ne correspond  à la clé reçue
 		if ( $res->nb == 0) {
-			envoyerErreur(405, "Authorization Required", "Please provide proper authentication details." );
+			Api::envoyerErreur(405, "Authorization Required", "Please provide proper authentication details." );
 		}
 	return true;	
     }
@@ -114,7 +117,7 @@
 	// Fonction pour obtenir un objet channel à partir de sa write_api_key
 	// Retourne l'objet channel si la write_api_key est présente dans la table channels
 	// Sinon tue le script et envoie un message d'erreur 405
-    function obtenirChannel($bdd, $write_api_key){
+    static function obtenirChannel($bdd, $write_api_key){
 		$sql = sprintf("SELECT * FROM `channels` WHERE `write_api_key` = %s", $bdd->quote($write_api_key));
 		$stmt = $bdd->query($sql);
 		$channel =  $stmt->fetchObject();
@@ -122,7 +125,7 @@
 	
 		// si aucune ligne ne correspond  à la clé reçue
 		if ( $channel === false) {
-			envoyerErreur(405, "Authorization Required", "Please provide proper write_api_key." );
+			Api::envoyerErreur(405, "Authorization Required", "Please provide proper write_api_key." );
 		}
 		else {
 			return $channel;
@@ -133,7 +136,7 @@
 	
 	// Fonction pour generer une chaine aléatoire
 	// Retourne la chaine générée
-	function genererChaineAleatoire($longueur = 0)
+	static function genererChaineAleatoire($longueur = 0)
 	{
 		if( $longueur == 0 ){
 			$longueur = rand ( 10 , 16 );
@@ -149,10 +152,10 @@
 	
 	// Fonction pour générer un clé API utilisateur
 	// La fonction vérifie que la clé générée est unique
-	function genererKey($bdd){
+	static function genererKey($bdd){
 		
 		do{
-			$key = genererChaineAleatoire();
+			$key = Api::genererChaineAleatoire();
 			$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
 			$stmt = $bdd->query($sql);
 			$res =  $stmt->fetchObject();
@@ -161,7 +164,7 @@
 	}
 
     // Fonction pour convertir un dateTime UTC en localTime
-	function ObtenirDateTimeLocal($datetime, $timeZone) {
+	static function ObtenirDateTimeLocal($datetime, $timeZone) {
 		if ($datetime != ""){
 			$date = new DateTime($datetime, new DateTimeZone('UTC'));
 			$date->setTimezone(new \DateTimeZone($timeZone));
@@ -171,7 +174,7 @@
 	}
 	
 	// Fonction pour remplacer les valeurs null par nan
-    function nan($valeur){
+    static function nan($valeur){
 	if($valeur == null)
 		return "nan";
 	else 
@@ -179,14 +182,14 @@
     }
 
     // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
-    function formatDate($date){
+    static function formatDate($date){
 		$dt = new DateTime($date);
         return $dt->format('Y-m-d\TH-i-s\Z');
 	}
 	
 	// Fonction pour convertir tous les caractères éligibles en entités HTML
 	// Et limité la longueur de la chaîne
-	function reduire( $chaine ){	
+	static function reduire( $chaine ){	
 	if ( strlen($chaine) > 60){	
 		$retour = htmlentities(substr( $chaine, 0, 60) . '...');
 	}else{
@@ -195,3 +198,4 @@
 	
 	return $retour;	
 	}
+}	

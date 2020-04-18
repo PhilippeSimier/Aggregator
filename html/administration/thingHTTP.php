@@ -2,9 +2,9 @@
 include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
-$bdd = connexionBD(BASE);
+$bdd = Api::connexionBD(BASE);
 
 
 
@@ -77,7 +77,7 @@ else
 		$_POST['action'] = "insert";
 		$_POST['id'] = 0;
 		$_POST['user_id']   = $_SESSION['id'];
-		$_POST['api_key'] = genererChaineAleatoire();
+		$_POST['api_key'] = Api::genererChaineAleatoire();
 		$_POST['url'] = "";
 		$_POST['auth_name'] = "";
 		$_POST['auth_pass'] = "";

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-
 <?php
 include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
+$bdd = Api::connexionBD(BASESMS,$_SESSION['time_zone']);
+$title = "SMS received";
 
 // Si le formulaire à été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -20,22 +20,17 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 
-		// connexion à la base
-		$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
 		$sql = "DELETE FROM `inbox` WHERE `ID` IN " . $supp;
 		$bdd->exec($sql);
 	}
-	unset($_POST['table_array']);
-	unset($_GET['page']);
-	unset($_GET['ipp']);
-
 }
 
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Inbox - SMS</title>
+    <title><?php echo $title ?></title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -50,7 +45,6 @@ if(isset($_POST['btn_supprimer'])){
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
-	<!--<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>-->
 	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
 	
 	<script >
@@ -158,7 +152,7 @@ if(isset($_POST['btn_supprimer'])){
 			$( "#btn_ecrire" ).click(function() {
 				console.log("Bouton ecrire cliqué");
 				$.confirm({
-					title: 'Ecrire un SMS',
+					title: 'Write an SMS',
 					content: '' +
 					'<form action="" class="formName">' +
 					'<div class="form-group">' +
@@ -173,7 +167,7 @@ if(isset($_POST['btn_supprimer'])){
 					'</form>',
 					buttons: {
 						formSubmit: {
-							text: 'Envoyer',
+							text: 'Send',
 							btnClass: 'btn-blue',
 							action: function () {
 								var message = this.$content.find('#message').val();
@@ -198,7 +192,7 @@ if(isset($_POST['btn_supprimer'])){
 									}	
 									else{
 										$.dialog({
-											title: "Erreur",
+											title: "Error",
 											content: response.message + " <em>" + response.detail + "</em>"
 										});
 									}
@@ -226,9 +220,9 @@ if(isset($_POST['btn_supprimer'])){
 
  <body>
 	<?php require_once '../menu.php'; 	?>
-	<div class="container" style="padding-top: 65px;">
-		<div class="row popin">
-			
+	<div class="container" style="padding-top: 65px; max-width: 90%;">
+		<div class="row popin card">
+			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>			
 			<div class="col-md-12 col-sm-12 col-xs-12">			
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
@@ -244,7 +238,7 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
-								$bdd = connexionBD(BASESMS,$_SESSION['time_zone']);
+								
 								$sql = "SELECT `ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ";
 								
 								$stmt = $bdd->query($sql);
@@ -253,17 +247,17 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<tr>\n    <td><input type='checkbox' class='selection' name='table_array[$message->ID]' value='$message->ID' ></td>\n";
 									echo "    <td>" . $message->ReceivingDateTime . "</td>\n";
 									echo "    <td>" . $message->SenderNumber . "</td>\n";
-									echo "    <td>" . reduire($message->TextDecoded) . "</td>\n";
+									echo "    <td>" . Api::reduire($message->TextDecoded) . "</td>\n";
 									echo "</tr>\n";
 									
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Supprimer" class="btn btn-danger" readonly size="9">
-					<button id="btn_lire" type="button" class="btn btn-info">Lire</button>
-					<button id="btn_ecrire" type="button" class="btn btn-info">Ecrire</button>
-					<a  class="btn btn-info" role="button" href="sent">SMS Envoyés</a>
+					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_lire" type="button" class="btn btn-info">Read</button>
+					<button id="btn_ecrire" type="button" class="btn btn-info">Write</button>
+					<a  class="btn btn-info" role="button" href="sent">SMS Sent</a>
 					
 					
 					</form>	

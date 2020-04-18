@@ -2,20 +2,23 @@
 include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
-$bdd = connexionBD(BASE);
+$bdd = Api::connexionBD(BASE);
 
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
 if( !empty($_POST['envoyer'])){
 	
 	if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-		$sql = sprintf("INSERT INTO `data`.`users` (`login`, `encrypted_password`, `User_API_Key`, `Created_at`, `sign_in_count`, `quotaSMS`, `delaySMS`) VALUES (%s, %s, %s, CURRENT_TIMESTAMP, '0', %s, %s)",
-			$bdd->quote($login),
-			$bdd->quote(md5($pwd)),
-			$bdd->quote($User_API_Key),
-			$bdd->quote($quota),
-			$bdd->quote($delay)
+		$sql = sprintf("INSERT INTO `data`.`users` (`login`, `droits`, `email`, `telNumber`, `encrypted_password`, `User_API_Key`, `Created_at`, `sign_in_count`, `quotaSMS`, `delaySMS`) VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, '0', %s, %s)",
+			$bdd->quote($_POST['login']),
+			$bdd->quote($_POST['droits']),
+			$bdd->quote($_POST['email']),
+			$bdd->quote($_POST['telNumber']),
+			$bdd->quote(hash('sha256', $_POST['login'])),
+			$bdd->quote($_POST['User_API_Key']),
+			$bdd->quote($_POST['quotaSMS']),
+			$bdd->quote($_POST['delaySMS'])
 		);
 			
 		$bdd->exec($sql);
@@ -23,8 +26,11 @@ if( !empty($_POST['envoyer'])){
 		return;
 	}
 	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-		$sql = sprintf("UPDATE `data`.`users` SET `login` = %s, `User_API_Key`=%s, `quotaSMS`=%s, `delaySMS`=%s WHERE `users`.`id` = %s;"
+		$sql = sprintf("UPDATE `data`.`users` SET `login` = %s, `droits` = %s, `email` = %s, `telNumber` = %s, `User_API_Key`=%s, `quotaSMS`=%s, `delaySMS`=%s WHERE `users`.`id` = %s;"
 					  , $bdd->quote($_POST['login'])
+					  , $bdd->quote($_POST['droits'])
+					  , $bdd->quote($_POST['email'])
+					  , $bdd->quote($_POST['telNumber'])
 					  , $bdd->quote($_POST['User_API_Key'])
 					  , $bdd->quote($_POST['quotaSMS'])
 					  , $bdd->quote($_POST['delaySMS'])
@@ -47,6 +53,9 @@ else
 		   $_POST['action']  = "update";
 		   $_POST['id']      = $user->id;
 		   $_POST['login']   = $user->login;
+		   $_POST['droits']   = $user->droits;
+		   $_POST['email']   = $user->email;
+		   $_POST['telNumber']   = $user->telNumber;
 		   $_POST['User_API_Key'] = $user->User_API_Key;
 		   $_POST['quotaSMS'] = $user->quotaSMS;
 		   $_POST['delaySMS'] = $user->delaySMS;
@@ -55,6 +64,9 @@ else
 		$_POST['action'] = "insert";
 		$_POST['id'] = 0;
 		$_POST['login']   = "";
+		$_POST['droits']   = 1;
+		$_POST['email']   = "";
+		$_POST['telNumber']   = "";
 		$_POST['User_API_Key'] = genererChaineAleatoire();
 		$_POST['quotaSMS'] = "140";
 		$_POST['delaySMS'] = "30";	
@@ -68,7 +80,7 @@ else
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>user Settings - Aggregator</title>
+		<title>User Settings - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="/Ruche/css/bootstrap.min.css" >
 		<link rel="stylesheet" href="/Ruche/css/ruche.css" />
@@ -97,7 +109,7 @@ else
 							</div>
 							
 							<div class="form-group row">
-								<label for="api_key"  class="font-weight-bold col-sm-3 control-label">Api_key  </label>
+								<label for="api_key"  class="font-weight-bold col-sm-3 control-label">Api key  </label>
 								<div class="col-sm-9">
 									<input type="text"  name="User_API_Key" class="form-control" value="<?php echo  $_POST['User_API_Key']; ?>" />
 								</div>
@@ -107,6 +119,27 @@ else
 								<label for="name"  class="font-weight-bold col-sm-3 col-form-label">Login  </label>
 								<div class="col-sm-9">
 									<input type="text"  name="login" class="form-control" value="<?php echo  $_POST['login']; ?>" />
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="name"  class="font-weight-bold col-sm-3 col-form-label">Droits  </label>
+								<div class="col-sm-9">
+									<input type="int"  name="droits" class="form-control" value="<?php echo  $_POST['droits']; ?>" />
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="name"  class="font-weight-bold col-sm-3 col-form-label">E mail  </label>
+								<div class="col-sm-9">
+									<input type="email"  name="email" class="form-control" value="<?php echo  $_POST['email']; ?>" />
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								<label for="name"  class="font-weight-bold col-sm-3 col-form-label">Tel number  </label>
+								<div class="col-sm-9">
+									<input type="text"  name="telNumber" class="form-control" value="<?php echo  $_POST['telNumber']; ?>" />
 								</div>
 							</div>
 							

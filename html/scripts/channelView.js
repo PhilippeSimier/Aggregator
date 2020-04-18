@@ -452,7 +452,11 @@ $(document).ready(function () {
         let selectedChannel = document.getElementById("Channel_Select");
         let maxLoads = document.getElementById("Loads").value;
         let channelIndex = selectedChannel.selectedIndex;
-        loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, maxLoads);
+		// Recharge plus de données si des données ont déja été chargées.
+		if(channelKeys[channelIndex].fieldList[0].data.length > 0){
+			console.log("load More data: " + channelKeys[channelIndex].name);
+			loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, maxLoads);
+		}
     }
     );
 

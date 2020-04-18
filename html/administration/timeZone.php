@@ -2,9 +2,9 @@
 include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
-require_once('../api/biblio.php');
+require_once('../api/Api.php');
 
-$bdd = connexionBD(BASE);
+$bdd = Api::connexionBD(BASE);
 
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
 if( !empty($_POST['envoyer'])){
