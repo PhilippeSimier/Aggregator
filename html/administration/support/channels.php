@@ -14,7 +14,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Support - Index</title>
+    <title>Support - Channels</title>
     <!-- Bootstrap CSS version 4.1.1 -->
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -30,7 +30,7 @@
 
 <body>
 	
-	<?php require_once '../../../menu.php'; ?>
+	<?php require_once '../../menu.php'; ?>
 	
 	<div class="container" >
 		<div style="min-height : 500px">	
@@ -42,7 +42,7 @@
 			
 			</div>
 		</div>
-		<?php require_once '../../../support/piedDePage.php'; ?>
+		<?php require_once '../../support/piedDePage.php'; ?>
 	</div>
 	
 	

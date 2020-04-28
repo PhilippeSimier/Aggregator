@@ -3,7 +3,7 @@
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
     @date     Avril 2020
     @version  v1.0 - First release						
-    @details  support pour la page administration/things.php
+    @details  support pour la page administration/index.php
 ------------------------------------------------------------------------------------>
 
 <?php session_start(); ?>
@@ -30,19 +30,18 @@
 
 <body>
 	
-	<?php require_once '../../../menu.php'; ?>
+	<?php require_once '../../menu.php'; ?>
 	
 	<div class="container" >
 		<div style="min-height : 500px">	
 		<div class="row" style="background-color:white; padding-top: 65px; ">
 			<div class="col-lg-12">
-			<h4> Vue d'ensemble </h4>
-			<p>Internet se transforme progressivement en un réseau étendu, appelé « Internet des objets », reliant tous les objets devenus connectables.
-			Agregator est un des maillons de l’internet des objets. C’est une plate-forme de collecte et de stockage de données.</p>
+			<h4> Authentification </h4>
+			<p>Pour s'authentifier vous devez saisir votre login et votre mot de passe.</p>
 			
 			</div>
 		</div>
-		<?php require_once '../../../support/piedDePage.php'; ?>
+		<?php require_once '../../support/piedDePage.php'; ?>
 	</div>
 	
 	

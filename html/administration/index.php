@@ -5,6 +5,10 @@
 
 	require_once('../definition.inc.php');
 	require_once('../api/Api.php');
+	require_once('../api/Str.php');
+	
+	use Aggregator\Support\Api;
+	use Aggregator\Support\Str;
 	
 	session_start();
 	unset($_SESSION['identite']);
@@ -100,7 +104,7 @@
 		}		
 	}
 	
-	$token =  Api::genererChaineAleatoire(20);
+	$token =  Str::genererChaineAleatoire(20);
 	//Mémorisation du token dans la variable de session
 	$_SESSION['token'] 	 =  $token;
 ?>

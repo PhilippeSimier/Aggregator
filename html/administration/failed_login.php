@@ -4,6 +4,8 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 
+use Aggregator\Support\Api;
+
 // connexion à la base
     
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
@@ -149,7 +151,7 @@ if(isset($_POST['btn_supprimer'])){
 								
 								while ($thing =  $stmt->fetchObject()){
 									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . Api::reduire($thing->created_at) . "</td>";
+									echo "<td>" . $thing->created_at . "</td>";
 									echo "<td>" . $thing->login . "</td>";
 									echo "<td>" . $thing->ip_address . "</td></tr>\n";
 

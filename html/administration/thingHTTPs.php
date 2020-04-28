@@ -4,6 +4,8 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 
+use Aggregator\Support\Api;
+
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 $title = "ThingHTTPs";
@@ -30,7 +32,7 @@ if(isset($_POST['btn_supprimer'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Apps - thingHTTP - Aggregator</title>
+    <title>thingHTTP - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -55,8 +57,8 @@ if(isset($_POST['btn_supprimer'])){
                 pagingType: "simple_numbers",
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
-                order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"num"}, {type:"text"} , {type:"text"} , {type:"text"}]
+                order: [[1, 'asc']],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}]
                 
             };
 			$('#tableau').DataTable(options);				
@@ -197,7 +199,7 @@ if(isset($_POST['btn_supprimer'])){
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>id</th>
+							<th>User</th>
 							<th>Name</th>
 							<th>Created</th>
 							<th>Method</th>
@@ -206,18 +208,16 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
-								$sql = "SELECT * FROM `thinghttps`";
-                                if ($_SESSION['droits'] > 1)
-										$sql .= " where 1 ";	
-								else	
-								        $sql .= " where `user_id` = " . $_SESSION['id'];
-								$sql .= " order by `id` ";
+								$sql = "SELECT `thinghttps`.`id`,`name`,`thinghttps`.`created_at`,`method`,`users`.`login` FROM `thinghttps`,`users` WHERE `users`.`id` = `thinghttps`.`user_id`";
+                                if ($_SESSION['droits'] == 1)	
+								        $sql .= " and `thinghttps`.`user_id` = " . $_SESSION['id'];
+								
 								
 								$stmt = $bdd->query($sql);
 								
 								while ($thingHTTP =  $stmt->fetchObject()){
-									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thingHTTP->id]' value='$thingHTTP->id' ></td>";
-									echo "<td>" . $thingHTTP->id . "</td>";
+									echo "<tr><td><input class='selection' type='checkbox' name='table_array[{$thingHTTP->id}]' value='{$thingHTTP->id}' ></td>";
+									echo "<td>" . $thingHTTP->login . "</td>";
 									echo "<td>" . $thingHTTP->name . "</td>";
 									echo "<td>" . $thingHTTP->created_at . "</td>";
 									echo "<td>" . $thingHTTP->method . "</td>";

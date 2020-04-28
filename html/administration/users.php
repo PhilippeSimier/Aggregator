@@ -3,31 +3,50 @@ include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../api/Str.php');
 
+use Aggregator\Support\Api;
+use Aggregator\Support\Str;
 
 // connexion à la base
     
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
 // Lecture du paramètre facultatif allow
-// Si allow n'est pas présent alors affichage des utilisateurs autorisés 
-	$allow = Api::facultatif("allow", "1");
+
 // construction du titre de la page	
-	if ($allow && $_SESSION['droits'] > 1) 
+	if ( $_SESSION['droits'] > 1) 
 		$title =  "Users"; 
 	else 
-		$title = "Suspended Users";
-    if 	($_SESSION['droits'] == 1) 
 		$title = "My Account";
 	
-// Si le formulaire a été soumis
-if(isset($_POST['action'])){
-	if ($_POST['action'] == "Suspending") $status = 0;
-	if ($_POST['action'] == "Cancel") $status = 1;
+// Si le formulaire suspending a été soumis
+if(isset($_POST['suspending'])){
 
-	// Si un élément a été sélectionné création de la liste des id à mettre à jour
-	if (count($_POST['table_array']) > 0){
-		$Clef=$_POST['table_array'];
+	// Si un élément a été sélectionné création de la liste des id à suspendre
+	if (count($_POST['array_suspending']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
+		$Clef=$_POST['array_suspending'];
+		$selection= "(";
+		foreach($Clef as $selectValue)
+		{
+			if( $selection != "(" ){$selection .= ",";}
+			$selection .= $selectValue;
+		}
+		$selection .= ")";
+		
+		$sql = "UPDATE `data`.`users` SET `allow` =  0 WHERE `users`.`id` IN " . $selection;		
+		
+		$bdd->exec($sql);
+	}
+}
+
+// Si le formulaire cancel a été soumis
+if(isset($_POST['cancel'])){
+	
+
+	// Si un élément a été sélectionné création de la liste des id à annuler
+	if (count($_POST['array_cancel']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
+		$Clef=$_POST['array_cancel'];
 		$selection= "(";
 		foreach($Clef as $selectValue)
 		{
@@ -36,12 +55,22 @@ if(isset($_POST['action'])){
 		}
 		$selection .= ")";
 
-		$sql = "UPDATE `data`.`users` SET `allow` = " . $status . " WHERE `users`.`id` IN " . $selection;
+		if ($_POST['action'] === 'cancel'){
+			$sql = "UPDATE `data`.`users` SET `allow` = 1  WHERE `users`.`id` IN " . $selection;		
+		}
+		if ($_POST['action'] === 'delete'){
+			$sql = "DELETE FROM `data`.`users`   WHERE `users`.`id` IN " . $selection;
+			
+		}
 		$bdd->exec($sql);
 		
 	}
-	
 }
+
+// Création du tokenCSRF
+$tokenCSRF = STR::genererChaineAleatoire(32);
+$_SESSION['tokenCSRF'] = $tokenCSRF;
+
 ?>
 
 <!DOCTYPE html>
@@ -74,43 +103,127 @@ if(isset($_POST['action'])){
 				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}]
                 
             };
-			$('#tableau').DataTable(options);
+			$('#tableau1').DataTable(options);
+			$('#tableau0').DataTable(options);
 	
-			function cocherTout(etat)
+						
+			function cocherTout(etat,formulaire)
 			{
-			  var cases = document.getElementsByTagName('input');   // on recupere tous les INPUT
-			   for(var i=1; i<cases.length; i++)     // on les parcourt
+			  var cases = document.getElementsByClassName(formulaire);   // on recupere tous les éléments ayant la classe 
+			   for(var i=0; i<cases.length; i++)     // on les parcourt
 				 if(cases[i].type == 'checkbox')     // si on a une checkbox...
 					 {cases[i].checked = etat;}
 			}
 			
 			
-			$("#all").click(function(){	
-				cocherTout(this.checked);
+			$("#all1").click(function(){	
+				cocherTout(this.checked,'array_suspending');
 			});
 			
 			
-			$( "#action" ).click(function() {
-				console.log("Bouton Disable cliqué");
+			$("#all0").click(function(){	
+				cocherTout(this.checked,'array_cancel');
+			});
+			
+			
+			
+			$( "#btn_suspending" ).click(function() {
+				console.log("Bouton suspending cliqué");
 				
-				nbCaseCochees = $('input:checked').length - $('#all:checked').length;
+				nbCaseCochees = $('.array_suspending:checked').length;
 				console.log(nbCaseCochees);
 				if (nbCaseCochees > 0){
 					
 					$.confirm({
 						theme: 'bootstrap',
 						title: 'Confirm!',
-						content: 'Confirmez-vous la désactivation de ' + nbCaseCochees + ' utilisateur(s) ?',
+						content: 'Confirmez-vous la suspension sur ' + nbCaseCochees + ' utilisateur(s) ?',
 						buttons: {
 							confirm: {
-								text: 'Confirmation', // text for button
-								btnClass: 'btn-blue', // class for the button
+								text: 'Apply', 
+								btnClass: 'btn-blue', 
 								action: function () {
-								$( "#supprimer" ).submit(); // soumission du formulaire
+								$( "#suspending" ).submit(); // soumission du formulaire suspending
 								}
 							},
 					 		cancel: {
-								text: 'Annuler', // text for button
+								text: 'Cancel', 
+								action: function () {}
+							}
+						}
+					});
+				
+				}
+				else{
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "You haven't selected any user!"
+					});
+			
+				}
+			});
+			
+			$( "#btn_cancel" ).click(function() {
+				console.log("Bouton cancel cliqué");
+				
+				nbCaseCochees = $('.array_cancel:checked').length;
+				console.log(nbCaseCochees);
+				if (nbCaseCochees > 0){
+					
+					$.confirm({
+						theme: 'bootstrap',
+						title: 'Confirm!',
+						content: 'Confirmez-vous l\'annulation sur ' + nbCaseCochees + ' utilisateur(s) ?',
+						buttons: {
+							confirm: {
+								text: 'Apply', 
+								btnClass: 'btn-blue', 
+								action: function () {
+								$( "#action" ).val("cancel"); // Mise à jour du champ caché action
+								$( "#cancel" ).submit(); // soumission du formulaire cancel
+								}
+							},
+					 		cancel: {
+								text: 'Cancel', // text for button
+								action: function () {}
+							}
+						}
+					});
+				
+				}
+				else{
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "You haven't selected any user!"
+					});
+			
+				}
+			});
+			
+			$( "#btn_delete" ).click(function() {
+				console.log("Bouton delete cliqué");
+				
+				nbCaseCochees = $('.array_cancel:checked').length;
+				console.log(nbCaseCochees);
+				if (nbCaseCochees > 0){
+					
+					$.confirm({
+						theme: 'bootstrap',
+						title: 'Confirm!',
+						content: 'Confirmez-vous la suppression sur ' + nbCaseCochees + ' utilisateur(s) ?',
+						buttons: {
+							confirm: {
+								text: 'Apply', 
+								btnClass: 'btn-blue', 
+								action: function () {
+								$( "#action" ).val("delete");	
+								$( "#cancel" ).submit(); // soumission du formulaire cancel
+								}
+							},
+					 		cancel: {
+								text: 'Cancel', // text for button
 								action: function () {}
 							}
 						}
@@ -136,7 +249,7 @@ if(isset($_POST['action'])){
 				var checkbox_val = [];
 
 				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
+				$('.array_suspending:checked').each(function(){
 					checkbox_val.push($(this).val());
 				});
 				if(checkbox_val.length == 0){
@@ -164,11 +277,11 @@ if(isset($_POST['action'])){
 						content: '' +
 						'<form action="" class="passwd form-horizontal">' +
 						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Passwd : </label>' +
+						'<label class="col-sm-4 control-label">Password : </label>' +
 						'<input type="password" id="pwd" name="pwd" size="30"  /><br />' +				
 						'</div>' +
 						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Confirm Passwd : </label>' +
+						'<label class="col-sm-4 control-label">Confirm Password : </label>' +
 						'<input type="password" id="conf_pwd" name="conf_pwd" size="30"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
@@ -176,7 +289,7 @@ if(isset($_POST['action'])){
 						'</form>',
 						buttons: {
 							formSubmit: {
-								text: 'Appliquer',
+								text: 'Apply',
 								btnClass: 'btn-blue',
 								action: function () {
 									var pwd = this.$content.find('#pwd').val();
@@ -184,7 +297,7 @@ if(isset($_POST['action'])){
 									var form_data = this.$content.find('.passwd').serialize();
 																	
 									if (pwd != conf_pwd){
-										$.alert('passwd and Confirm Passwd');
+										$.alert('Password and Confirm Password not OK');
 										return false;
 									}
 									console.log(' form_data : ' + form_data);
@@ -289,12 +402,11 @@ if(isset($_POST['action'])){
 										window.location = 'users'
 										
 									}	
-									else{
-										$.dialog({
-											title: "Erreur",
-											content: response.message + " <em>" + response.detail + "</em>"
-										});
-									}
+								}).fail(function(response,status, error) {
+									$.dialog({
+										title: status,
+										content : error
+									});	
 								});	
 							}
 						},
@@ -323,7 +435,7 @@ if(isset($_POST['action'])){
 				var checkbox_val = [];
 
 				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
+				$('.array_suspending:checked').each(function(){
 					checkbox_val.push($(this).val());
 				});
 				if(checkbox_val.length == 0){
@@ -353,7 +465,7 @@ if(isset($_POST['action'])){
 				var checkbox_val = [];
 
 				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
+				$('.array_suspending:checked').each(function(){
 					checkbox_val.push($(this).val());
 				});
 				if(checkbox_val.length == 0){
@@ -450,7 +562,7 @@ if(isset($_POST['action'])){
 				var checkbox_val = [];
 
 				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
+				$('.array_suspending:checked').each(function(){
 					checkbox_val.push($(this).val());
 				});
 				if(checkbox_val.length == 0){
@@ -481,71 +593,136 @@ if(isset($_POST['action'])){
 
  <body>
 	<?php require_once '../menu.php'; 	?>
-	<div class="container" style="padding-top: 65px;">
-		<div class="row popin card">
-			
-			<div class="col-md-12 col-sm-12 col-xs-12">	
-				<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
-				<div class="table-responsive">
-					<form method="post" id="supprimer">
-					<table id="tableau" class="display"  class="table table-striped">
-					
-						<thead>
-						  <tr>
-							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>Login</th>
-							<th>API Key</th>
-							<th>Time Zone</th>
-							<th>Last sign in</th>
-							<th>Count</th>
-						  </tr>
-						</thead>
-						<tbody>
+	<div class="container" style="padding-top: 65px; max-width: 90%">
+	<div class="popin">
+		<nav class="nav nav-tabs">
+			<a class="nav-item nav-link active" href="#p0" data-toggle="tab">Users</a>
+			<a class="nav-item nav-link" href="#p1" data-toggle="tab">Suspended Users</a>
+		</nav>
+	
+		<div class="tab-content">
+			<div class="tab-pane fade show active" id="p0">
+			<div class="row">
+				
+				<div class="col-md-12 col-sm-12 col-xs-12">	
+					<div class="table-responsive">
+						<form method="post" id="suspending">
+							<table id="tableau1" class="display"  class="table table-striped">
 							
-							<?php
-								$sql = "SELECT * FROM `users`";
-                                if ($_SESSION['droits'] > 1){
-										$sql .= " where allow = ";
-										$sql .= $allow;
-								}		
-								else	
-								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `login` ";
-								
-								$stmt = $bdd->query($sql);
-								
-								while ($thing =  $stmt->fetchObject()){
-									echo "<tr><td><input type='checkbox' class='selection' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . $thing->login . "</td>";
-									echo "<td>" . $thing->User_API_Key . "</td>";
-									echo "<td>" . $thing->time_zone . "</td>";
-									echo "<td>" . $thing->last_sign_in_at . "</td>";
-									echo "<td>" . $thing->sign_in_count . "</td>";								
-								}
-							?>
-						</tbody>
-					</table>
+								<thead>
+								  <tr>
+									<th><input type='checkbox' name='all' value='all' id='all1' ></th>
+									<th>Login</th>
+									<th>API Key</th>
+									<th>Time Zone</th>
+									<th>Last sign in</th>
+									<th>Count</th>
+								  </tr>
+								</thead>
+								<tbody>
+									
+									<?php
+										$sql = "SELECT * FROM `users`";
+										if ($_SESSION['droits'] > 1){
+												$sql .= " where allow = 1";
+										}		
+										else	
+												$sql .= " where login = '" . $_SESSION['login'] . "'";
+										$sql .= " order by `login` ";
+										
+										$stmt = $bdd->query($sql);
+										
+										while ($thing =  $stmt->fetchObject()){
+											echo "<tr><td><input type='checkbox' class='array_suspending' name='array_suspending[$thing->id]' value='$thing->id' ></td>";
+											echo "<td>" . $thing->login . "</td>";
+											echo "<td>" . $thing->User_API_Key . "</td>";
+											echo "<td>" . $thing->time_zone . "</td>";
+											echo "<td>" . $thing->last_sign_in_at . "</td>";
+											echo "<td>" . $thing->sign_in_count . "</td>";								
+										}
+									?>
+								</tbody>
+							</table>
 
-					<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
-					<button id="btn_typeZone" type="button" class="btn btn-warning">Change Time Zone</button>
-					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
-					<?php
-					if ($_SESSION['droits'] > 1){
-						if ($allow == 0)
-							echo ' <input id="action" name="action" value="Cancel" class="btn btn-danger" readonly > ';
-						else
-							echo ' <input id="action" name="action" value="Suspending" class="btn btn-danger" readonly > ';
-						
-						echo '<button id="btn_add" type="button" class="btn btn-secondary">Add</button> ';
-						echo '<button id="btn_setting" type="button" class="btn btn-secondary">Setting</button>';
-						if ( ! $allow) 	echo ' <a href="users?allow=1" class="btn btn-secondary" role="button" >Users</a>';
-						if ($allow) echo ' <a href="users?allow=0" class="btn btn-secondary" role="button" >Suspended Users</a>';
-					}	
-					?>					
-					</form>	
+							<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
+							<button id="btn_typeZone" type="button" class="btn btn-warning">Change Time Zone</button>
+							<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
+							<?php
+							if ($_SESSION['droits'] > 1){
+								echo ' <input id="btn_suspending" name="suspending" value="Suspending" class="btn btn-danger" readonly >';
+								echo ' <button id="btn_add" type="button" class="btn btn-secondary">Add</button>';
+								echo ' <button id="btn_setting" type="button" class="btn btn-secondary">Setting</button>';
+								echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>";
+							}	
+							?>					
+						</form>	
+					</div>
 				</div>
 			</div>
+			</div>
+			<div class="tab-pane fade" id="p1">
+				<div class="row">
+				
+				<div class="col-md-12 col-sm-12 col-xs-12">	
+					<div class="table-responsive">
+						<form method="post" id="cancel">
+						<table id="tableau0" class="display"  class="table table-striped">
+						
+							<thead>
+							  <tr>
+								<th><input type='checkbox' name='all' value='all' id='all0' ></th>
+								<th>Login</th>
+								<th>API Key</th>
+								<th>Time Zone</th>
+								<th>Last sign in</th>
+								<th>Count</th>
+							  </tr>
+							</thead>
+							<tbody>
+								
+								<?php
+									$sql = "SELECT * FROM `users`";
+									if ($_SESSION['droits'] > 1){
+											$sql .= " where allow = 0";
+									}		
+									else	
+											$sql .= " where login = '" . $_SESSION['login'] . "'";
+									$sql .= " order by `login` ";
+									
+									$stmt = $bdd->query($sql);
+									
+									while ($thing =  $stmt->fetchObject()){
+										echo "<tr><td><input type='checkbox' class='array_cancel' name='array_cancel[$thing->id]' value='$thing->id' ></td>";
+										echo "<td>" . $thing->login . "</td>";
+										echo "<td>" . $thing->User_API_Key . "</td>";
+										echo "<td>" . $thing->time_zone . "</td>";
+										echo "<td>" . $thing->last_sign_in_at . "</td>";
+										echo "<td>" . $thing->sign_in_count . "</td>";								
+									}
+								?>
+							</tbody>
+						</table>
+						<?php
+						if ($_SESSION['droits'] > 1){
+							echo ' <input id="btn_cancel" name="cancel" value="Cancel" class="btn btn-warning" readonly > ';	
+							echo ' <input id="btn_delete" name="Delete" value="Delete" class="btn btn-danger" readonly > ';	
+							echo ' <input type="hidden" id="action" name="action" value="cancel" >';
+							echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>";
+						}	
+						?>					
+						</form>	
+					</div>
+				</div>
+			</div>
+				
+				
+				
+				
+				
+				
+			</div>
 		</div>
+	</div>
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
 	

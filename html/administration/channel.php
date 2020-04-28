@@ -3,69 +3,61 @@ include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../api/Str.php');
+require_once('../api/Form.php');
 
-$bdd = Api::connexionBD(BASE);
+use Aggregator\Support\Api;
+use Aggregator\Support\Str;
+use Aggregator\Support\Form;
 
-// Fonction pour créer le sélecteur tag 
-// Le tag d'un canal fait référence au tag d'un objet
-function faireSelectTags($bdd , $thing_tag){
-	
-	$sql = "SELECT tag FROM `things`";
-	$stmt = $bdd->query($sql);
-	
-	echo '<select class="form-control" name="tags">';
-	while ($thing =  $stmt->fetchObject()){
-		if ($thing->tag == $thing_tag)
-			echo "<option selected value='" . $thing->tag . "'>" . $thing->tag . "</option>" ;
-        else
-			echo "<option value='" . $thing->tag . "'>" . $thing->tag . "</option>" ;	
-	}
-    echo "</select>";
-   
-}
+$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
 //------------si des données  sont soumises on les enregistre dans la table data.channels ---------
 if( !empty($_POST['envoyer'])){
-	
-	if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-		$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `tags`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-		              , $bdd->quote($_POST['name'])   // utf8_decode()
-					  , $bdd->quote($_POST['field1'])
-					  , $bdd->quote($_POST['field2'])
-					  , $bdd->quote($_POST['field3'])
-					  , $bdd->quote($_POST['field4'])
-					  , $bdd->quote($_POST['field5'])
-					  , $bdd->quote($_POST['field6'])
-					  , $bdd->quote($_POST['field7'])
-					  , $bdd->quote($_POST['field8'])
-					  , $bdd->quote($_POST['status'])
-					  , $bdd->quote($_POST['tags'])
-					  , $bdd->quote(Api::genererKey($bdd))
-					  ); 	
-		$bdd->exec($sql);
-		header("Location: channels.php");
-		return;
-	}
-	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-		$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `tags`=%s WHERE `channels`.`id` = %s;"
-					  , $bdd->quote($_POST['name'])
-					  , $bdd->quote($_POST['field1'])
-					  , $bdd->quote($_POST['field2'])
-					  , $bdd->quote($_POST['field3'])
-					  , $bdd->quote($_POST['field4'])
-					  , $bdd->quote($_POST['field5'])
-					  , $bdd->quote($_POST['field6'])
-					  , $bdd->quote($_POST['field7'])
-					  , $bdd->quote($_POST['field8'])
-					  , $bdd->quote($_POST['status'])
-					  , $bdd->quote($_POST['tags'])
-					  , $_POST['id']
-					  );
+	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
+		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+			$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `tags`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+						  , $bdd->quote($_POST['name'])   // utf8_decode()
+						  , $bdd->quote($_POST['field1'])
+						  , $bdd->quote($_POST['field2'])
+						  , $bdd->quote($_POST['field3'])
+						  , $bdd->quote($_POST['field4'])
+						  , $bdd->quote($_POST['field5'])
+						  , $bdd->quote($_POST['field6'])
+						  , $bdd->quote($_POST['field7'])
+						  , $bdd->quote($_POST['field8'])
+						  , $bdd->quote($_POST['status'])
+						  , $bdd->quote($_POST['tags'])
+						  , $bdd->quote(Api::genererKey($bdd))
+						  ); 	
+			$bdd->exec($sql);
 
-		$bdd->exec($sql);
+		}
+		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+			$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `tags`=%s WHERE `channels`.`id` = %s;"
+						  , $bdd->quote($_POST['name'])
+						  , $bdd->quote($_POST['field1'])
+						  , $bdd->quote($_POST['field2'])
+						  , $bdd->quote($_POST['field3'])
+						  , $bdd->quote($_POST['field4'])
+						  , $bdd->quote($_POST['field5'])
+						  , $bdd->quote($_POST['field6'])
+						  , $bdd->quote($_POST['field7'])
+						  , $bdd->quote($_POST['field8'])
+						  , $bdd->quote($_POST['status'])
+						  , $bdd->quote($_POST['tags'])
+						  , $_POST['id']
+						  );
+
+			$bdd->exec($sql);
+		}
+		
+		// destruction du tokenCSRF
+		unset($_SESSION['tokenCSRF']);
+		
 		header("Location: channels.php");
 		return;
-	}
+	}	
 }
 // -------------- sinon lecture de la table data.channels  -----------------------------
 else
@@ -88,6 +80,8 @@ else
 		   $_POST['field8'] = $channel->field8;
 		   $_POST['status'] = $channel->status;
 		   $_POST['tags']   = $channel->tags;
+		   $_POST['write_api_key']   = $channel->write_api_key;
+		   $_POST['last_write_at']   = $channel->last_write_at;
 	   } 
 	}else {
 		$_POST['action'] = "insert";
@@ -103,7 +97,22 @@ else
 		$_POST['field8'] = "";
 		$_POST['status'] = "";
 		$_POST['tags'] = "";
-   }   
+		$_POST['write_api_key'] = "";
+		$_POST['last_write_at'] = "";
+	}
+
+	// Création du selectTag
+	$sql = "SELECT tag FROM `things`";
+	$stmt = $bdd->query($sql);
+	
+	$selectTag = array();
+	while ($thing = $stmt->fetchObject()){
+		$selectTag[$thing->tag] = $thing->tag;
+	}
+
+	// Création du tokenCSRF
+	$tokenCSRF = STR::genererChaineAleatoire(32);
+	$_SESSION['tokenCSRF'] = $tokenCSRF;
 }
 ?>
 
@@ -126,104 +135,41 @@ else
 
 	<?php require_once '../menu.php'; ?>
 
-	<div class="container" style="padding-top: 65px;">
+	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
-						
-							<input type='hidden' name='action' value="<?php  echo $_POST["action"]; ?>" />
+							<?php
+								echo Form::hidden('action', $_POST['action']);
+								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
+								
+								$options = array( 'class' => 'form-control', 'readonly' => null);
+								echo Form::input( 'int', 'id', $_POST['id'], $options, 'Id' );
+								echo Form::input( 'text', 'write_api_key', $_POST['write_api_key'], $options, 'write api key' );
+								echo Form::input( 'text', 'last_write_at', $_POST['last_write_at'], $options, 'last write at' );
+								
+								$options = array( 'class' => 'form-control');
+								echo Form::input( 'text', 'name', $_POST['name'], $options);
+								
+								echo Form::select("tags", $selectTag , "Tag", $_POST['tags']);
+								echo Form::input( 'field1', 'field1', $_POST['field1'], $options);
+								echo Form::input( 'field2', 'field2', $_POST['field2'], $options);
+								echo Form::input( 'field3', 'field3', $_POST['field3'], $options);
+								echo Form::input( 'field4', 'field4', $_POST['field4'], $options);
+								echo Form::input( 'field5', 'field5', $_POST['field5'], $options);
+								echo Form::input( 'field6', 'field6', $_POST['field6'], $options);
+								echo Form::input( 'field7', 'field7', $_POST['field7'], $options);
+								echo Form::input( 'field8', 'field8', $_POST['field8'], $options);
+								echo Form::input( 'status', 'status', $_POST['status'], $options);
+								
 							
-							
-							<div class="form-group row">
-								<label for="id"  class="font-weight-bold col-sm-2 col-form-label">id : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="id" class="form-control" readonly value="<?php echo  $_POST['id']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="name"  class="font-weight-bold col-sm-2 col-form-label">Name : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="name" class="form-control" value="<?php echo  $_POST['name']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field1"  class="font-weight-bold col-sm-2 col-form-label">field1 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field1" class="form-control" value="<?php echo  $_POST['field1']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field2"  class="font-weight-bold col-sm-2 col-form-label">field2 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field2" class="form-control" value="<?php echo  $_POST['field2']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field3"  class="font-weight-bold col-sm-2 col-form-label">field3 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field3" class="form-control" value="<?php echo  $_POST['field3']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field4"  class="font-weight-bold col-sm-2 col-form-label">field4 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field4" class="form-control" value="<?php echo  $_POST['field4']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field5"  class="font-weight-bold col-sm-2 col-form-label">field5 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field5" class="form-control" value="<?php echo  $_POST['field5']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field6"  class="font-weight-bold col-sm-2 col-form-label">field6 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field6" class="form-control" value="<?php echo  $_POST['field6']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field7"  class="font-weight-bold col-sm-2 col-form-label">field7 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field7" class="form-control" value="<?php echo  $_POST['field7']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="field8"  class="font-weight-bold col-sm-2 col-form-label">field8 : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="field8" class="form-control" value="<?php echo  $_POST['field8']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="status"  class="font-weight-bold col-sm-2 col-form-label">status : </label>
-								<div class="col-sm-10">
-									<input type="text"  name="status" class="form-control" value="<?php echo  $_POST['status']; ?>" />
-								</div>
-							</div>
-							
-							<div class="form-group row">
-								<label for="tags"  class="font-weight-bold col-sm-2 col-form-label">tags : </label>
-								<div class="col-sm-10">
-									<?php faireSelectTags($bdd , $_POST['tags']); ?>
-								</div>
-							</div>
-							
-							
+							?>
+
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Appliquer</button>
-								<a  class="btn btn-info" role="button" href="channels">Annuler</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
+								<a  class="btn btn-info" role="button" href="channels">Cancel</a>
 							</div>	
 					</form>
 				</div>
@@ -254,4 +200,10 @@ else
 				</ul>
 				</div>
 			</div>
+		</div>	
+
+		<?php require_once '../piedDePage.php'; ?>
+	</div>
+	
+</body>
 	

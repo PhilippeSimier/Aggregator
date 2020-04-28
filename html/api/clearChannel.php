@@ -4,7 +4,9 @@
 	include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-	require_once('Api.php');	
+	require_once('Api.php');
+
+    use Aggregator\Support\Api;	
 	
 	// Lecture des paramétres obligatoires
 	$channelId = Api::obtenir("channelId", FILTER_VALIDATE_INT);

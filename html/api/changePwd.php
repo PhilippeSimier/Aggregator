@@ -3,7 +3,11 @@
 	include "../administration/authentification/authcheck.php" ;
    
 	require_once('../definition.inc.php');
-	require_once('Api.php');	
+	require_once('Api.php');
+	require_once('Str.php');
+	
+	use Aggregator\Support\Api;
+	use Aggregator\Support\Str;
     
 	$id	       = Api::obtenir("id", FILTER_VALIDATE_INT);
 	$pwd	   = Api::obtenir("pwd");
@@ -25,7 +29,7 @@
 	Api::controlerkey($bdd, $User_API_Key);
 	
 	// Générer et enregistrer un grain de sel
-	$salt = Api::genererChaineAleatoire(20);
+	$salt = Str::genererChaineAleatoire(20);
 	$sql = sprintf("UPDATE `data`.`users` SET `password_salt` = %s WHERE `users`.`id` = %s;",
 		$bdd->quote($salt),
 		$bdd->quote($id)

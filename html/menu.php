@@ -52,7 +52,7 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTP</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/sms">SMS</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/failed_login">Failed login</a>';
 					}	
 					else{
@@ -60,7 +60,7 @@
 						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
 						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTP</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/sent">SMS</a>';
+						echo '<a class="dropdown-item" href="/Ruche/administration/sms">SMS</a>';
 					}	
 					
 					echo '<a class="dropdown-item" href="/Ruche/administration/signout" id="nav-sign-in">Sign Out</a>';

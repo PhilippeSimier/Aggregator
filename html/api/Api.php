@@ -1,18 +1,23 @@
 <?php
-    /** fichier		 : Api.php
-	    description  : Ensemble de fonctions pour simplifier l'écriture des API http
+    /** fichier		 : api/Api.php
+	    description  : Class pour simplifier l'écriture des API http
 	    author       : Philippe SIMIER Lycée Touchard Le Mans
 		
-		
-			 	
 	**/
+	
+namespace Aggregator\Support;
+
+require_once('Str.php');   // La classe Api utilise des méthodes de la classe Str
+use Aggregator\Support\Str;
 	
 class Api
 {
+    
+	
   
     // Fonction pour renvoyer une réponse suite à une erreur 
 	// Cette fonction tue (termine) l'éxécution du script
-    static function envoyerErreur($httpStatus, $message, $detail){
+    public static function envoyerErreur($httpStatus, $message, $detail){
         $data = array(
                 'status' => $httpStatus,
                 'message' => $message,
@@ -30,10 +35,10 @@ class Api
 	// Retourne un objet bdd
 	// avec selection de la timeZone pour la session.
 	// Si time_zone est vide alors UTC +00:00
-	static function connexionBD($base, $time_zone = '+00:00') {
+	public static function connexionBD($base, $time_zone = '+00:00') {
 		try 
 		{
-			$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE);
+			$bdd = new \PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE);
 			// selection de la timezone UTC pour la session
 			$sql = "SET @@session.time_zone = ". $bdd->quote($time_zone);
 			$stmt = $bdd->exec($sql);
@@ -54,7 +59,7 @@ class Api
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT
 	
-    static function verifier($key, $filter_flag = FILTER_DEFAULT){
+    public static function verifier($key, $filter_flag = FILTER_DEFAULT){
 		$valeur = filter_input(INPUT_GET, $key, $filter_flag);
 		if($valeur === NULL || $valeur === FALSE){
 			$valeur = filter_input(INPUT_POST, $key, $filter_flag);
@@ -73,7 +78,7 @@ class Api
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT
 	
-    static function obtenir($key, $filter_flag = FILTER_DEFAULT){
+    public static function obtenir($key, $filter_flag = FILTER_DEFAULT){
         $valeur = Api::verifier( $key, $filter_flag);
 		if ($valeur === NULL)
 		    Api::envoyerErreur(403, "Bad Request", "The request cannot be fulfilled due to bad syntax.");	
@@ -89,7 +94,7 @@ class Api
 	// FILTER_VALIDATE_EMAIL
 	// FILTER_VALIDATE_FLOAT
 	// FILTER_VALIDATE_INT 
-	static function facultatif($key, $default, $filter_flag = FILTER_DEFAULT){
+	public static function facultatif($key, $default, $filter_flag = FILTER_DEFAULT){
 		$valeur = Api::verifier( $key, $filter_flag);
 		if ($valeur === NULL)
 				return $default;
@@ -102,7 +107,7 @@ class Api
 	// Fonction pour contrôler la présence de la clé dans la table users
 	// Retourne true si la clé appartient à un utilisateur présent dans la table users
 	// Sinon tue le script et envoie un message d'erreur 405
-    static function controlerkey($bdd, $key){
+    public static function controlerkey($bdd, $key){
 		$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
 		$stmt = $bdd->query($sql);
 		$res =  $stmt->fetchObject();
@@ -117,7 +122,7 @@ class Api
 	// Fonction pour obtenir un objet channel à partir de sa write_api_key
 	// Retourne l'objet channel si la write_api_key est présente dans la table channels
 	// Sinon tue le script et envoie un message d'erreur 405
-    static function obtenirChannel($bdd, $write_api_key){
+    public static function obtenirChannel($bdd, $write_api_key){
 		$sql = sprintf("SELECT * FROM `channels` WHERE `write_api_key` = %s", $bdd->quote($write_api_key));
 		$stmt = $bdd->query($sql);
 		$channel =  $stmt->fetchObject();
@@ -132,30 +137,13 @@ class Api
         }			
     }
 	
-		
-	
-	// Fonction pour generer une chaine aléatoire
-	// Retourne la chaine générée
-	static function genererChaineAleatoire($longueur = 0)
-	{
-		if( $longueur == 0 ){
-			$longueur = rand ( 10 , 16 );
-		}	
-		$string = "";
-		$chaine = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		srand((double)microtime()*1000000);
-		for($i=0; $i<$longueur; $i++) {
-			$string .= $chaine[rand()%strlen($chaine)];
-		}
-		return $string;
-	}	
 	
 	// Fonction pour générer un clé API utilisateur
 	// La fonction vérifie que la clé générée est unique
-	static function genererKey($bdd){
+	public static function genererKey($bdd){
 		
 		do{
-			$key = Api::genererChaineAleatoire();
+			$key = Str::genererChaineAleatoire();
 			$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
 			$stmt = $bdd->query($sql);
 			$res =  $stmt->fetchObject();
@@ -164,7 +152,7 @@ class Api
 	}
 
     // Fonction pour convertir un dateTime UTC en localTime
-	static function ObtenirDateTimeLocal($datetime, $timeZone) {
+	public static function ObtenirDateTimeLocal($datetime, $timeZone) {
 		if ($datetime != ""){
 			$date = new DateTime($datetime, new DateTimeZone('UTC'));
 			$date->setTimezone(new \DateTimeZone($timeZone));
@@ -174,7 +162,7 @@ class Api
 	}
 	
 	// Fonction pour remplacer les valeurs null par nan
-    static function nan($valeur){
+    public static function nan($valeur){
 	if($valeur == null)
 		return "nan";
 	else 
@@ -182,20 +170,10 @@ class Api
     }
 
     // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
-    static function formatDate($date){
+    public static function formatDate($date){
 		$dt = new DateTime($date);
         return $dt->format('Y-m-d\TH-i-s\Z');
 	}
 	
-	// Fonction pour convertir tous les caractères éligibles en entités HTML
-	// Et limité la longueur de la chaîne
-	static function reduire( $chaine ){	
-	if ( strlen($chaine) > 60){	
-		$retour = htmlentities(substr( $chaine, 0, 60) . '...');
-	}else{
-		$retour =  htmlentities($chaine);
-	}	
-	
-	return $retour;	
-	}
+
 }	

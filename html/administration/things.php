@@ -4,6 +4,10 @@ include "authentification/authcheck.php" ;
 //require_once('../ini/ini.php');
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../api/Str.php');
+
+use Aggregator\Support\Api;
+use Aggregator\Support\Str;
 
 // connexion à la base
     
@@ -193,7 +197,7 @@ if(isset($_POST['btn_supprimer'])){
 								
 								while ($thing =  $stmt->fetchObject()){
 									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . Api::reduire($thing->name) . "</td>";
+									echo "<td>" . Str::reduire($thing->name) . "</td>";
 									echo "<td>" . $thing->tag . "</td>";
 									echo "<td>" . $thing->status . "</td>";
 									echo "<td>" . $thing->login . "</td>";

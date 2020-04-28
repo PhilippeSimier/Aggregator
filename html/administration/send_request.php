@@ -3,6 +3,9 @@
 
 	require_once('../definition.inc.php');
 	require_once('../api/Api.php');
+	
+	use Aggregator\Support\Api;
+	
 	include('thingHTTP.class.php');
 
 	// connexion à la base

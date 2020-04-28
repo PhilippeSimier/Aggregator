@@ -4,6 +4,8 @@
    
 	require_once('../definition.inc.php');
 	require_once('Api.php');	
+	
+	use Aggregator\Support\Api;
     
 	$id	          = Api::obtenir("id", FILTER_VALIDATE_INT);
 	$key       	  = Api::obtenir("key");

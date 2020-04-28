@@ -34,7 +34,9 @@
 	**/
 
 	require_once('../definition.inc.php');
-	require_once('Api.php');	
+	require_once('Api.php');
+
+	use Aggregator\Support\Api;
 
     // fonction pour obtenir la date UTC	
 	function ObtenirDateUTC(){

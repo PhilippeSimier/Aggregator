@@ -29,7 +29,7 @@
 </head>
 
 <body>
-	<?php require_once '../../../menu.php'; ?>
+	<?php require_once '../../menu.php'; ?>
 	
 	<div class="container" >
 		<div style="min-height : 500px">
@@ -67,7 +67,7 @@
 	
 	
 		</div>
-		<?php require_once '../../../support/piedDePage.php'; ?>
+		<?php require_once '../../support/piedDePage.php'; ?>
 	</div>
 	
 	

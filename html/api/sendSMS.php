@@ -19,6 +19,8 @@
  
     require_once('../definition.inc.php');
 	require_once('Api.php');
+	
+	use Aggregator\Support\Api;
   
 	
 	// Contrôle de la présence des paramètres key number message en GET ou POST

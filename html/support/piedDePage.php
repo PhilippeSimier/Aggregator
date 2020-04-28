@@ -14,7 +14,7 @@
 			</div>
 		
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<p>Copyright &copy; Section Snir Lycée Touchard - le Mans</p>
+				<p style="float: right">Copyright &copy; Section Snir Lycée Touchard - le Mans</p>
 			</div>
         </div>
     </footer>

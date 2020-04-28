@@ -20,7 +20,9 @@
 	**/
 	
 	require_once('../definition.inc.php');
-	require_once('Api.php');	
+	require_once('Api.php');
+
+	use Aggregator\Support\Api;
 	
    
 	// Lecture des paramétres obligatoires

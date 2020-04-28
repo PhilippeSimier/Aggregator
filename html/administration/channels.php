@@ -3,6 +3,10 @@ include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../api/Str.php');
+
+use Aggregator\Support\Api;
+use Aggregator\Support\Str;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
@@ -293,7 +297,7 @@ if(isset($_POST['btn_supprimer'])){
 						
 						'<div class="form-group">' +
 						'<label class="col-sm-4 control-label">API Key : </label>' +
-						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = Api::genererChaineAleatoire(). "'"; ?> +'"  /><br />' +				
+						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = Str::genererChaineAleatoire(). "'"; ?> +'"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
 						'<input type="hidden" id="User_API_Key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +

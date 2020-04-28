@@ -2,6 +2,8 @@
    
 	require_once('../../definition.inc.php');
 	require_once('../../api/Api.php');	
+	
+	use Aggregator\Support\Api;
     
 	$login = Api::obtenir("login");
 	$bdd = Api::connexionBD(BASE);

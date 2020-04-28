@@ -2,7 +2,9 @@
     include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-    require_once('Api.php');	
+    require_once('Api.php');
+
+    use Aggregator\Support\Api;	
  
     // Contrôle de la présence des paramètres key id folder en GET ou POST
 	$key    = Api::obtenir("key");

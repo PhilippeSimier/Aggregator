@@ -3,7 +3,11 @@
 	include "../administration/authentification/authcheck.php" ;    
    
 	require_once('../definition.inc.php');
-	require_once('Api.php');	
+	require_once('Api.php');
+	require_once('Str.php');
+	
+	use Aggregator\Support\Api;
+	use Aggregator\Support\Str;
 	
 	// Contrôle de la présence des paramètres requis
 	$key          = Api::obtenir("key");
@@ -40,7 +44,7 @@
     }
 	
     // Générer un grain de sel
-	$salt = Api::genererChaineAleatoire(20);
+	$salt = Str::genererChaineAleatoire(20);
 
 	
 	$sql = sprintf("INSERT INTO `users` (`login`, `encrypted_password`, `password_salt`, `User_API_Key`, `Created_at`, `sign_in_count`) VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP, '0')",
@@ -56,17 +60,17 @@
 	if($nb == 1){
 		
 		$data = array(
-                'status' => "202 Accepted",
+                'status' => "201 Created",
 				'login' => utf8_encode($login), 
 				'User_API_Key' => utf8_encode($User_API_Key)
             );
 
-        header('HTTP/1.1 202 Accepted');
+        header('HTTP/1.1 201 Created');
         header('content-type:application/json');
         echo json_encode($data);
 	}
 	else{
-        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+        Api::envoyerErreur(409, "duplicate login", "duplicate login");
     }
 
 ?>	

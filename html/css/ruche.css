@@ -24,7 +24,7 @@ body {
 		border-radius: 8px;
 		box-shadow: 0 0 20px #999;
 		padding: 10px;
-		margin: 10px;
+		margin-top: 10px; 
 
 }
 
@@ -88,24 +88,8 @@ body {
     min-height: 400px;
  }
 
-#pied {
-
-	background:#000000 none repeat scroll 0 0;
-	border-top:1px dotted #CCCCCC;
-	clear:both;
-	color: #FFFFFF;
-	margin-top:1em;
-	padding:20px;
-	text-align:center;
-}
-
-#pied small {
-	color:#FFFFFF;
-	font-size:12px;
-}
-
-#pied a {
-	color:#FFFFFF;
+a {
+	color:#000;
 }
 
 
