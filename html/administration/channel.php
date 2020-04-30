@@ -28,7 +28,7 @@ if( !empty($_POST['envoyer'])){
 						  , $bdd->quote($_POST['field8'])
 						  , $bdd->quote($_POST['status'])
 						  , $bdd->quote($_POST['tags'])
-						  , $bdd->quote(Api::genererKey($bdd))
+						  , $bdd->quote($_POST['write_api_key'])
 						  ); 	
 			$bdd->exec($sql);
 
@@ -97,7 +97,7 @@ else
 		$_POST['field8'] = "";
 		$_POST['status'] = "";
 		$_POST['tags'] = "";
-		$_POST['write_api_key'] = "";
+		$_POST['write_api_key'] = Api::genererKey($bdd);
 		$_POST['last_write_at'] = "";
 	}
 
@@ -135,9 +135,9 @@ else
 
 	<?php require_once '../menu.php'; ?>
 
-	<div class="container" style="padding-top: 65px; max-width: 90%;">
+	<div class="container-fluid" style="padding-top: 65px;">
 		<div class="row">
-			<div class="col-md-6 col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 							<?php
@@ -175,7 +175,7 @@ else
 				</div>
 			</div>
 			
-			<div class="col-md-6 col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-12">
 			    <div class="popin">
 				<h3>Channel Settings</h3>
 				<ul>

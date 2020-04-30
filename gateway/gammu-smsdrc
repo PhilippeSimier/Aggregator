@@ -1,0 +1,25 @@
+# Configuration file for Gammu SMS Daemon
+# fichier créer par Philippe SIMIER le 10 sep 2019
+# Gammu library configuration, see gammurc(5)
+[gammu]
+
+port = /dev/ttyUSB0
+connection = at
+GammuLoc = fr_FR.UTF8
+gammucoding = utf8
+
+
+[smsd]
+service = sql
+driver = native_mysql
+host = localhost
+user = ruche
+password = touchard72
+database = smsd
+
+logfile = syslog
+# Increase for debugging information
+debuglevel = 0
+RunOnReceive = /opt/Ruche/etc/SMSDreceive.sh
+
+pin = 0000

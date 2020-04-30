@@ -47,8 +47,8 @@ class Form{
 		if ($label== null) $label = $name;
 		
 		$retour  = '<div class="form-group row">'.PHP_EOL;
-		$retour .= '    <label class="font-weight-bold col-sm-3 control-label text-right "  for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
-		$retour .= '    <div class="col-sm-9">'.PHP_EOL;
+		$retour .= '    <label class="font-weight-bold col-3 control-label text-right "  for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
+		$retour .= '    <div class="col-9">'.PHP_EOL;
 		$retour .= "        <select {$options}>{$list}</select>".PHP_EOL;
 		$retour .= "    </div>".PHP_EOL;
 		$retour .= "</div>".PHP_EOL;
@@ -73,8 +73,8 @@ class Form{
 		if ($value != null) $options['value'] = $value;
 		
 		$retour  = '<div class="form-group row">'.PHP_EOL;
-		$retour .= '    <label class="font-weight-bold col-sm-3 control-label text-right " for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
-		$retour .= '    <div class="col-sm-9">'.PHP_EOL;
+		$retour .= '    <label class="font-weight-bold col-3 control-label text-right " for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
+		$retour .= '    <div class="col-9">'.PHP_EOL;
 		$retour .= '        <input '. Form::attributes($options) .' />'.PHP_EOL;
 		$retour .= "    </div>".PHP_EOL;
 		$retour .= "</div>".PHP_EOL;
@@ -99,8 +99,8 @@ class Form{
 		
 		
 		$retour  = '<div class="form-group row">'.PHP_EOL;
-		$retour .= '    <label class="font-weight-bold col-sm-3 control-label text-right " for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
-		$retour .= '    <div class="col-sm-9">'.PHP_EOL;
+		$retour .= '    <label class="font-weight-bold col-3 control-label text-right " for="' . $name . '">'. ucwords($label) ."</label>".PHP_EOL;
+		$retour .= '    <div class="col-9">'.PHP_EOL;
 		$retour .= '        <textarea '. Form::attributes($options) .' />'.PHP_EOL;
 		$retour .= $value;
 		$retour .= '</textarea>';

@@ -113,9 +113,9 @@ else
 
 	<?php require_once '../menu.php'; ?>
 
-	<div class="container" style="padding-top: 65px; max-width: 90%;">
+	<div class="container-fluid" style="padding-top: 65px; ">
 		<div class="row">
-			<div class="col-md-6 col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
@@ -149,7 +149,7 @@ else
 				</div>
 			</div>
 			
-			<div class="col-md-6 col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-12">
 			    <div class="popin">
 				<h3>User Settings</h3>
 				<ul>
@@ -161,5 +161,6 @@ else
 				</div>
 			</div>
 		</div>
+		<?php require_once '../piedDePage.php'; ?>
 	</div>
 </body>	
