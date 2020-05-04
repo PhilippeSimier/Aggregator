@@ -391,21 +391,18 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 								
 								$.getJSON( '../api/createUser.php' , form_data, function( response,status, error ) {
 									console.log("status : " + status);
-									console.log("reponse : " +response);
+									console.log("response.status : " +response.status);
 									console.log("error : " +error);
-									if (response.status == "202 Accepted"){
-										console.log("message Accepted");
-										$.dialog({
-											title: "Info",
-											content: "Message Accepted"
-										});
-										window.location = 'users'
+									$.dialog({
+										title: "Info",
+										content: "Message Accepted"
+									});
+									window.location = 'users'
 										
-									}	
 								}).fail(function(response,status, error) {
 									$.dialog({
 										title: status,
-										content : error
+										content: error
 									});	
 								});	
 							}
@@ -629,17 +626,23 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 										else	
 												$sql .= " where login = '" . $_SESSION['login'] . "'";
 										$sql .= " order by `login` ";
+										try{
+											$stmt = $bdd->query($sql);
+											
+											while ($thing =  $stmt->fetchObject()){
+												echo "<tr><td><input type='checkbox' class='array_suspending' name='array_suspending[$thing->id]' value='$thing->id' ></td>";
+												echo "<td>" . $thing->login . "</td>";
+												echo "<td>" . $thing->User_API_Key . "</td>";
+												echo "<td>" . $thing->time_zone . "</td>";
+												echo "<td>" . $thing->last_sign_in_at . "</td>";
+												echo "<td>" . $thing->sign_in_count . "</td>";								
+											}
+										} 
+										catch (\PDOException $ex) 
+											{
+											   echo($ex->getMessage());       	   
+											}
 										
-										$stmt = $bdd->query($sql);
-										
-										while ($thing =  $stmt->fetchObject()){
-											echo "<tr><td><input type='checkbox' class='array_suspending' name='array_suspending[$thing->id]' value='$thing->id' ></td>";
-											echo "<td>" . $thing->login . "</td>";
-											echo "<td>" . $thing->User_API_Key . "</td>";
-											echo "<td>" . $thing->time_zone . "</td>";
-											echo "<td>" . $thing->last_sign_in_at . "</td>";
-											echo "<td>" . $thing->sign_in_count . "</td>";								
-										}
 									?>
 								</tbody>
 							</table>
