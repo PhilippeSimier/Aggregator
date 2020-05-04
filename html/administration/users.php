@@ -12,8 +12,6 @@ use Aggregator\Support\Str;
     
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
-// Lecture du paramètre facultatif allow
-
 // construction du titre de la page	
 	if ( $_SESSION['droits'] > 1) 
 		$title =  "Users"; 
@@ -22,48 +20,57 @@ use Aggregator\Support\Str;
 	
 // Si le formulaire suspending a été soumis
 if(isset($_POST['suspending'])){
-
+    try{
 	// Si un élément a été sélectionné création de la liste des id à suspendre
-	if (count($_POST['array_suspending']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
-		$Clef=$_POST['array_suspending'];
-		$selection= "(";
-		foreach($Clef as $selectValue)
-		{
-			if( $selection != "(" ){$selection .= ",";}
-			$selection .= $selectValue;
+		if (count($_POST['array_suspending']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
+			$Clef=$_POST['array_suspending'];
+			$selection= "(";
+			foreach($Clef as $selectValue)
+			{
+				if( $selection != "(" ){$selection .= ",";}
+				$selection .= $selectValue;
+			}
+			$selection .= ")";
+			
+			$sql = "UPDATE `data`.`users` SET `allow` =  0 WHERE `users`.`id` IN " . $selection;		
+			
+			$bdd->exec($sql);
 		}
-		$selection .= ")";
-		
-		$sql = "UPDATE `data`.`users` SET `allow` =  0 WHERE `users`.`id` IN " . $selection;		
-		
-		$bdd->exec($sql);
+	}	
+	catch (\PDOException $ex) 
+	{
+	   echo($ex->getMessage());       	   
 	}
 }
 
 // Si le formulaire cancel a été soumis
 if(isset($_POST['cancel'])){
 	
-
+	try{
 	// Si un élément a été sélectionné création de la liste des id à annuler
-	if (count($_POST['array_cancel']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
-		$Clef=$_POST['array_cancel'];
-		$selection= "(";
-		foreach($Clef as $selectValue)
-		{
-			if( $selection != "(" ){$selection .= ",";}
-			$selection .= $selectValue;
-		}
-		$selection .= ")";
+		if (count($_POST['array_cancel']) > 0 && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']){
+			$Clef=$_POST['array_cancel'];
+			$selection= "(";
+			foreach($Clef as $selectValue)
+			{
+				if( $selection != "(" ){$selection .= ",";}
+				$selection .= $selectValue;
+			}
+			$selection .= ")";
 
-		if ($_POST['action'] === 'cancel'){
-			$sql = "UPDATE `data`.`users` SET `allow` = 1  WHERE `users`.`id` IN " . $selection;		
+			if ($_POST['action'] === 'cancel'){
+				$sql = "UPDATE `data`.`users` SET `allow` = 1  WHERE `users`.`id` IN " . $selection;		
+			}
+			if ($_POST['action'] === 'delete'){
+				$sql = "DELETE FROM `data`.`users`   WHERE `users`.`id` IN " . $selection;
+				
+			}
+			$bdd->exec($sql);
 		}
-		if ($_POST['action'] === 'delete'){
-			$sql = "DELETE FROM `data`.`users`   WHERE `users`.`id` IN " . $selection;
-			
-		}
-		$bdd->exec($sql);
-		
+	}
+	catch (\PDOException $ex) 
+	{
+	   echo($ex->getMessage());       	   
 	}
 }
 
@@ -369,7 +376,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 					'</form>',
 					buttons: {
 						formSubmit: {
-							text: 'Appliquer',
+							text: 'Apply',
 							btnClass: 'btn-blue',
 							action: function () {
 								var login = this.$content.find('#login').val();
@@ -635,13 +642,13 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 												echo "<td>" . $thing->User_API_Key . "</td>";
 												echo "<td>" . $thing->time_zone . "</td>";
 												echo "<td>" . $thing->last_sign_in_at . "</td>";
-												echo "<td>" . $thing->sign_in_count . "</td>";								
+												echo "<td>" . $thing->sign_in_count . "</td></tr>";								
 											}
 										} 
 										catch (\PDOException $ex) 
-											{
-											   echo($ex->getMessage());       	   
-											}
+										{
+										   echo($ex->getMessage());       	   
+										}
 										
 									?>
 								</tbody>
@@ -684,6 +691,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 							<tbody>
 								
 								<?php
+								try{
 									$sql = "SELECT * FROM `users`";
 									if ($_SESSION['droits'] > 1){
 											$sql .= " where allow = 0";
@@ -702,6 +710,11 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 										echo "<td>" . $thing->last_sign_in_at . "</td>";
 										echo "<td>" . $thing->sign_in_count . "</td>";								
 									}
+								}
+								catch (\PDOException $ex) 
+								{
+								    echo($ex->getMessage());       	   
+								}
 								?>
 							</tbody>
 						</table>

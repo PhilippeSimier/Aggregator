@@ -16,7 +16,7 @@
 	unset($_SESSION['ID_user']);
 	unset($_SESSION['email']);
 	unset($_SESSION['droits']);
-	
+	unset($_SESSION['language']);
 
 	
 	$erreur = "";
@@ -34,10 +34,15 @@
 			Api::envoyerErreur(403, "Authorization Required", "Erreur interne token invalide !!" );		
 		}
 		
-		$sql = sprintf("SELECT * FROM `users` WHERE `login`=%s AND `allow` = 1; ", $bdd->quote($login));
-		$stmt = $bdd->query($sql);
-		$utilisateur =  $stmt->fetchObject();
-	
+		try{
+			$sql = sprintf("SELECT * FROM `users` WHERE `login`=%s AND `allow` = 1; ", $bdd->quote($login));
+			$stmt = $bdd->query($sql);
+			$utilisateur =  $stmt->fetchObject();
+		}
+		catch (\PDOException $ex) 
+		{
+		   Api::envoyerErreur('503','Service Unavailable',$ex->getMessage());       	   
+		}
 		// vérification des identifiants login et encrypted_password par rapport à ceux enregistrés dans la table users
 		
 		
@@ -53,19 +58,25 @@
 			$_SESSION['User_API_Key']= $utilisateur->User_API_Key;
 			$_SESSION['time_zone']   = $utilisateur->time_zone;
 			$_SESSION['droits'] 	 = $utilisateur->droits;
+			$_SESSION['language'] 	 = $utilisateur->language;
        
 			// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
-	
-			$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
-			$stmt = $bdd->query($sql);
-		
-			$sql = "UPDATE `users` SET `current_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
-			$stmt = $bdd->query($sql);
+	        try{
+				$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
+				$stmt = $bdd->query($sql);
+			
+				$sql = "UPDATE `users` SET `current_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
+				$stmt = $bdd->query($sql);
 
-			// Incrémentation du compteur de session
-			$sql = "UPDATE `users` SET `sign_in_count` = `sign_in_count`+1 WHERE `users`.`id` = $utilisateur->id LIMIT 1" ;
-			$stmt = $bdd->query($sql);
-	   
+				// Incrémentation du compteur de session
+				$sql = "UPDATE `users` SET `sign_in_count` = `sign_in_count`+1 WHERE `users`.`id` = $utilisateur->id LIMIT 1" ;
+				$stmt = $bdd->query($sql);
+			}
+			catch (\PDOException $ex) 
+			{
+				Api::envoyerErreur('503','Service Unavailable',$ex->getMessage());       	   
+			}
+			
 			// sélection de la page de retour
 			if ($retour!== ""){
 				header("Location: " . $_POST['retour'] );
@@ -76,31 +87,36 @@
 				exit;
 			}
 		}
-		else{		
-			// Erreur d'identification enregistrement des informations dans la table `failed_logins`
-			$ip_address =  $_SERVER['REMOTE_ADDR'];
-			$sql = sprintf("INSERT INTO `data`.`failed_logins` (`login`, `password`, `ip_address`, `created_at`) VALUES (%s, %s, %s, CURRENT_TIMESTAMP);"
-						,$bdd->quote($login)
-						,$bdd->quote($md5)
-						,$bdd->quote($_SERVER['REMOTE_ADDR']));
-			$stmt = $bdd->query($sql);			
-            
-			// Comptage du nombre d'erreurs lors de la dernière heure
-			$sql = sprintf("SELECT count(*) as nb FROM `failed_logins` where `login` = %s AND `created_at` > DATE_SUB(NOW(), INTERVAL 3600 SECOND)"
+		else{
+			try{
+				// Erreur d'identification enregistrement des informations dans la table `failed_logins`
+				$ip_address =  $_SERVER['REMOTE_ADDR'];
+				$sql = sprintf("INSERT INTO `data`.`failed_logins` (`login`, `password`, `ip_address`, `created_at`) VALUES (%s, %s, %s, CURRENT_TIMESTAMP);"
+							,$bdd->quote($login)
+							,$bdd->quote($md5)
+							,$bdd->quote($_SERVER['REMOTE_ADDR']));
+				$stmt = $bdd->query($sql);			
+				
+				// Comptage du nombre d'erreurs lors de la dernière heure
+				$sql = sprintf("SELECT count(*) as nb FROM `failed_logins` where `login` = %s AND `created_at` > DATE_SUB(NOW(), INTERVAL 3600 SECOND)"
+							,$bdd->quote($login));
+				$stmt = $bdd->query($sql);
+				$res =  $stmt->fetchObject();
+				
+				// Si plus de trois erreurs 
+				if ($res->nb > 3) {
+					$erreur = "Attention! plus de trois erreurs !!!";
+					$sql = sprintf("UPDATE `data`.`users` SET `allow` = 0 WHERE `users`.`login` = %s" 
 						,$bdd->quote($login));
-			$stmt = $bdd->query($sql);
-			$res =  $stmt->fetchObject();
-			
-			// Si plus de trois erreurs 
-			if ($res->nb > 3) {
-				$erreur = "Attention! plus de trois erreurs !!!";
-				$sql = sprintf("UPDATE `data`.`users` SET `allow` = 0 WHERE `users`.`login` = %s" 
-				    ,$bdd->quote($login));
-				$stmt = $bdd->query($sql);	
-			}else{	
-				$erreur = "Incorrectes! Vérifiez vos identifiant et mot de passe.";
-			}	
-
+					$stmt = $bdd->query($sql);	
+				}else{	
+					$erreur = "Incorrectes! Vérifiez vos identifiant et mot de passe.";
+				}
+			}
+			catch (\PDOException $ex) 
+			{
+				Api::envoyerErreur('503','Service Unavailable',$ex->getMessage());       	   
+			}
 		}		
 	}
 	

@@ -10,7 +10,7 @@ $bdd = Api::connexionBD(BASE);
 
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
 if( !empty($_POST['envoyer'])){
-	
+
 	
 	if(isset($_POST['action']) && ($_POST['action'] == 'update')){
 		$sql = sprintf("UPDATE `users` SET `time_zone` = %s WHERE `users`.`id` = %s;"
@@ -22,7 +22,7 @@ if( !empty($_POST['envoyer'])){
 		// Prise en compte immédiate du changement de time zone pour la session php et Bdd
 		$_SESSION['time_zone'] = $_POST['time_zone'];
 		// Prise en compte immédiate du changement de time zone pour la session bdd
-		$sql = "SET @@session.time_zone = ". $time_zone;
+		$sql = "SET @@session.time_zone = ". $bdd->quote($_POST['time_zone']) ;
 		$stmt = $bdd->exec($sql);
 		
 		header("Location: users.php");

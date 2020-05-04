@@ -35,12 +35,13 @@ class Api
 	// Retourne un objet bdd
 	// avec selection de la timeZone pour la session.
 	// Si time_zone est vide alors UTC +00:00
+	// Définition du mode d'erreur sur exception
 	public static function connexionBD($base, $time_zone = '+00:00') {
 		try 
 		{
 			$bdd = new \PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE, );
 			// définition du mode d'erreur sur exception
-			//$bdd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$bdd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			// selection de la timezone UTC pour la session
 			$sql = "SET @@session.time_zone = ". $bdd->quote($time_zone);
 			$stmt = $bdd->exec($sql);
@@ -110,47 +111,64 @@ class Api
 	// Retourne true si la clé appartient à un utilisateur présent dans la table users
 	// Sinon tue le script et envoie un message d'erreur 405
     public static function controlerkey($bdd, $key){
-		$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
-		$stmt = $bdd->query($sql);
-		$res =  $stmt->fetchObject();
-	
-		// si aucune ligne ne correspond  à la clé reçue
-		if ( $res->nb == 0) {
-			Api::envoyerErreur(405, "Authorization Required", "Please provide proper authentication details." );
+		try{
+			$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
+			$stmt = $bdd->query($sql);
+			$res =  $stmt->fetchObject();
+		
+			// si aucune ligne ne correspond  à la clé reçue
+			if ( $res->nb == 0) {
+				Api::envoyerErreur(405, "Authorization Required", "Please provide proper authentication details." );
+			}
+			return true;
 		}
-	return true;	
+		catch(\PDOException $ex)
+		{
+			Api::envoyerErreur(405, "Authorization Required", "Please provide proper write_api_key." );
+		}	
     }
 	
 	// Fonction pour obtenir un objet channel à partir de sa write_api_key
 	// Retourne l'objet channel si la write_api_key est présente dans la table channels
 	// Sinon tue le script et envoie un message d'erreur 405
     public static function obtenirChannel($bdd, $write_api_key){
-		$sql = sprintf("SELECT * FROM `channels` WHERE `write_api_key` = %s", $bdd->quote($write_api_key));
-		$stmt = $bdd->query($sql);
-		$channel =  $stmt->fetchObject();
+		try{	
+			$sql = sprintf("SELECT * FROM `channels` WHERE `write_api_key` = %s", $bdd->quote($write_api_key));
+			$stmt = $bdd->query($sql);
+			$channel =  $stmt->fetchObject();
+			
 		
-	
-		// si aucune ligne ne correspond  à la clé reçue
-		if ( $channel === false) {
+			// si aucune ligne ne correspond  à la clé reçue
+			if ( $channel === false) {
+				Api::envoyerErreur(405, "Authorization Required", "Please provide proper write_api_key." );
+			}
+			else {
+				return $channel;
+			}
+		}
+		catch(\PDOException $ex)
+		{
 			Api::envoyerErreur(405, "Authorization Required", "Please provide proper write_api_key." );
 		}
-		else {
-			return $channel;
-        }			
     }
 	
 	
 	// Fonction pour générer un clé API utilisateur
 	// La fonction vérifie que la clé générée est unique
 	public static function genererKey($bdd){
-		
-		do{
-			$key = Str::genererChaineAleatoire();
-			$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
-			$stmt = $bdd->query($sql);
-			$res =  $stmt->fetchObject();
-		}while($res->nb != 0);
-		return $key;	
+		try{	
+			do{
+				$key = Str::genererChaineAleatoire();
+				$sql = sprintf("SELECT COUNT(*) as nb FROM `users` WHERE `users`.`User_API_Key`=%s", $bdd->quote($key));
+				$stmt = $bdd->query($sql);
+				$res =  $stmt->fetchObject();
+			}while($res->nb != 0);
+			return $key;
+		}
+		catch(\PDOException $ex)
+		{
+			return "";
+		}
 	}
 
     // Fonction pour convertir un dateTime UTC en localTime
