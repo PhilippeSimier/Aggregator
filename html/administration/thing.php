@@ -18,37 +18,42 @@ use Aggregator\Support\Form;
 
 //------------si des données  sont soumises on les enregistre dans la table data.things ---------
 if( !empty($_POST['envoyer'])){
-    if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) {	
-		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-			$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-						  , $_POST['user_id']
-						  , $_POST['latitude']
-						  , $_POST['longitude']
-						  , $_POST['elevation']
-						  , $bdd->quote($_POST['name'])
-						  , $bdd->quote($_POST['tag'])
-						  , $bdd->quote($_POST['status'])
-						  , $bdd->quote($_POST['local_ip_address'])
-						  , $bdd->quote($_POST['class'])
-						  ); 
-			$bdd->exec($sql);
-		
+    if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) {
+		try{
+			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+				$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+							  , $_POST['user_id']
+							  , $_POST['latitude']
+							  , $_POST['longitude']
+							  , $_POST['elevation']
+							  , $bdd->quote($_POST['name'])
+							  , $bdd->quote($_POST['tag'])
+							  , $bdd->quote($_POST['status'])
+							  , $bdd->quote($_POST['local_ip_address'])
+							  , $bdd->quote($_POST['class'])
+							  ); 
+				$bdd->exec($sql);			
+			}
+			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+				$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s  WHERE `things`.`id` = %s;"
+							  , $_POST['latitude']
+							  , $_POST['longitude']
+							  , $_POST['elevation']
+							  , $bdd->quote($_POST['name'])
+							  , $bdd->quote($_POST['tag'])
+							  , $bdd->quote($_POST['status'])
+							  , $_POST['user_id']
+							  , $bdd->quote($_POST['local_ip_address'])
+							  , $bdd->quote($_POST['class'])
+							  , $_POST['id']
+							  ); 
+				$bdd->exec($sql);				
+			}
 		}
-		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-			$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s  WHERE `things`.`id` = %s;"
-						  , $_POST['latitude']
-						  , $_POST['longitude']
-						  , $_POST['elevation']
-						  , $bdd->quote($_POST['name'])
-						  , $bdd->quote($_POST['tag'])
-						  , $bdd->quote($_POST['status'])
-						  , $_POST['user_id']
-						  , $bdd->quote($_POST['local_ip_address'])
-						  , $bdd->quote($_POST['class'])
-						  , $_POST['id']
-						  ); 
-			$bdd->exec($sql);
-			
+		catch (\PDOException $ex) 
+		{
+		    echo($ex->getMessage());
+			return;
 		}
 	
 	// destruction du tokenCSRF
@@ -62,55 +67,57 @@ if( !empty($_POST['envoyer'])){
 // -------------- sinon lecture de la table data.things  -----------------------------
 else
 {
-   if (isset($_GET['id'])){
- 
-   $sql = sprintf("SELECT * FROM `things` WHERE `id`=%s", $bdd->quote($_GET['id']));
-   $stmt = $bdd->query($sql);
-	   if ($thing =  $stmt->fetchObject()){
-		   $_POST['action'] = "update";
-		   $_POST['id'] = $thing->id;
-		   $_POST['user_id'] = $thing->user_id;
-		   $_POST['tag'] = $thing->tag;
-		   $_POST['name'] = $thing->name;
-		   $_POST['status'] = $thing->status;
-		   $_POST['elevation']  = $thing->elevation;
-		   $_POST['latitude']  = $thing->latitude;
-		   $_POST['longitude']  = $thing->longitude;
-		   $_POST['local_ip_address']  = $thing->local_ip_address;
-		   $_POST['class'] = $thing->class;
-		   
-	   } 
-   }else {
-  	   $_POST['action'] = "insert";
-	   $_POST['id'] = 0;
-	   $_POST['user_id'] = $_SESSION['id'];
-	   $_POST['tag'] = "inconnu";
-	   $_POST['name'] = "inconnu";
-	   $_POST['status'] = "private";
-	   $_POST['elevation']  = "44";
-	   $_POST['latitude']  = "48.847849";
-	   $_POST['longitude']  = "2.335168";
-	   $_POST['local_ip_address']  = "";
-	   $_POST['class'] = "";
-	   
-   }
- 
-    // Création du selectUser 
-	$sql = "SELECT id,login FROM users ORDER BY id;";
-	$stmt = $bdd->query($sql);
-	
-	$selectUser = array();
-	while ($user = $stmt->fetchObject()){
-		$selectUser[$user->id] = $user->login;
+	if (isset($_GET['id'])){
+		try{
+		$sql = sprintf("SELECT * FROM `things` WHERE `id`=%s", $bdd->quote($_GET['id']));
+		$stmt = $bdd->query($sql);
+			if ($thing =  $stmt->fetchObject()){
+				$thing->action = 'update';			   
+			} 
+		}
+		catch (\PDOException $ex) 
+		{
+		    echo($ex->getMessage());
+			return;			
+		}
+   
+   
+	}else {
+		// Création d'un nouvel objet thing par défault
+		$thing = new stdClass();
+		$thing->action = 'insert';
+		$thing->id = 0;
+  	    $thing->user_id = $_SESSION['id'];
+	    $thing->tag = "inconnu";
+		$thing->name = "inconnu";
+		$thing->status = "private";
+	    $thing->elevation = "44";
+	    $thing->latitude = "48.847849";
+	    $thing->longitude = "2.335168";
+	    $thing->local_ip_address = "127.0.0.1 /24";
+		$thing->class = "objet";	   
 	}
-
+ 
+    // Création du selectUser
+    try{	
+		$sql = "SELECT id,login FROM users ORDER BY id;";
+		$stmt = $bdd->query($sql);
+		
+		$selectUser = array();
+		while ($user = $stmt->fetchObject()){
+			$selectUser[$user->id] = $user->login;
+		}
+	}
+	catch (\PDOException $ex) 
+	{
+	    echo($ex->getMessage());
+        return;		
+	}
+	
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
-	
-
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -170,8 +177,8 @@ else
 	
 	var	map = new GMaps({
 		div: '#map-canvas',
-		lat: <?php echo  $_POST['latitude']; ?> , 
-		lng: <?php echo  $_POST['longitude']; ?> ,
+		lat: <?php echo $thing->latitude; ?> , 
+		lng: <?php echo $thing->longitude; ?> ,
 		zoom : 13 ,
 		mapType : 'terrain',
 	});
@@ -180,13 +187,13 @@ else
 	
 	/************  placement d'une puce au milieu de la map ********/
 	map.addMarker({
-        lat: <?php echo  $_POST['latitude']; ?>, 
-        lng: <?php echo  $_POST['longitude']; ?>,
-        title: <?php echo '"Tag ' . $_POST['tag'] . '"'; ?>,
+        lat: <?php echo $thing->latitude ; ?>, 
+        lng: <?php echo $thing->longitude; ?>,
+        title: <?php echo '"Tag ' . $thing->tag . '"'; ?>,
 		draggable: true,
 		dragend : position,
         infoWindow: {
-          content: '<p> <?php echo "<b>" . $_POST['name'] . "</b><br />Coordonnées GPS : </br> Lat : " . $_POST['latitude'] . "<br /> Lng : " . $_POST['longitude']; ?></p>' 
+          content: '<p> <?php echo "<b>" . $thing->name . "</b><br />Coordonnées GPS : </br> Lat : " . $thing->latitude . "<br /> Lng : " . $thing->longitude; ?></p>' 
 		  
         }
 		
@@ -291,29 +298,31 @@ else
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
 							<?php
-								echo Form::hidden('action', $_POST['action']);
-								echo Form::hidden('id', $_POST['id']);
+								echo Form::hidden('action', $thing->action);
+								echo Form::hidden('id', $thing->id);
 								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								
 								if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
-									echo Form::select("user_id", $selectUser, "User ", $_POST["user_id"]);
+									echo Form::select("user_id", $selectUser, "User ", $thing->user_id);
 								else
-									echo Form::hidden("user_id", $_POST["user_id"]);
+									echo Form::hidden("user_id", $thing->user_id );
 								
 								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'tag', $_POST['tag'], $options , 'Tag');
-								echo Form::input( 'text', 'name', $_POST['name'], $options , 'Name');
+								echo Form::input( 'text', 'tag', $thing->tag, $options , 'Tag');
+								echo Form::input( 'text', 'name', $thing->name, $options , 'Name');
 								
 								$status = array('private' => "private", 'public' =>"public" );
-								echo Form::select("status", $status, "Status ", $_POST["status"]);
+								echo Form::select("status", $status, "Status ", $thing->status);
 								
-								echo Form::input( 'int', 'latitude',  $_POST['latitude'],  $options , 'latitude');
-								echo Form::input( 'int', 'longitude', $_POST['longitude'], $options , 'longitude');
-								echo Form::input( 'int', 'elevation', $_POST['elevation'], $options , 'elevation');
-								echo Form::input( 'text', 'local_ip_address', $_POST['local_ip_address'], $options , 'local IP');
+								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.000001");
+								echo Form::input( 'number', 'latitude',  $thing->latitude,  $optionsNumber , 'latitude');
+								echo Form::input( 'number', 'longitude', $thing->longitude, $optionsNumber , 'longitude');
+								echo Form::input( 'number', 'elevation', $thing->elevation, $optionsNumber , 'elevation');
+								
+								echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , 'local IP');
 								
 								$classes = array('ruche' => "beehive", 'objet' => 'thing', 'weather' => 'weather station');
-								echo Form::select("class", $classes, "Class ", $_POST["class"]);
+								echo Form::select("class", $classes, "Class ", $thing->class);
 							?>
 							
 							<div class="form-group">

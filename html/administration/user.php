@@ -17,75 +17,60 @@ $bdd = Api::connexionBD(BASE);
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
 if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
-		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-			$sql = sprintf("INSERT INTO `data`.`users` (`login`, `droits`, `email`, `telNumber`, `encrypted_password`, `User_API_Key`, `Created_at`, `sign_in_count`, `quotaSMS`, `delaySMS`) VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, '0', %s, %s)",
-				$bdd->quote($_POST['login']),
-				$bdd->quote($_POST['droits']),
-				$bdd->quote($_POST['email']),
-				$bdd->quote($_POST['telNumber']),
-				$bdd->quote(hash('sha256', $_POST['login'])),
-				$bdd->quote($_POST['User_API_Key']),
-				$bdd->quote($_POST['quotaSMS']),
-				$bdd->quote($_POST['delaySMS'])
-			);
-				
-			$bdd->exec($sql);
-			header("Location: users.php");
-			return;
-		}
-		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-			$sql = sprintf("UPDATE `data`.`users` SET `login` = %s, `droits` = %s, `email` = %s, `telNumber` = %s, `User_API_Key`=%s, `quotaSMS`=%s, `delaySMS`=%s WHERE `users`.`id` = %s;"
-						  , $bdd->quote($_POST['login'])
-						  , $bdd->quote($_POST['droits'])
-						  , $bdd->quote($_POST['email'])
-						  , $bdd->quote($_POST['telNumber'])
-						  , $bdd->quote($_POST['User_API_Key'])
-						  , $bdd->quote($_POST['quotaSMS'])
-						  , $bdd->quote($_POST['delaySMS'])
-						  , $_POST['id']
-						  );
+		try{
+			
+			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+				$sql = sprintf("UPDATE `data`.`users` SET `login` = %s, `droits` = %s, `email` = %s, `telNumber` = %s, `User_API_Key`=%s, `quotaSMS`=%s, `delaySMS`=%s, `language`=%s WHERE `users`.`id` = %s;"
+							  , $bdd->quote($_POST['login'])
+							  , $bdd->quote($_POST['droits'])
+							  , $bdd->quote($_POST['email'])
+							  , $bdd->quote($_POST['telNumber'])
+							  , $bdd->quote($_POST['User_API_Key'])
+							  , $bdd->quote($_POST['quotaSMS'])
+							  , $bdd->quote($_POST['delaySMS'])
+							  , $bdd->quote($_POST['language'])
+							  , $_POST['id']
+							  );
 
-			$bdd->exec($sql);
-			
-			// destruction du tokenCSRF
-			unset($_SESSION['tokenCSRF']);
-			
-			header("Location: users.php");
-			return;
+				$bdd->exec($sql);
+			}
 		}
+		catch (\PDOException $ex) 
+		{
+		    echo($ex->getMessage());       	   
+		}
+		
+		// destruction du tokenCSRF
+		unset($_SESSION['tokenCSRF']);
+		header("Location: users.php");
+		return;
+		
 	}
 }
 // -------------- sinon lecture de la table data.users  -----------------------------
 else
 {
-	if (isset($_GET['id'])){
- 
-		$sql = sprintf("SELECT * FROM `users` WHERE `id`=%s", $bdd->quote($_GET['id']));
+	// Le parametre id est obligatoire pour modifier un utilisateur
+	$id = Api::obtenir("id");
+	
+	// Création d'un objet utilisateur
+    try{
+		$sql = sprintf("SELECT * FROM `users` WHERE `id`=%s", $bdd->quote($id));
 		$stmt = $bdd->query($sql);
 		if ($user =  $stmt->fetchObject()){
-		   $_POST['action']  = "update";
-		   $_POST['id']      = $user->id;
-		   $_POST['login']   = $user->login;
-		   $_POST['droits']   = $user->droits;
-		   $_POST['email']   = $user->email;
-		   $_POST['telNumber']   = $user->telNumber;
-		   $_POST['User_API_Key'] = $user->User_API_Key;
-		   $_POST['time_zone'] = $user->time_zone;
-		   $_POST['quotaSMS'] = $user->quotaSMS;
-		   $_POST['delaySMS'] = $user->delaySMS;
-		} 
-	}else {
-		$_POST['action'] = "insert";
-		$_POST['id'] = 0;
-		$_POST['login']   = "";
-		$_POST['droits']   = 1;
-		$_POST['email']   = "";
-		$_POST['telNumber']   = "";
-		$_POST['User_API_Key'] = Str::genererChaineAleatoire();
-		$_POST['time_zone'] = "";
-		$_POST['quotaSMS'] = "140";
-		$_POST['delaySMS'] = "30";	
+			$user->action = 'update';			
+		}
+		else{
+			echo "Erreur users.id inconnu ";
+			return;
+		}	
 	}
+	catch (\PDOException $ex) 
+	{
+	    echo($ex->getMessage()); 
+		return;
+	}
+	
 	
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
@@ -120,30 +105,33 @@ else
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
 							<?php 	
-							    echo Form::hidden("action",    $_POST["action"] );
+							    echo Form::hidden("action",    $user->action );
 								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								
 								$options = array( 'class' => 'form-control', 'readonly' => null);
-								echo Form::input( 'int', 'id', $_POST['id'], $options, 'Id ' ); 
-								echo Form::input( 'text', 'User_API_Key', $_POST['User_API_Key'], $options , 'Api key ');
-								echo Form::input( 'text', 'time_zone', $_POST['time_zone'], $options , 'Time zone ');
+								echo Form::input( 'number', 'id', $user->id, $options, 'Id ' ); 
+								echo Form::input( 'text', 'User_API_Key', $user->User_API_Key, $options , 'Api key ');
+								echo Form::input( 'text', 'time_zone', $user->time_zone, $options , 'Time zone ');
 								
 								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'login', $_POST['login'], $options , 'Login ');
+								echo Form::input( 'text', 'login', $user->login, $options , 'Login ');
 								
 								$droits = array(1 => "Utilisateur", 2 =>"Administrateur" );
-								echo Form::select("droits", $droits,     "Droits  ", $_POST['droits']);
+								echo Form::select("droits", $droits,     "Droits  ", $user->droits);
 								
-								echo Form::input( 'email' , 'email',     $_POST['email'],     $options , 'E mail ');
-								echo Form::input( 'text'  , 'telNumber', $_POST['telNumber'], $options , 'Tel number ');
-								echo Form::input( 'int'   , 'quotaSMS',  $_POST['quotaSMS'],  $options , 'Quota SMS ');
-								echo Form::input( 'int'   , 'delaySMS',  $_POST['delaySMS'],  $options , 'Delay SMS ');
+								echo Form::input( 'email' , 'email',     $user->email,     $options , 'E mail ');
+								echo Form::input( 'text'  , 'telNumber', $user->telNumber, $options , 'Tel number ');
+								echo Form::input( 'number'   , 'quotaSMS',  $user->quotaSMS,  $options , 'Quota SMS ');
+								echo Form::input( 'number'   , 'delaySMS',  $user->delaySMS,  $options , 'Delay SMS ');
+								
+								$language = array('FR' => "French", 'EN' => "English" );
+								echo Form::select("language", $language,     "language  ", $user->language);
 							?>
 																		
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Appliquer</button>
-								<a  class="btn btn-info" role="button" href="users">Annuler</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
+								<a  class="btn btn-info" role="button" href="users">Cancel</a>
 							</div>	
 					</form>
 				</div>

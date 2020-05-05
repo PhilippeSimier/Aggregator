@@ -11,7 +11,7 @@ use Aggregator\Support\Str;
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
-$title = "Channels";
+$title = "Reacts";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -25,12 +25,11 @@ if(isset($_POST['btn_supprimer'])){
 			$supp.=$selectValue;
 		}
 		$supp .= ")";
-		
-		
-		$sql = "DELETE FROM `feeds` WHERE `id_channel` IN " . $supp;
+
+
+		$sql = "DELETE FROM `reacts` WHERE `id` IN " . $supp;
 		$bdd->exec($sql);
-		$sql = "DELETE FROM `channels` WHERE `id` IN " . $supp;
-		$bdd->exec($sql);
+
 	}
 }
 
@@ -39,37 +38,38 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Channels - Aggregator</title>
+    <title>Reacts - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    
+
     <!-- Bootstrap CSS version 4.1.1 -->
     <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
 	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
 	<link rel="stylesheet" href="/Ruche/css/datatables.min.css"/>
-	<link rel="stylesheet" href="../css/dataTables.css" />	
-	
+	<link rel="stylesheet" href="../css/dataTables.css" />
+
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
+	<script src="/Ruche/scripts/bootstrap.min.js"></script>
 	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
 	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
-	
+
 	<script >
 		$(document).ready(function(){
-			
+
 			let options = {
-                dom: 'ptlf',
-                pagingType: "simple_numbers",
+
+				dom: 'ptlf',
+				pagingType: "simple_numbers",
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}]
-                
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"},{type:"text"}]
+
             };
-			$('#tableau').DataTable(options);		
-			
+			$('#tableau').DataTable(options);
+
 			function cocherTout(etat)
 			{
 			  var cases = document.getElementsByTagName('input');   // on recupere tous les INPUT
@@ -77,24 +77,24 @@ if(isset($_POST['btn_supprimer'])){
 				 if(cases[i].type == 'checkbox')     // si on a une checkbox...
 					 {cases[i].checked = etat;}
 			}
-			
-			
-			$("#all").click(function(){	
+
+
+			$("#all").click(function(){
 				cocherTout(this.checked);
 			});
-			
-			
+
+
 			$( "#btn_supp" ).click(function() {
 				console.log("Bouton Supprimer cliqué");
-				
+
 				nbCaseCochees = $('input:checked').length - $('#all:checked').length;
 				console.log(nbCaseCochees);
 				if (nbCaseCochees > 0){
-					
+
 					$.confirm({
 						theme: 'bootstrap',
 						title: 'Confirm!',
-						content: 'Confirmez-vous la suppression de ' + nbCaseCochees + ' objet(s) ?',
+						content: 'Confirmez-vous la suppression de ' + nbCaseCochees + ' reac(s) ?',
 						buttons: {
 							confirm: {
 								text: 'Confirmation', // text for button
@@ -109,21 +109,21 @@ if(isset($_POST['btn_supprimer'])){
 							}
 						}
 					});
-				
+
 				}
 				else{
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "Vous n'avez sélectionné aucun reac !"
 					});
-			
+
 				}
 			});
-			
+
 			$( "#btn_mod" ).click(function() {
 				console.log("Bouton modifier cliqué");
-				
+
 			    // Ce tableau va stocker les valeurs des checkbox cochées
 				var checkbox_val = [];
 
@@ -135,135 +135,36 @@ if(isset($_POST['btn_supprimer'])){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
+					content: "Vous n'avez sélectionné aucun reac !"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
 					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
+					content: "Vous avez sélectionné plusieurs reacs !"
 					});
 				}
 				if(checkbox_val.length == 1){
-					console.log("channel.php?id" + checkbox_val[0]);
-					window.location = 'channel?id='+checkbox_val[0];
+					console.log("reac.php?id" + checkbox_val[0]);
+					window.location = 'reac?id='+checkbox_val[0];
 				}
 			});
-			
-			$( "#btn_csv" ).click(function() {
-				console.log("Bouton download CSV cliqué");
-				
-			    // Ce tableau va stocker les valeurs des checkbox cochées
-				var checkbox_val = [];
 
-				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
-					checkbox_val.push($(this).val());
-				});
-				if(checkbox_val.length == 0){
-					$.alert({
-					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
-					});
-				}
-				if(checkbox_val.length > 1){
-					$.alert({
-					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
-					});
-				}
-				if(checkbox_val.length == 1){
-					console.log("../api/feeds.php?channelId="+ checkbox_val[0] + "&type=csv");
-					window.location = "../api/feeds.php?channelId="+ checkbox_val[0] + "&type=csv";
-				}
-			});
 			
-			$( "#btn_clear" ).click(function() {
-				console.log("Bouton download Clear cliqué");
-				
-			    // Ce tableau va stocker les valeurs des checkbox cochées
-				var checkbox_val = [];
 
-				// Parcours de toutes les checkbox checkées"
-				$('.selection:checked').each(function(){
-					checkbox_val.push($(this).val());
-				});
-				if(checkbox_val.length == 0){
-					$.alert({
-					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "Vous n'avez sélectionné aucun objet !"
-					});
-				}
-				if(checkbox_val.length > 1){
-					$.alert({
-					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "Vous avez sélectionné plusieurs objets !"
-					});
-				}
-				if(checkbox_val.length == 1){
-					console.log("../api/clearChannel.php?channelId" + checkbox_val[0]);
-					$.confirm({
-						theme: 'bootstrap',
-						title: 'Confirm!',
-						content: 'Are you sure you want to clear the channel id <b>' + checkbox_val[0] + '</b> ?',
-						buttons: {
-							confirm: {
-								text: 'Confirmation', // text for button
-								btnClass: 'btn-blue', // class for the button
-								action: function () {
-									console.log("Action clear confirmée");
-									
-									$.getJSON( '../api/clearChannel.php' , 'channelId='+checkbox_val[0], function( response,status, error ) {
-										console.log("status : " + status);
-										console.log("reponse : " +response);
-										console.log("error : " +error);
-										if (response.status == "202 Accepted"){
-											console.log("message Accepted");
-											$.dialog({
-												title: "Info",
-												content: "Clear Accepted"
-											});	
-											window.location = 'channels'
-										}	
-										else{
-											$.dialog({
-												title: "Erreur",
-												content: response.message + " <em>" + response.detail + "</em>"
-											});
-										}
-									});	
-									
-									
-									
-									
-								}	
-							},
-					 		cancel: {
-								text: 'Annuler', // text for button
-								action: function () {}
-							}
-						}
-					});
-				}
-			});
-			
 			$( "#btn_add" ).click(function() {
 				console.log("Bouton Ajouter cliqué");
-				window.location = 'channel'
-			
-			
+				window.location = 'react'
+
+
 			});
-			
-			
-	
+
+
+
 			$( "#btn_key" ).click(function() {
 				console.log("Generate New API Key clicked");
-				
+
 				// Ce tableau va stocker les valeurs des checkbox cochées
 				var checkbox_val = [];
 
@@ -289,15 +190,15 @@ if(isset($_POST['btn_supprimer'])){
 					console.log("id = " + checkbox_val[0]);
 					$.confirm({
 						theme: 'bootstrap',
-						closeIcon: true, 
+						closeIcon: true,
 						columnClass: 'col-md-6 col-md-offset-3',
 						title: 'Generate New API Key',
 						content: '' +
 						'<form action="" class="channel form-horizontal">' +
-						
+
 						'<div class="form-group">' +
 						'<label class="col-sm-4 control-label">API Key : </label>' +
-						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = Str::genererChaineAleatoire(). "'"; ?> +'"  /><br />' +				
+						'<input type="text" id="key" name="key" size="30" value="' + <?php echo "'".$key = Str::genererChaineAleatoire(). "'"; ?> +'"  /><br />' +
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
 						'<input type="hidden" id="User_API_Key" name="User_API_Key"  value="' + <?php echo "'".$_SESSION['User_API_Key']. "'"; ?> + '"/>' +
@@ -307,17 +208,17 @@ if(isset($_POST['btn_supprimer'])){
 								text: 'Appliquer',
 								btnClass: 'btn-blue',
 								action: function () {
-									
+
 									var User_API_Key = this.$content.find('#User_API_Key').val();
 									var form_data = this.$content.find('.channel').serialize();
-									
+
 									if(!key){
 										$.alert('provide a valid Write API Key');
 										return false;
 									}
-									
+
 									console.log(' form_data : ' + form_data);
-									
+
 									$.getJSON( '../api/changeWriteAPIKey.php' , form_data, function( response,status, error ) {
 										console.log("status : " + status);
 										console.log("reponse : " +response);
@@ -328,15 +229,15 @@ if(isset($_POST['btn_supprimer'])){
 												title: "Info",
 												content: "message Accepted"
 											});
-											setTimeout( function(){window.location = 'channels'}, 5000); 								
-										}	
+											setTimeout( function(){window.location = 'reacts'}, 5000);
+										}
 										else{
 											$.dialog({
 												title: "Erreur",
 												content: response.message + " <em>" + response.detail + "</em>"
 											});
 										}
-									});	
+									});
 								}
 							},
 							cancel: function () {
@@ -353,20 +254,20 @@ if(isset($_POST['btn_supprimer'])){
 							});
 						}
 					});
-				}	
-			
-			
+				}
+
+
 			});
-			
+
 		});
-		
+
 	</script>
-    
+
  </head>
 
  <body>
 	<?php require_once '../menu.php'; 	?>
-	<div class="container" style="padding-top: 65px;">
+	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row popin card">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
@@ -378,56 +279,55 @@ if(isset($_POST['btn_supprimer'])){
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
 							<th>id</th>
 							<th>Name</th>
-							<th>tags</th>
-							<th>Write API Key</th>
-							<th>Last entry id</th>
-							<th>Last write entry</th>
+							<th>Channel To Check</th>
+							<th>Field to Check</th>
+							<th>Condition</th>
+							<th>Condition Value</th>
+							<th>Actionable Type</th>
 						  </tr>
 						</thead>
 						<tbody>
-							<?php					
-								try{
-									$sql = "SELECT * FROM `users_channels`";
-									if ($_SESSION['droits'] > 1)
-											$sql .= " where 1";	
-									else	
-											$sql .= " where user_id = '" . $_SESSION['id'] . "'";
-									$sql .= " order by `tags` ";
-									
-									$stmt = $bdd->query($sql);
-									
-									while ($channel =  $stmt->fetchObject()){
-										echo "<tr><td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>";
-										echo "<td>" . $channel->id . "</td>";
-										echo "<td>" . $channel->name . "</td>";  
-										echo "<td>" . $channel->tags . "</td>";
-										echo "<td>" . $channel->write_api_key . "</td>";
-										echo "<td>" . $channel->last_entry_id . "</td>";
-										echo "<td>" . $channel->last_write_at . "</td>";
-										echo "</tr>";								
-									}
-								}
-								catch (\PDOException $ex) 
-								{
-									echo($ex->getMessage());
-									return;
+							<?php
+
+							
+
+
+
+								$sql = "SELECT * FROM `reacts`";
+                                if ($_SESSION['droits'] > 1)
+										$sql .= " where 1";
+								else
+								        $sql .= " where user_id = '" . $_SESSION['id'] . "'";
+								$sql .= " order by `id` ";
+
+
+								$stmt = $bdd->query($sql);
+
+								while ($react =  $stmt->fetchObject()){
+									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$react->id]' value='$react->id' ></td>";
+									echo "<td>" . $react->id . "</td>";
+									echo "<td>" . $react->name . "</td>";
+									echo "<td>" . $react->channel_id . "</td>";
+									echo "<td>" . $react->field_number . "</td>";
+									echo "<td>" . $react->condition . "</td>";
+									echo "<td>" . $react->condition_value . "</td>";
+									echo "<td>" . $react->actionable_type . "</td>";
+									echo "</tr>";
 								}
 							?>
 						</tbody>
 					</table>
-					
-					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
+
 					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
+					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
+
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
-					<button id="btn_csv" type="button" class="btn btn-secondary">Download CSV</button>
-					<button id="btn_clear" type="button" class="btn btn-danger">Clear all feed</button>
 					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
-					</form>	
+					</form>
 				</div>
 			</div>
 		</div>
 		<?php require_once '../piedDePage.php'; ?>
-	</div>	
+	</div>
 </body>
 </html>
-	

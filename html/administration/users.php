@@ -697,7 +697,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 											$sql .= " where allow = 0";
 									}		
 									else	
-											$sql .= " where login = '" . $_SESSION['login'] . "'";
+											$sql .= " where login = '" . $_SESSION['login'] . "' and allow = 0";
 									$sql .= " order by `login` ";
 									
 									$stmt = $bdd->query($sql);

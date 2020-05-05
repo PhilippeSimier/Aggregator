@@ -39,7 +39,7 @@ class Api
 	public static function connexionBD($base, $time_zone = '+00:00') {
 		try 
 		{
-			$bdd = new \PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE, );
+			$bdd = new \PDO('mysql:host=' . SERVEUR . ';dbname=' . $base, UTILISATEUR,PASSE );
 			// définition du mode d'erreur sur exception
 			$bdd->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			// selection de la timezone UTC pour la session

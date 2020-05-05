@@ -15,42 +15,49 @@ $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 //------------si des données  sont soumises on les enregistre dans la table data.channels ---------
 if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
-		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-			$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `tags`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-						  , $bdd->quote($_POST['name'])   // utf8_decode()
-						  , $bdd->quote($_POST['field1'])
-						  , $bdd->quote($_POST['field2'])
-						  , $bdd->quote($_POST['field3'])
-						  , $bdd->quote($_POST['field4'])
-						  , $bdd->quote($_POST['field5'])
-						  , $bdd->quote($_POST['field6'])
-						  , $bdd->quote($_POST['field7'])
-						  , $bdd->quote($_POST['field8'])
-						  , $bdd->quote($_POST['status'])
-						  , $bdd->quote($_POST['tags'])
-						  , $bdd->quote($_POST['write_api_key'])
-						  ); 	
-			$bdd->exec($sql);
+		try{
+			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+				$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `tags`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+							  , $bdd->quote($_POST['name'])   // utf8_decode()
+							  , $bdd->quote($_POST['field1'])
+							  , $bdd->quote($_POST['field2'])
+							  , $bdd->quote($_POST['field3'])
+							  , $bdd->quote($_POST['field4'])
+							  , $bdd->quote($_POST['field5'])
+							  , $bdd->quote($_POST['field6'])
+							  , $bdd->quote($_POST['field7'])
+							  , $bdd->quote($_POST['field8'])
+							  , $bdd->quote($_POST['status'])
+							  , $bdd->quote($_POST['tags'])
+							  , $bdd->quote($_POST['write_api_key'])
+							  ); 	
+				$bdd->exec($sql);
 
-		}
-		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-			$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `tags`=%s WHERE `channels`.`id` = %s;"
-						  , $bdd->quote($_POST['name'])
-						  , $bdd->quote($_POST['field1'])
-						  , $bdd->quote($_POST['field2'])
-						  , $bdd->quote($_POST['field3'])
-						  , $bdd->quote($_POST['field4'])
-						  , $bdd->quote($_POST['field5'])
-						  , $bdd->quote($_POST['field6'])
-						  , $bdd->quote($_POST['field7'])
-						  , $bdd->quote($_POST['field8'])
-						  , $bdd->quote($_POST['status'])
-						  , $bdd->quote($_POST['tags'])
-						  , $_POST['id']
-						  );
+			}
+			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+				$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `tags`=%s WHERE `channels`.`id` = %s;"
+							  , $bdd->quote($_POST['name'])
+							  , $bdd->quote($_POST['field1'])
+							  , $bdd->quote($_POST['field2'])
+							  , $bdd->quote($_POST['field3'])
+							  , $bdd->quote($_POST['field4'])
+							  , $bdd->quote($_POST['field5'])
+							  , $bdd->quote($_POST['field6'])
+							  , $bdd->quote($_POST['field7'])
+							  , $bdd->quote($_POST['field8'])
+							  , $bdd->quote($_POST['status'])
+							  , $bdd->quote($_POST['tags'])
+							  , $_POST['id']
+							  );
 
-			$bdd->exec($sql);
+				$bdd->exec($sql);
+			}
 		}
+		catch (\PDOException $ex) 
+		{
+		    echo($ex->getMessage());
+			return;
+		}		
 		
 		// destruction du tokenCSRF
 		unset($_SESSION['tokenCSRF']);
@@ -62,54 +69,48 @@ if( !empty($_POST['envoyer'])){
 // -------------- sinon lecture de la table data.channels  -----------------------------
 else
 {
-	if (isset($_GET['id'])){
- 
-		$sql = sprintf("SELECT * FROM `channels` WHERE `id`=%s", $bdd->quote($_GET['id']));
+	try{
+		if (isset($_GET['id'])){
+	 
+			$sql = sprintf("SELECT * FROM `channels` WHERE `id`=%s", $bdd->quote($_GET['id']));
+			$stmt = $bdd->query($sql);
+			if ($channel =  $stmt->fetchObject()){
+			   $channel->action = "update";
+			   
+		   } 
+		}else {
+			$channel->action = "insert";
+			$channel->id = 0;
+			$channel->name = "";
+			$channel->field1 = "";
+			$channel->field2 = "";
+			$channel->field3 = "";
+			$channel->field4 = "";
+			$channel->field5 = "";
+			$channel->field6 = "";
+			$channel->field7 = "";
+			$channel->field8 = "";
+			$channel->status = "";
+			$channel->tags = "";
+			$channel->write_api_key = Api::genererKey($bdd);
+			$channel->last_write_at = "";
+		}
+
+		// Création du selectTag
+		$sql = "SELECT tag FROM `things`";
 		$stmt = $bdd->query($sql);
-		if ($channel =  $stmt->fetchObject()){
-		   $_POST['action'] = "update";
-		   $_POST['id']     = $channel->id;
-		   $_POST['name']   = $channel->name;
-		   $_POST['field1'] = $channel->field1;
-		   $_POST['field2'] = $channel->field2;
-		   $_POST['field3'] = $channel->field3;
-		   $_POST['field4'] = $channel->field4;
-		   $_POST['field5'] = $channel->field5;
-		   $_POST['field6'] = $channel->field6;
-		   $_POST['field7'] = $channel->field7;
-		   $_POST['field8'] = $channel->field8;
-		   $_POST['status'] = $channel->status;
-		   $_POST['tags']   = $channel->tags;
-		   $_POST['write_api_key']   = $channel->write_api_key;
-		   $_POST['last_write_at']   = $channel->last_write_at;
-	   } 
-	}else {
-		$_POST['action'] = "insert";
-		$_POST['id'] = 0;
-		$_POST['name'] = "";
-		$_POST['field1'] = "";
-		$_POST['field2'] = "";
-		$_POST['field3'] = "";
-		$_POST['field4'] = "";
-		$_POST['field5'] = "";
-		$_POST['field6'] = "";
-		$_POST['field7'] = "";
-		$_POST['field8'] = "";
-		$_POST['status'] = "";
-		$_POST['tags'] = "";
-		$_POST['write_api_key'] = Api::genererKey($bdd);
-		$_POST['last_write_at'] = "";
+		
+		$selectTag = array();
+		while ($thing = $stmt->fetchObject()){
+			$selectTag[$thing->tag] = $thing->tag;
+		}
 	}
-
-	// Création du selectTag
-	$sql = "SELECT tag FROM `things`";
-	$stmt = $bdd->query($sql);
+	catch (\PDOException $ex) 
+	{
+	    echo($ex->getMessage());
+		return;
+	}
 	
-	$selectTag = array();
-	while ($thing = $stmt->fetchObject()){
-		$selectTag[$thing->tag] = $thing->tag;
-	}
-
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
@@ -141,28 +142,27 @@ else
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 							<?php
-								echo Form::hidden('action', $_POST['action']);
+								echo Form::hidden('action', $channel->action);
 								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								
 								$options = array( 'class' => 'form-control', 'readonly' => null);
-								echo Form::input( 'int', 'id', $_POST['id'], $options, 'Id' );
-								echo Form::input( 'text', 'write_api_key', $_POST['write_api_key'], $options, 'write api key' );
-								echo Form::input( 'text', 'last_write_at', $_POST['last_write_at'], $options, 'last write at' );
+								echo Form::input( 'int', 'id', $channel->id, $options, 'Id' );
+								echo Form::input( 'text', 'write_api_key', $channel->write_api_key, $options, 'write api key' );
+								echo Form::input( 'text', 'last_write_at', $channel->last_write_at, $options, 'last write at' );
 								
 								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'name', $_POST['name'], $options);
+								echo Form::input( 'text', 'name', $channel->name, $options);
 								
-								echo Form::select("tags", $selectTag , "Tag", $_POST['tags']);
-								echo Form::input( 'field1', 'field1', $_POST['field1'], $options);
-								echo Form::input( 'field2', 'field2', $_POST['field2'], $options);
-								echo Form::input( 'field3', 'field3', $_POST['field3'], $options);
-								echo Form::input( 'field4', 'field4', $_POST['field4'], $options);
-								echo Form::input( 'field5', 'field5', $_POST['field5'], $options);
-								echo Form::input( 'field6', 'field6', $_POST['field6'], $options);
-								echo Form::input( 'field7', 'field7', $_POST['field7'], $options);
-								echo Form::input( 'field8', 'field8', $_POST['field8'], $options);
-								echo Form::input( 'status', 'status', $_POST['status'], $options);
-								
+								echo Form::select("tags", $selectTag , "Tag", $channel->tags);
+								echo Form::input( 'field1', 'field1', $channel->field1, $options);
+								echo Form::input( 'field2', 'field2', $channel->field2, $options);
+								echo Form::input( 'field3', 'field3', $channel->field3, $options);
+								echo Form::input( 'field4', 'field4', $channel->field4, $options);
+								echo Form::input( 'field5', 'field5', $channel->field5, $options);
+								echo Form::input( 'field6', 'field6', $channel->field6, $options);
+								echo Form::input( 'field7', 'field7', $channel->field7, $options);
+								echo Form::input( 'field8', 'field8', $channel->field8, $options);
+								echo Form::input( 'status', 'status', $channel->status, $options);
 							
 							?>
 

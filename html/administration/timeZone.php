@@ -6,6 +6,8 @@ require_once('../api/Api.php');
 
 use Aggregator\Support\Api;
 
+
+
 $bdd = Api::connexionBD(BASE);
 
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
