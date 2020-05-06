@@ -17,33 +17,32 @@ if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
 		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
 			$sql = sprintf("INSERT INTO `data`.`reacts` (`name`, `testFrequency`, `conditionChannel`, `conditionField`, `condition`, `conditionValue`, `actionType`, `actionName`, `react_type` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-						, $bdd->quote($_POST['name'])   // utf8_decode()
-						, $bdd->quote($_POST['testFrequency'])
-						, $bdd->quote($_POST['conditionChannel'])
-						  , $bdd->quote($_POST['conditionField'])
-						  , $bdd->quote($_POST['condition'])
-						  , $bdd->quote($_POST['conditionValue'])
-						  , $bdd->quote($_POST['actionType'])
-						  , $bdd->quote($_POST['actionName'])
-						  , $bdd->quote($_POST['option'])
-						  );
+					, $bdd->quote($_POST['name'])   
+					, $bdd->quote($_POST['testFrequency'])
+					, $bdd->quote($_POST['conditionChannel'])
+					, $bdd->quote($_POST['conditionField'])
+					, $bdd->quote($_POST['condition'])
+					, $bdd->quote($_POST['conditionValue'])
+					, $bdd->quote($_POST['actionType'])
+					, $bdd->quote($_POST['actionName'])
+					, $bdd->quote($_POST['option'])
+					);
 			$bdd->exec($sql);
 		}
 		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
 			$sql = sprintf("UPDATE `` SET `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `react_type`=%s WHERE `reacts`.`id` = %s;"
-						  , $bdd->quote($_POST['name'])
-						  , $bdd->quote($_POST['run_interval'])
-						  , $bdd->quote($_POST['run_on_insertion'])
-						  , $bdd->quote($_POST['channel_id'])
-						  , $bdd->quote($_POST['field_number'])
-						  , $bdd->quote($_POST['condition'])
-						  , $bdd->quote($_POST['condition_value'])
-						  , $bdd->quote($_POST['actionable_type'])
-						  , $bdd->quote($_POST['actionable_id'])
-						  , $bdd->quote($_POST['react_type'])
-						  , $_POST['id']
-						  );
-
+					, $bdd->quote($_POST['name'])
+					, $bdd->quote($_POST['run_interval'])
+					, $bdd->quote($_POST['run_on_insertion'])
+					, $bdd->quote($_POST['channel_id'])
+					, $bdd->quote($_POST['field_number'])
+					, $bdd->quote($_POST['condition'])
+					, $bdd->quote($_POST['condition_value'])
+					, $bdd->quote($_POST['actionable_type'])
+					, $bdd->quote($_POST['actionable_id'])
+					, $bdd->quote($_POST['react_type'])
+					, $_POST['id']
+					);
 			$bdd->exec($sql);
 		}
 
@@ -83,7 +82,7 @@ else
 	}
 
 
-// -------------- Création des différents Select  -----------------------------
+// -------------- Création des options des différents Selecteurs  ----------------------
 
     
     try{	
@@ -101,6 +100,7 @@ else
 		$stmt = $bdd->query($sql);
 
 		$select_channel_id = array();
+		$select_channel_id[''] = "Choose your channel";
 		while ($channel = $stmt->fetchObject()){
 			$select_channel_id[$channel->id] = $channel->name;
 		}
@@ -119,17 +119,6 @@ else
 	    echo($ex->getMessage());
         return;		
 	}
-
-	//Création du select_react_type
-	if($_SESSION['language'] == "EN")
-		$select_react_type = array('Run action only the first time the condition is met','Run action each time condition is met');
-	else
-		$select_react_type = array("Exécuter l'action uniquement la première fois que la condition est remplie","Exécuter l'action chaque fois que la condition est remplie");
-
-
-
-
-
 
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
@@ -150,6 +139,26 @@ else
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="/Ruche/scripts/bootstrap.min.js"></script>
+		
+		<script>
+		    
+		$(document).ready(function(){	
+			
+			// when a channel is changed
+			$('#channel_id').change(function(){  
+				// $("#loader").show();    
+				$.post("../api/fields_html.php", { channelId: this.value },
+					function(code_html){
+						// $("#loader").hide();   
+						$("#field_number").html(code_html);  // ajoute dans l'élément id épreuve le contenu html reçu
+					}
+				);
+			});
+    
+			
+		});
+		
+		</script>
 
 	</head>
 <body>
@@ -199,7 +208,7 @@ else
 								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
 								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
 
-								$select_actionable_type = array('thingHTTP' => "ThingHTTP", 'sms' => "SMS", 'email' => "Email" );
+								$select_actionable_type = array('' => 'Choose your action', 'thingHTTP' => "ThingHTTP", 'sms' => "Send a SMS", 'email' => "Send a email" );
 								echo Form::select("actionable_type", $select_actionable_type , "action", $react->actionable_type );
 								
 								echo Form::select("actionable_id", $select_actionable_id , "perform ThingHTTP", $react->actionable_id );
@@ -223,7 +232,7 @@ else
 			    <div class="popin">
 				<h3>Reacts Settings</h3>
 				<ul>
-					<li>Channel Name: Enter a unique name for the reac.</li>
+					<li>Channel Name: Enter a unique name for the react.</li>
 
 					<li>Description: Enter a description of the channel.</li>
 
