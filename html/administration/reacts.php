@@ -65,7 +65,7 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"},{type:"text"}]
+				columns: [{orderable:false},  {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"},{type:"text"}]
 
             };
 			$('#tableau').DataTable(options);
@@ -173,7 +173,6 @@ if(isset($_POST['btn_supprimer'])){
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>id</th>
 							<th>Name</th>
 							<th>Channel To Check</th>
 							<th>Field to Check</th>
@@ -201,7 +200,6 @@ if(isset($_POST['btn_supprimer'])){
 
 								while ($react =  $stmt->fetchObject()){
 									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$react->id]' value='$react->id' ></td>";
-									echo "<td>" . $react->id . "</td>";
 									echo "<td>" . $react->name . "</td>";
 									echo "<td>" . $react->channel_id . "</td>";
 									echo "<td>" . $react->field_number . "</td>";

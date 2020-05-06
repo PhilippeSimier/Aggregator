@@ -16,33 +16,55 @@ $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
 		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-			$sql = sprintf("INSERT INTO `data`.`reacts` (`name`, `testFrequency`, `conditionChannel`, `conditionField`, `condition`, `conditionValue`, `actionType`, `actionName`, `react_type` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+			
+			if($_POST['shedule'] == 'on_insertion'){ 
+				$run_interval = 0; 
+				$run_on_insertion = 1;
+			}else{
+				$run_interval = $_POST['shedule']; 
+				$run_on_insertion = 0;
+			}	
+			$sql = sprintf("INSERT INTO `data`.`reacts` (`user_id`, `name`, `run_interval`, `run_on_insertion`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_type`, `actionable_id`, `run_action_every_time` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+					, $bdd->quote($_POST['user_id'])
 					, $bdd->quote($_POST['name'])   
-					, $bdd->quote($_POST['testFrequency'])
-					, $bdd->quote($_POST['conditionChannel'])
-					, $bdd->quote($_POST['conditionField'])
-					, $bdd->quote($_POST['condition'])
-					, $bdd->quote($_POST['conditionValue'])
-					, $bdd->quote($_POST['actionType'])
-					, $bdd->quote($_POST['actionName'])
-					, $bdd->quote($_POST['option'])
-					);
-			$bdd->exec($sql);
-		}
-		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-			$sql = sprintf("UPDATE `` SET `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `react_type`=%s WHERE `reacts`.`id` = %s;"
-					, $bdd->quote($_POST['name'])
-					, $bdd->quote($_POST['run_interval'])
-					, $bdd->quote($_POST['run_on_insertion'])
+					, $bdd->quote($run_interval)
+					, $bdd->quote($run_on_insertion)
 					, $bdd->quote($_POST['channel_id'])
 					, $bdd->quote($_POST['field_number'])
 					, $bdd->quote($_POST['condition'])
 					, $bdd->quote($_POST['condition_value'])
 					, $bdd->quote($_POST['actionable_type'])
 					, $bdd->quote($_POST['actionable_id'])
-					, $bdd->quote($_POST['react_type'])
+					, $bdd->quote($_POST['run_action_every_time'])
+					);
+			
+			$bdd->exec($sql);
+		}
+		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+			
+			if($_POST['shedule'] == 'on_insertion'){ 
+				$run_interval = 0; 
+				$run_on_insertion = 1;
+			}else{
+				$run_interval = $_POST['shedule']; 
+				$run_on_insertion = 0;
+			}
+			
+			$sql = sprintf("UPDATE `reacts` SET `user_id`= %s, `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `run_action_every_time`=%s WHERE `reacts`.`id` = %s;"
+					, $bdd->quote($_POST['user_id'])
+					, $bdd->quote($_POST['name'])
+					, $bdd->quote($run_interval)
+					, $bdd->quote($run_on_insertion)
+					, $bdd->quote($_POST['channel_id'])
+					, $bdd->quote($_POST['field_number'])
+					, $bdd->quote($_POST['condition'])
+					, $bdd->quote($_POST['condition_value'])
+					, $bdd->quote($_POST['actionable_type'])
+					, $bdd->quote($_POST['actionable_id'])
+					, $bdd->quote($_POST['run_action_every_time'])
 					, $_POST['id']
 					);
+			
 			$bdd->exec($sql);
 		}
 
@@ -63,6 +85,19 @@ else
 		if ($react =  $stmt->fetchObject()){
 		   $react->action = "update";
 		}
+	// Création des options pour $select_field_number
+        $sql = "SELECT * FROM `channels` where `id` = ". $react->channel_id;
+		$stmt = $bdd->query($sql); 
+		$channel = $stmt->fetchObject();
+		$select_field_number['1'] = $channel->field1;
+		$select_field_number['2'] = $channel->field2;	
+		$select_field_number['3'] = $channel->field3;
+		$select_field_number['4'] = $channel->field4;
+		$select_field_number['5'] = $channel->field5;
+		$select_field_number['6'] = $channel->field6;
+		$select_field_number['7'] = $channel->field7;
+		$select_field_number['8'] = $channel->field8;
+		
 	}else {
 	// Création d'un nouvel objet react par défault
 		$react = new stdClass();
@@ -78,7 +113,10 @@ else
 		$react->condition_value = "0";
 		$react->actionable_type = "";
 		$react->actionable_id = "";
-		$react->react_type = "";
+		$react->run_action_every_time = "";
+	
+	// champs mis à jour en ajax   car le channel_id est inconnu à ce stade
+		$select_field_number = array();  
 	}
 
 
@@ -186,15 +224,14 @@ else
 								echo Form::input( 'text', 'name', $react->name, $options);
 
 								$select_interval = array('on_insertion' => "On data insertion", 
-								                         '10mins' =>"Every 10 minutes", 
-														 '30mins' =>"Every 30 minutes", 
-														 '60mins' =>"Every 60 minutes" );
+								                         '10' =>"Every 10 minutes", 
+														 '30' =>"Every 30 minutes", 
+														 '60' =>"Every 60 minutes" );
 								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
 
 								
 								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
 								
-								$select_field_number = array();  // champs mis à jour en ajax
 								echo Form::select("field_number", $select_field_number , " ", $react->field_number);
 								
 								$select_condition = array(	'gt' => 'is greater than',
@@ -213,9 +250,9 @@ else
 								
 								echo Form::select("actionable_id", $select_actionable_id , "perform ThingHTTP", $react->actionable_id );
 								
-								$select_react_type = array('false'=>'Run action only the first time the condition is met', 
-														   'true' =>'Run action each time condition is met');
-								echo Form::select("react_type", $select_react_type , "Option", $react->react_type ); 
+								$select_react_type = array('0'=>'Run action only the first time the condition is met', 
+														   '1' =>'Run action each time condition is met');
+								echo Form::select("run_action_every_time", $select_react_type , "Option", $react->run_action_every_time ); 
 
 							?>
 

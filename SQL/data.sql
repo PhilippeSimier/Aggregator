@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost:3306
--- Généré le :  Sam 02 Mai 2020 à 19:05
+-- Généré le :  Mer 06 Mai 2020 à 21:35
 -- Version du serveur :  10.3.22-MariaDB-0+deb10u1
 -- Version de PHP :  7.3.14-1~deb10u1
 
@@ -42,7 +42,7 @@ CREATE TABLE `channels` (
   `write_api_key` varchar(50) DEFAULT NULL,
   `last_write_at` timestamp NULL DEFAULT NULL,
   `last_entry_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 --
 -- Contenu de la table `channels`
@@ -55,7 +55,7 @@ INSERT INTO `channels` (`id`, `name`, `field1`, `field2`, `field3`, `field4`, `f
 (558210, 'Mesures - Tests', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'dew point (°C)', 'Corrected Weight (kg)', 'Derived Weight (g/h)', '', 'test', '3RPCCIIT1JJHM25A', NULL, NULL),
 (566173, 'Mesures Danemark', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', 'Corrected Weight (Kg)', '', 'actif', 'danemark', 'NWIA1TIPGT1L9S39', NULL, NULL),
 (569228, 'Dérivée poids Test', 'Dérivée poids Test', '', '', '', '', '', '', '', '', 'test', 'OH5D06IUTUJ7ZAV9', NULL, NULL),
-(602082, 'Tests unitaires', 'Echelon', 'Sinus', 'Carré', 'Impulsions', '--', '--', '--', 'field8', 'passif', 'weather', 'BUNNFRUOOIJ4HM7X', '2020-04-18 20:21:53', 2),
+(602082, 'Tests unitaires', 'Echelon', 'Sinus', 'Carré', 'Impulsions', 'field5', 'field6', 'field7', 'field8', 'passif', 'weather', 'BUNNFRUOOIJ4HM7X', NULL, NULL),
 (622253, 'Weather Le Mans', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Wind speed (m/s)', 'Wind direction (°)', 'dew point (°C)', '', '', '', 'france', 'MEUSWB77H6MMRFHD', NULL, NULL),
 (684316, 'Derivée poids', 'derivée (Kg/h)', '', '', '', '', '', '', '', '', 'danemark', '3EVVIU67Z14GDQHU', NULL, NULL),
 (752839, 'Mesures - France', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', 'Corrected Weight (kg)', '', '', 'france', 'OES0BIVP60Q61248', NULL, NULL),
@@ -82,15 +82,7 @@ CREATE TABLE `failed_logins` (
 
 INSERT INTO `failed_logins` (`id`, `login`, `password`, `ip_address`, `created_at`) VALUES
 (12, 'root', 'b778ff35a109e2291d9f12016f951d899b3a270bd495fc6a539b83a8650d515d', '192.168.1.26', '2020-04-19 16:43:34'),
-(13, 'philippe', 'c3255ad8dad4cd57a29f3a61293003d5aca4447c0e7846173fb0fb6b186b62ee', '192.168.1.26', '2020-04-19 19:32:30'),
-(18, 'Fanny', '350483a35a0dd4ecdfc17533cd3b95b21136daa9ba84721e15e71215f1ad8e7e', '192.168.1.26', '2020-04-19 19:50:32'),
-(19, 'Fanny', '350483a35a0dd4ecdfc17533cd3b95b21136daa9ba84721e15e71215f1ad8e7e', '192.168.1.26', '2020-04-19 19:50:55'),
-(20, 'Fanny', '350483a35a0dd4ecdfc17533cd3b95b21136daa9ba84721e15e71215f1ad8e7e', '192.168.1.26', '2020-04-19 19:51:04'),
-(21, 'Fanny', '8ca00d1863abe6a6b7ee2a61b9911f5c21ded436dbca5eda14a64887d07777b3', '192.168.1.26', '2020-04-19 19:51:14'),
-(22, 'philippe', '31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66', '192.168.1.26', '2020-04-20 10:24:44'),
-(23, 'root', '50a42b9f3c9d227c6433b751d694cdc122ccc8d78acd6656d51c3e8616f4b55e', '192.168.1.26', '2020-04-20 16:46:50'),
-(24, 'root', '50a42b9f3c9d227c6433b751d694cdc122ccc8d78acd6656d51c3e8616f4b55e', '192.168.1.26', '2020-04-20 16:47:03'),
-(25, 'admin', '7a525181df3295f9c3859d50ca2ae6bcdad6dff8e32f3a8e06a5c3d7d53dbd42', '192.168.1.26', '2020-04-26 06:52:31');
+(13, 'philippe', 'c3255ad8dad4cd57a29f3a61293003d5aca4447c0e7846173fb0fb6b186b62ee', '192.168.1.26', '2020-04-19 19:32:30');
 
 -- --------------------------------------------------------
 
@@ -115,14 +107,6 @@ CREATE TABLE `feeds` (
   `longitude` decimal(15,10) DEFAULT NULL,
   `elevation` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Contenu de la table `feeds`
---
-
-INSERT INTO `feeds` (`id`, `id_channel`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `date`, `status`, `latitude`, `longitude`, `elevation`) VALUES
-(1688, 602082, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-18 18:15:25', NULL, NULL, NULL, NULL),
-(1689, 602082, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-18 20:21:53', NULL, NULL, NULL, NULL);
 
 --
 -- Déclencheurs `feeds`
@@ -194,11 +178,22 @@ CREATE TABLE `reacts` (
   `condition` varchar(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `condition_value` float NOT NULL,
   `actionable_id` int(11) NOT NULL,
-  `last_result` int(11) NOT NULL,
+  `last_result` int(11) DEFAULT NULL,
   `actionable_type` varchar(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'Thinghttp',
-  `action_value` float NOT NULL,
-  `latest_value` float NOT NULL
+  `action_value` float DEFAULT NULL,
+  `latest_value` float DEFAULT NULL,
+  `run_action_every_time` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `reacts`
+--
+
+INSERT INTO `reacts` (`id`, `user_id`, `name`, `run_interval`, `run_on_insertion`, `last_run_at`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_id`, `last_result`, `actionable_type`, `action_value`, `latest_value`, `run_action_every_time`) VALUES
+(1, 0, 'Weather temperature greater 20', 0, 1, NULL, 552430, 2, 'gt', 20, 4, NULL, 'thingHTTP', NULL, NULL, 0),
+(2, 0, 'SOC Battery less 10', 60, 0, NULL, 556419, 4, 'lt', 10, 2, NULL, 'thingHTTP', NULL, NULL, 0),
+(3, 0, 'Ruche-Danemark Weight 50', 0, 1, NULL, 566173, 1, 'gt', 50, 1, NULL, 'thingHTTP', NULL, NULL, 0),
+(5, 7, 'React1', 0, 1, NULL, 602082, 3, 'gt', 50, 2, NULL, 'thingHTTP', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -251,7 +246,7 @@ CREATE TABLE `things` (
   `status` enum('public','private') DEFAULT NULL,
   `local_ip_address` varchar(20) NOT NULL,
   `class` varchar(20) NOT NULL DEFAULT 'objet'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 --
 -- Contenu de la table `things`
@@ -263,9 +258,9 @@ INSERT INTO `things` (`id`, `user_id`, `latitude`, `longitude`, `elevation`, `na
 (3, 1, '47.994900', '0.204600', 70.2, 'Ruche France', 'france', 'public', '172.18.58.219 /24', 'ruche'),
 (4, 2, '47.816359', '0.113129', 83.3, 'Ruche Oizé', 'test', 'public', '172.18.58.220 /24', 'ruche'),
 (11, 1, '47.995532', '0.202465', 49.3, 'Gateway - Gsm', 'gateway', 'private', '172.18.58.169 /24', 'objet'),
-(13, 2, '48.848866', '2.322122', 37.4, 'Webcam', 'Webcam', 'public', '172.18.58.253 /24', 'objet'),
+(13, 2, '48.170718', '0.704355', 113.6, 'Webcam', 'Webcam', 'public', '172.18.58.253 /24', 'objet'),
 (17, 2, '48.146652', '0.363191', 94.9, 'Ruche beaufay', 'beaufay', 'private', '192.168.1.9 /24', 'ruche'),
-(18, 4, '48.847849', '2.335168', 44, 'test_unit', 'test_unit', 'public', '127.0.0.1', 'objet');
+(18, 12, '48.009774', '0.199032', 77.8, 'test_unit', 'test_unit', 'private', '127.0.0.1', 'objet');
 
 -- --------------------------------------------------------
 
@@ -302,22 +297,24 @@ CREATE TABLE `users` (
   `delaySMS` int(11) NOT NULL DEFAULT 15,
   `allow` tinyint(1) NOT NULL DEFAULT 1,
   `droits` int(11) NOT NULL DEFAULT 1,
-  `reset_password_token` varchar(128) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `reset_password_token` varchar(128) DEFAULT NULL,
+  `language` varchar(50) NOT NULL DEFAULT 'FR'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 --
 -- Contenu de la table `users`
 --
 
-INSERT INTO `users` (`id`, `login`, `encrypted_password`, `password_salt`, `email`, `telNumber`, `User_API_Key`, `Created_at`, `sign_in_count`, `last_sign_in_at`, `current_sign_in_at`, `time_zone`, `quotaSMS`, `delaySMS`, `allow`, `droits`, `reset_password_token`) VALUES
-(0, 'root', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', NULL, '', NULL, 'RDIK9LVVYEYZYZER', '2019-08-11 12:42:44', 303, '2020-05-02 16:30:05', '2020-05-02 16:59:35', 'Europe/Paris', 140, 15, 1, 2, NULL),
-(1, 'touchard', '31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66', NULL, '', '', 'RC8IK9LVVYEYZNSM', '2019-06-18 20:02:20', 64, '2019-09-08 09:41:45', '2020-04-13 16:36:39', 'Europe/Paris', 140, 30, 1, 1, NULL),
-(2, 'philippe', '011311eee2eb1a13e3fb1503397f43f3c7ae184ad30a23c83b102a528c92cb1e', NULL, 'philaure@wanadoo.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '0000-00-00 00:00:00', 87, '2020-04-22 18:46:21', '2020-04-23 19:25:26', 'Europe/Paris', 140, 15, 1, 1, NULL),
-(4, 'essai', '8284654b713eef76588b094c7fd4c0641b9fedb798ffaefc40defc4db17ceb38', 'ABOCH9FPWQ5SRTNZAWXD', 'l.ziani@st.org', NULL, '6BNI1RPKV4M', '2020-03-30 16:15:37', 9, '2020-04-17 16:34:02', '2020-04-19 19:43:40', 'Europe/Prague', 140, 30, 1, 1, NULL),
-(6, 'didier', '2fd887facce086740cd630d26c79ec00821606047ee56580a6c987aed857889a', NULL, '', NULL, 'GC6SESWGAIOW0', '2020-03-31 18:58:51', 1, '2020-04-13 16:28:07', '2020-04-13 16:28:07', 'Europe/Paris', 140, 30, 1, 1, NULL),
-(7, 'bidochon', 'e743dd1be6bcd0a00ad0de2e561e9341800f5cebf5def5db1218217e5ff62ff0', '1LHIFKUGI6E3MC4LLJ1Y', 'bidochon@gmail.com', '+33612724236', '3G7IMI0INJ683IT', '2020-04-11 09:10:56', 7, '2020-04-14 13:39:12', '2020-04-14 19:18:16', 'Europe/Madrid', 140, 15, 1, 1, NULL),
-(9, 'Robert', '7d4a5ed6d9ee48ebd83d1637628bfa9c5709dd572ff24332e03fbdef502ca2b9', 'JVCZ7VA1BCPG6A1DJKWC', NULL, NULL, 'M5R470BD20KU', '2020-04-17 19:09:20', 5, '2020-04-18 15:11:58', '2020-04-19 19:30:46', 'Europe/Paris', 140, 15, 0, 1, NULL),
-(12, 'Camille', '2e09944dafe7cd2616362f4054a00ad886137edb6efe2859cbc8a428b92836c1', '7AHITEGURANUASTZ6WKM', 'titane72@hotmail.fr', '0602154829', 'A5MMSU09QPA', '2020-04-20 19:06:20', 1, '2020-04-20 19:08:03', '2020-04-20 19:08:03', 'Europe/Monaco', 146, 16, 1, 1, NULL);
+INSERT INTO `users` (`id`, `login`, `encrypted_password`, `password_salt`, `email`, `telNumber`, `User_API_Key`, `Created_at`, `sign_in_count`, `last_sign_in_at`, `current_sign_in_at`, `time_zone`, `quotaSMS`, `delaySMS`, `allow`, `droits`, `reset_password_token`, `language`) VALUES
+(0, 'root', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', NULL, '', NULL, 'RDIK9LVVYEYZYZER', '2019-08-11 12:42:44', 323, '2020-05-06 14:55:37', '2020-05-06 16:54:07', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR'),
+(1, 'touchard', '31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66', NULL, '', '', 'RC8IK9LVVYEYZNSM', '2019-06-18 20:02:20', 64, '2019-09-08 09:41:45', '2020-04-13 16:36:39', 'Europe/Paris', 140, 30, 1, 1, NULL, 'FR'),
+(2, 'philippe', '011311eee2eb1a13e3fb1503397f43f3c7ae184ad30a23c83b102a528c92cb1e', NULL, 'philaure@wanadoo.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '0000-00-00 00:00:00', 87, '2020-04-22 18:46:21', '2020-04-23 19:25:26', 'Europe/Paris', 140, 15, 1, 1, NULL, 'FR'),
+(4, 'essai', '8284654b713eef76588b094c7fd4c0641b9fedb798ffaefc40defc4db17ceb38', 'ABOCH9FPWQ5SRTNZAWXD', 'l.ziani@st.org', NULL, '6BNI1RPKV4M', '2020-03-30 16:15:37', 9, '2020-04-17 16:34:02', '2020-04-19 19:43:40', 'Europe/Prague', 140, 30, 1, 1, NULL, 'FR'),
+(6, 'didier', '2fd887facce086740cd630d26c79ec00821606047ee56580a6c987aed857889a', NULL, '', NULL, 'GC6SESWGAIOW0', '2020-03-31 18:58:51', 1, '2020-04-13 16:28:07', '2020-04-13 16:28:07', 'Europe/Paris', 140, 30, 1, 1, NULL, 'FR'),
+(7, 'bidochon', 'e743dd1be6bcd0a00ad0de2e561e9341800f5cebf5def5db1218217e5ff62ff0', '1LHIFKUGI6E3MC4LLJ1Y', 'bidochon@gmail.com', '+33612724236', '3G7IMI0INJ683IT', '2020-04-11 09:10:56', 7, '2020-04-14 13:39:12', '2020-04-14 19:18:16', 'Europe/Madrid', 140, 15, 1, 1, NULL, 'FR'),
+(9, 'Robert', '7d4a5ed6d9ee48ebd83d1637628bfa9c5709dd572ff24332e03fbdef502ca2b9', 'JVCZ7VA1BCPG6A1DJKWC', NULL, NULL, 'M5R470BD20KU', '2020-04-17 19:09:20', 5, '2020-04-18 15:11:58', '2020-04-19 19:30:46', 'Europe/Paris', 140, 15, 0, 1, NULL, 'FR'),
+(12, 'Camille', '2e09944dafe7cd2616362f4054a00ad886137edb6efe2859cbc8a428b92836c1', '7AHITEGURANUASTZ6WKM', 'madamecamille@hotmail.fr', '0602154830', 'A5MMSU09QPA', '2020-04-20 19:06:20', 1, '2020-04-20 19:08:03', '2020-04-20 19:08:03', 'Europe/Monaco', 149, 15, 1, 1, NULL, 'FR'),
+(23, 'clement', '7f306a91dc8837dcd19b30e93787047769921abc72a0f68b7247b4f540cef794', '84PISTBH49GMPM1K479D', NULL, NULL, 'STGMZ40PUNX', '2020-05-03 20:47:32', 0, '0000-00-00 00:00:00', NULL, 'Europe/Copenhagen', 140, 15, 1, 1, NULL, 'FR');
 
 -- --------------------------------------------------------
 
@@ -457,7 +454,7 @@ ALTER TABLE `channels`
 -- AUTO_INCREMENT pour la table `failed_logins`
 --
 ALTER TABLE `failed_logins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT pour la table `feeds`
 --
@@ -472,7 +469,7 @@ ALTER TABLE `Matlab_Visu`
 -- AUTO_INCREMENT pour la table `reacts`
 --
 ALTER TABLE `reacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT pour la table `thinghttps`
 --
@@ -482,7 +479,7 @@ ALTER TABLE `thinghttps`
 -- AUTO_INCREMENT pour la table `things`
 --
 ALTER TABLE `things`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT pour la table `things_channels`
 --
@@ -492,7 +489,7 @@ ALTER TABLE `things_channels`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- Contraintes pour les tables exportées
 --
