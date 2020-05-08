@@ -11,128 +11,132 @@ use Aggregator\Support\Str;
 use Aggregator\Support\Form;
 
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+try{ 
+	//------------si des données  sont soumises on les enregistre dans la table data.reacts ---------
+	if( !empty($_POST['envoyer']) && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF'] && $_POST['field_number']!== '' && $_POST['channel_id']!== ''){
 
-//------------si des données  sont soumises on les enregistre dans la table data.reacts ---------
-if( !empty($_POST['envoyer'])){
-	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
-		if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+			  
+				if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
+					
+					if($_POST['shedule'] == 'on_insertion'){ 
+						$run_interval = 0; 
+						$run_on_insertion = 1;
+					}else{
+						$run_interval = $_POST['shedule']; 
+						$run_on_insertion = 0;
+					}
+						
+					$sql = sprintf("INSERT INTO `data`.`reacts` (`user_id`, `name`, `run_interval`, `run_on_insertion`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_type`, `actionable_id`, `run_action_every_time` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+							, $bdd->quote($_POST['user_id'])
+							, $bdd->quote($_POST['name'])   
+							, $bdd->quote($run_interval)
+							, $bdd->quote($run_on_insertion)
+							, $bdd->quote($_POST['channel_id'])
+							, $bdd->quote($_POST['field_number'])
+							, $bdd->quote($_POST['condition'])
+							, $bdd->quote($_POST['condition_value'])
+							, $bdd->quote($_POST['actionable_type'])
+							, $bdd->quote($_POST['actionable_id'])
+							, $bdd->quote($_POST['run_action_every_time'])
+							);
+					
+					$bdd->exec($sql);
+				}
+				if(isset($_POST['action']) && ($_POST['action'] == 'update')){
+					
+					if($_POST['shedule'] == 'on_insertion'){ 
+						$run_interval = 0; 
+						$run_on_insertion = 1;
+					}else{
+						$run_interval = $_POST['shedule']; 
+						$run_on_insertion = 0;
+					}
+					
+					$sql = sprintf("UPDATE `reacts` SET `user_id`= %s, `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `run_action_every_time`=%s WHERE `reacts`.`id` = %s;"
+							, $bdd->quote($_POST['user_id'])
+							, $bdd->quote($_POST['name'])
+							, $bdd->quote($run_interval)
+							, $bdd->quote($run_on_insertion)
+							, $bdd->quote($_POST['channel_id'])
+							, $bdd->quote($_POST['field_number'])
+							, $bdd->quote($_POST['condition'])
+							, $bdd->quote($_POST['condition_value'])
+							, $bdd->quote($_POST['actionable_type'])
+							, $bdd->quote($_POST['actionable_id'])
+							, $bdd->quote($_POST['run_action_every_time'])
+							, $_POST['id']
+							);
+					
+					$bdd->exec($sql);
+				}
 			
-			if($_POST['shedule'] == 'on_insertion'){ 
-				$run_interval = 0; 
-				$run_on_insertion = 1;
-			}else{
-				$run_interval = $_POST['shedule']; 
-				$run_on_insertion = 0;
-			}	
-			$sql = sprintf("INSERT INTO `data`.`reacts` (`user_id`, `name`, `run_interval`, `run_on_insertion`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_type`, `actionable_id`, `run_action_every_time` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-					, $bdd->quote($_POST['user_id'])
-					, $bdd->quote($_POST['name'])   
-					, $bdd->quote($run_interval)
-					, $bdd->quote($run_on_insertion)
-					, $bdd->quote($_POST['channel_id'])
-					, $bdd->quote($_POST['field_number'])
-					, $bdd->quote($_POST['condition'])
-					, $bdd->quote($_POST['condition_value'])
-					, $bdd->quote($_POST['actionable_type'])
-					, $bdd->quote($_POST['actionable_id'])
-					, $bdd->quote($_POST['run_action_every_time'])
-					);
-			
-			$bdd->exec($sql);
-		}
-		if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-			
-			if($_POST['shedule'] == 'on_insertion'){ 
-				$run_interval = 0; 
-				$run_on_insertion = 1;
-			}else{
-				$run_interval = $_POST['shedule']; 
-				$run_on_insertion = 0;
-			}
-			
-			$sql = sprintf("UPDATE `reacts` SET `user_id`= %s, `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `run_action_every_time`=%s WHERE `reacts`.`id` = %s;"
-					, $bdd->quote($_POST['user_id'])
-					, $bdd->quote($_POST['name'])
-					, $bdd->quote($run_interval)
-					, $bdd->quote($run_on_insertion)
-					, $bdd->quote($_POST['channel_id'])
-					, $bdd->quote($_POST['field_number'])
-					, $bdd->quote($_POST['condition'])
-					, $bdd->quote($_POST['condition_value'])
-					, $bdd->quote($_POST['actionable_type'])
-					, $bdd->quote($_POST['actionable_id'])
-					, $bdd->quote($_POST['run_action_every_time'])
-					, $_POST['id']
-					);
-			
-			$bdd->exec($sql);
-		}
+			// destruction du tokenCSRF
+			unset($_SESSION['tokenCSRF']);
 
-		// destruction du tokenCSRF
-		unset($_SESSION['tokenCSRF']);
-
-		header("Location: reacts");
-		return;
-	}
-}
-// -------------- sinon lecture de la table data.reacts  -----------------------------
-else
-{
-	if (isset($_GET['id'])){
-	// Création d'un objet react à partir de son id
-		$sql = sprintf("SELECT * FROM `reacts` WHERE `id`=%s", $bdd->quote($_GET['id']));
-		$stmt = $bdd->query($sql);
-		if ($react =  $stmt->fetchObject()){
-		   $react->action = "update";
-		}
-	// Création des options pour $select_field_number
-        $sql = "SELECT * FROM `channels` where `id` = ". $react->channel_id;
-		$stmt = $bdd->query($sql); 
-		$channel = $stmt->fetchObject();
-		$select_field_number['1'] = $channel->field1;
-		$select_field_number['2'] = $channel->field2;	
-		$select_field_number['3'] = $channel->field3;
-		$select_field_number['4'] = $channel->field4;
-		$select_field_number['5'] = $channel->field5;
-		$select_field_number['6'] = $channel->field6;
-		$select_field_number['7'] = $channel->field7;
-		$select_field_number['8'] = $channel->field8;
+			header("Location: reacts");
+			return;
 		
-	}else {
-	// Création d'un nouvel objet react par défault
-		$react = new stdClass();
-		$react->action = "insert";
-		$react->id = 0;
-		$react->user_id = $_SESSION['id'];
-		$react->name = "React";
-		$react->run_interval = "";
-		$react->run_on_insertion = "";
-		$react->channel_id = "";
-		$react->field_number = "";
-		$react->condition = "";
-		$react->condition_value = "0";
-		$react->actionable_type = "";
-		$react->actionable_id = "";
-		$react->run_action_every_time = "";
-	
-	// champs mis à jour en ajax   car le channel_id est inconnu à ce stade
-		$select_field_number = array();  
 	}
+	// -------------- sinon lecture de la table data.reacts  -----------------------------
+	else
+	{
+		$id = Api::verifier('id',FILTER_VALIDATE_INT);
+		if ($id != null){
+		// Création d'un objet react à partir de son id
+			$sql = sprintf("SELECT * FROM `reacts` WHERE `id`=%s", $bdd->quote($id));
+			$stmt = $bdd->query($sql);
+			if ($react =  $stmt->fetchObject()){
+			   $react->action = "update";
+			}
+		// Création des options pour $select_field_number
+			$sql = "SELECT * FROM `channels` where `id` = ". $react->channel_id;
+			$stmt = $bdd->query($sql); 
+			$channel = $stmt->fetchObject();
+			$select_field_number['1'] = $channel->field1;
+			$select_field_number['2'] = $channel->field2;	
+			$select_field_number['3'] = $channel->field3;
+			$select_field_number['4'] = $channel->field4;
+			$select_field_number['5'] = $channel->field5;
+			$select_field_number['6'] = $channel->field6;
+			$select_field_number['7'] = $channel->field7;
+			$select_field_number['8'] = $channel->field8;
+			
+		}else {
+		// Création d'un nouvel objet react par défault
+			$react = new stdClass();
+			$react->action = "insert";
+			$react->id = 0;
+			$react->user_id = $_SESSION['id'];
+			$react->name = "React";
+			$react->run_interval = "";
+			$react->run_on_insertion = "";
+			$react->channel_id = "";
+			$react->field_number = "";
+			$react->condition = "";
+			$react->condition_value = "0";
+			$react->actionable_type = "";
+			$react->actionable_id = "";
+			$react->run_action_every_time = "";
+			$react->last_run_at = "";
+		
+		// champs mis à jour en ajax   car le channel_id est inconnu à ce stade
+			$select_field_number = array();  
+		}
 
 
-// -------------- Création des options des différents Selecteurs  ----------------------
+	// -------------- Création des options des différents Selecteurs  ----------------------
 
-    
-    try{	
+		
+			
 		// Création du selectUser
 		$sql = "SELECT id,login FROM users ORDER BY id;";
 		$stmt = $bdd->query($sql);
-		
+			
 		$selectUser = array();
 		while ($user = $stmt->fetchObject()){
 			$selectUser[$user->id] = $user->login;
 		}
-		
+			
 		// Création du select_channel_id
 		$sql = "SELECT id,name FROM channels ORDER BY id;";
 		$stmt = $bdd->query($sql);
@@ -142,7 +146,7 @@ else
 		while ($channel = $stmt->fetchObject()){
 			$select_channel_id[$channel->id] = $channel->name;
 		}
-		
+			
 		// Création du $select_actionable_id
 		$sql = "SELECT id,name FROM thinghttps ORDER BY id;";
 		$stmt = $bdd->query($sql);
@@ -150,17 +154,18 @@ else
 		while ($thingHttp = $stmt->fetchObject()){
 			$select_actionable_id[$thingHttp->id] = $thingHttp->name;
 		}
+			
+		
+
+		// Création du tokenCSRF
+		$tokenCSRF = STR::genererChaineAleatoire(32);
+		$_SESSION['tokenCSRF'] = $tokenCSRF;
 		
 	}
-	catch (\PDOException $ex) 
-	{
-	    echo($ex->getMessage());
-        return;		
-	}
-
-	// Création du tokenCSRF
-	$tokenCSRF = STR::genererChaineAleatoire(32);
-	$_SESSION['tokenCSRF'] = $tokenCSRF;
+}catch (\PDOException $ex) 
+{
+	echo($ex->getMessage());
+    return;			
 }
 ?>
 
@@ -213,6 +218,8 @@ else
 								echo Form::hidden('action', $react->action);
 								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								echo Form::hidden('id', $react->id);
+								
+								
 
 
 								if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
@@ -253,6 +260,9 @@ else
 								$select_react_type = array('0'=>'Run action only the first time the condition is met', 
 														   '1' =>'Run action each time condition is met');
 								echo Form::select("run_action_every_time", $select_react_type , "Option", $react->run_action_every_time ); 
+								
+								$options = array( 'class' => 'form-control', 'readonly' => null);
+								echo Form::input( 'text', 'last_run_at', $react->last_run_at, $options , 'last run at');
 
 							?>
 
@@ -269,24 +279,17 @@ else
 			    <div class="popin">
 				<h3>Reacts Settings</h3>
 				<ul>
-					<li>Channel Name: Enter a unique name for the react.</li>
+					<li>React Name: Enter a unique name for your React.</li>
 
-					<li>Description: Enter a description of the channel.</li>
+					<li>Test Frequency: Choose whether to test your condition every time data enters the channel or on a periodic basis.</li>
 
-					<li>Field#: Check the box to enable the field, and enter a field name. Each  channel can have up to 8 fields.</li>
+					<li>Condition: Select a channel, a field and the condition for your React.</li>
 
 
-					<li>Tags: Enter keywords that identify the thing. Separate tags with commas.</li>
-
-					<li>Show Channel Location:
-						<ul>
-							<li>Latitude: Specify the latitude position in decimal degrees. For example, the latitude of the city of London is 51.5072.</li>
-
-							<li>Longitude: Specify the longitude position in decimal degrees. For example, the longitude of the city of London is -0.1275.</li>
-
-							<li>Elevation: Specify the elevation position meters. For example, the elevation of the city of London is 35.052.</li>
-						</ul>
-					</li>
+					<li>Action: Select ThingHTTP, Send a SMS, Send a email to run when the condition is met.</li>
+					
+					<li>Options: Select when the React runs.</li>
+					
 				</ul>
 				</div>
 			</div>

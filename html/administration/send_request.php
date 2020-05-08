@@ -1,23 +1,32 @@
 <?php
+    /** fichier		 : administration/send_request.php
+	    description  : Ce controleur envoie une requête http et affiche la réponse 
+					   
+	    author       : Philippe SIMIER Lycée Touchard Le Mans
+		
+	**/
+
+
 	include "authentification/authcheck.php" ;
 
 	require_once('../definition.inc.php');
 	require_once('../api/Api.php');
+	require_once('../api/ThingHTTP.class.php');
 	
 	use Aggregator\Support\Api;
-	
-	include('thingHTTP.class.php');
+	use Aggregator\Support\ThingHTTP;
+	use Aggregator\Support\ThingHTTPException;
 
 	// connexion à la base
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 	$id  = Api::obtenir("id", FILTER_VALIDATE_INT);
 	
 	try{
-		$objet = new thingHTTP($bdd,$id);
-		echo $objet->send_request();
+		$http = new ThingHTTP($bdd,$id);
+		echo $http->send_request();
 	}
 	//catch exception
-	catch(thingHTTPException $e) {
+	catch(ThingHTTPException $e) {
 		Api::envoyerErreur(500, $e->getMessage(), $e->getMessage());
 	}
 ?>

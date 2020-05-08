@@ -721,7 +721,8 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						<?php
 						if ($_SESSION['droits'] > 1){
 							echo ' <input id="btn_cancel" name="cancel" value="Cancel" class="btn btn-warning" readonly > ';	
-							echo ' <input id="btn_delete" name="Delete" value="Delete" class="btn btn-danger" readonly > ';	
+							echo ' <input id="btn_delete" name="Delete" value="Delete" class="btn btn-danger" readonly > ';
+							echo '<a class="btn btn-warning" href="failed_login">Failed login</a>';
 							echo ' <input type="hidden" id="action" name="action" value="cancel" >';
 							echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>";
 						}	

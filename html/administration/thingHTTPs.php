@@ -8,23 +8,29 @@ use Aggregator\Support\Api;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-$title = "ThingHTTPs";
+$title = "ThingHTTPs - Aggregator";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
-	// Si un élément a été sélectionné création de la liste des id à supprimer
-	if (count($_POST['table_array']) > 0){
-		$Clef=$_POST['table_array'];
-		$supp = "(";
-		foreach($Clef as $selectValue)
-		{
-			if($supp!="("){$supp.=",";}
-			$supp.=$selectValue;
-		}
-		$supp .= ")";	
+	try{
+		// Si un élément a été sélectionné création de la liste des id à supprimer
+		if (count($_POST['table_array']) > 0){
+			$Clef=$_POST['table_array'];
+			$supp = "(";
+			foreach($Clef as $selectValue)
+			{
+				if($supp!="("){$supp.=",";}
+				$supp.=$selectValue;
+			}
+			$supp .= ")";	
 
-		$sql = "DELETE FROM `thinghttps` WHERE `id` IN " . $supp;
-		$bdd->exec($sql);
+			$sql = "DELETE FROM `thinghttps` WHERE `id` IN " . $supp;
+			$bdd->exec($sql);
+		}
+	}
+	catch (\PDOException $ex) 
+	{
+	   echo($ex->getMessage());       	   
 	}
 }
 ?>
@@ -32,7 +38,7 @@ if(isset($_POST['btn_supprimer'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>thingHTTP - Aggregator</title>
+    <title><?php echo $title ?></title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -192,7 +198,7 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin card">	
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
+			<div  class="card-header" style=""><h4>ThingHTTPs</h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped">
@@ -208,6 +214,7 @@ if(isset($_POST['btn_supprimer'])){
 						<tbody>
 							
 							<?php
+							try{
 								$sql = "SELECT `thinghttps`.`id`,`name`,`thinghttps`.`created_at`,`method`,`users`.`login` FROM `thinghttps`,`users` WHERE `users`.`id` = `thinghttps`.`user_id`";
                                 if ($_SESSION['droits'] == 1)	
 								        $sql .= " and `thinghttps`.`user_id` = " . $_SESSION['id'];
@@ -223,6 +230,11 @@ if(isset($_POST['btn_supprimer'])){
 									echo "<td>" . $thingHTTP->method . "</td>";
 									echo "</tr>";								
 								}
+							}
+							catch (\PDOException $ex) 
+							{
+							   echo($ex->getMessage());       	   
+							}
 							?>
 						</tbody>
 					</table>

@@ -88,6 +88,42 @@ class Str
             }
         }
         return false;
-    }	
+    }
+	
+	/**
+     * affiche sous forme de symbole les opérateurs de comparaison
+     *
+     * @param  string $operateur
+     * @return string $symbole
+     */
+    public static function mathOperator($i)
+    {
+        $retour = "";
+		switch ($i) {
+			case "lt":
+				$retour = "<span class='font-weight-bold'> < </span>";
+				break;
+			case "lte":
+				$retour = "<span class='font-weight-bold'> &le; </span> ";
+				break;
+			case "gt":
+				$retour = "<span class='font-weight-bold'> > </span>";
+				break;
+			case "gte":
+				$retour = "<span class='font-weight-bold'> &ge; </span>";
+				break;
+			case "neq":
+				$retour = "<span class='font-weight-bold'> &ne; </span>";
+				break;
+			case "eq":
+				$retour = "<span class='font-weight-bold'> = </span>";
+				break;				
+		}
+        return $retour;
+    }
+	
+	
+
+    	
 
 }
