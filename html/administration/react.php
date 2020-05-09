@@ -11,10 +11,11 @@ use Aggregator\Support\Str;
 use Aggregator\Support\Form;
 
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-try{ 
+$error = "";
+ 
 	//------------si des données  sont soumises on les enregistre dans la table data.reacts ---------
 	if( !empty($_POST['envoyer']) && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF'] && $_POST['field_number']!== '' && $_POST['channel_id']!== ''){
-
+		try{
 			  
 				if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
 					
@@ -75,11 +76,16 @@ try{
 
 			header("Location: reacts");
 			return;
+			
+		}catch (\PDOException $ex) 
+		{
+			$error = $ex->getMessage();
+		}	
 		
 	}
-	// -------------- sinon lecture de la table data.reacts  -----------------------------
-	else
-	{
+	// -------------- sinon création d'un objet react et d'un selecteur field_number  -----------------------------
+	
+	try{
 		$id = Api::verifier('id',FILTER_VALIDATE_INT);
 		if ($id != null){
 		// Création d'un objet react à partir de son id
@@ -119,14 +125,13 @@ try{
 			$react->run_action_every_time = "";
 			$react->last_run_at = "";
 		
-		// champs mis à jour en ajax   car le channel_id est inconnu à ce stade
+		//  selecteur mis à jour en ajax   car le channel_id du react est vide à ce stade
 			$select_field_number = array();  
 		}
 
 
 	// -------------- Création des options des différents Selecteurs  ----------------------
 
-		
 			
 		// Création du selectUser
 		$sql = "SELECT id,login FROM users ORDER BY id;";
@@ -154,19 +159,18 @@ try{
 		while ($thingHttp = $stmt->fetchObject()){
 			$select_actionable_id[$thingHttp->id] = $thingHttp->name;
 		}
-			
-		
 
 		// Création du tokenCSRF
 		$tokenCSRF = STR::genererChaineAleatoire(32);
 		$_SESSION['tokenCSRF'] = $tokenCSRF;
-		
-	}
-}catch (\PDOException $ex) 
-{
-	echo($ex->getMessage());
-    return;			
-}
+	
+	}catch (\PDOException $ex) 
+	{
+		// si une erreur est intervenue pendant la création du react ou des sélecteurs alors
+		// il est impossible de créer le formulaire 
+		echo $ex->getMessage();
+		return;
+	}	
 ?>
 
 <!DOCTYPE html>
@@ -212,6 +216,7 @@ try{
 		<div class="row">
 			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
+					<?php echo '<p style="color: #ff0000;">' . $error . '</p>'; ?>
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 							<?php
 
