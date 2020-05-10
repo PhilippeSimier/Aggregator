@@ -35,8 +35,10 @@
 
 	require_once('../definition.inc.php');
 	require_once('Api.php');
+	require_once('React.class.php');
 
 	use Aggregator\Support\Api;
+	use Aggregator\Support\React;
 
     // fonction pour obtenir la date UTC	
 	function ObtenirDateUTC(){
@@ -65,10 +67,8 @@
 	$date      = Api::facultatif("created_at", ObtenirDateUTC());
 	
 	$flag = true;
-	//connexion à la base data
 	
-	$bdd = Api::connexionBD(BASE, "+00:00");
-		
+	$bdd = Api::connexionBD(BASE, "+00:00");	
 	$channel = Api::obtenirChannel($bdd, $api_key);
 	
 	$colonnes =  "(`id_channel`";
@@ -80,13 +80,13 @@
 	if ($channel->field4 !== "" && $val4 !== NULL) { $colonnes .= ", `field4`"; $valeurs .= ", ".$val4; $flag=false;}
 	if ($channel->field5 !== "" && $val5 !== NULL) { $colonnes .= ", `field5`"; $valeurs .= ", ".$val5; $flag=false;}
 	if ($channel->field6 !== "" && $val6 !== NULL) { $colonnes .= ", `field6`"; $valeurs .= ", ".$val6; $flag=false;}
-	if ($channel->field7 !== "" && $val7 !== NULL) { $colonnes .= ", `field7`"; $valeurs .= ", ".$val7; $flag=false;}
-	if ($channel->field8 !== "" && $val8 !== NULL) { $colonnes .= ", `field8`"; $valeurs .= ", ".$val8; $flag=false;}
-	if ($status !== NULL) 						   { $colonnes .= ", `status`"; $valeurs .= ", ".$bdd->quote($status); $flag=false;}
+	if ($channel->field7 !== "" && $val7 !== NULL) { $colonnes .= ", `field7`";    $valeurs .= ", ".$val7; $flag=false;}
+	if ($channel->field8 !== "" && $val8 !== NULL) { $colonnes .= ", `field8`";    $valeurs .= ", ".$val8; $flag=false;}
+	if ($status !== NULL) 						   { $colonnes .= ", `status`";    $valeurs .= ", ".$bdd->quote($status); $flag=false;}
 	if ($lat    !== NULL) 						   { $colonnes .= ", `latitude`";  $valeurs .= ", ".$lat; $flag=false;}
 	if ($long   !== NULL) 						   { $colonnes .= ", `longitude`"; $valeurs .= ", ".$long; $flag=false;}
 	if ($elevation !== NULL) 					   { $colonnes .= ", `elevation`"; $valeurs .= ", ".$elevation; $flag=false;}
-	if ($date   !== NULL) 						   { $colonnes .= ", `date`";   $valeurs .= ", ".$bdd->quote($date);}
+	if ($date   !== NULL) 						   { $colonnes .= ", `date`";      $valeurs .= ", ".$bdd->quote($date);}
 	
 	
 	$colonnes .= ")";
@@ -96,35 +96,49 @@
 	if ($flag) 
 		Api::envoyerErreur(421, "No Action Performed", "The server attempted to process your request, but has no action to perform."); 
 	
-    $sql = "INSERT INTO `feeds` " . $colonnes . $valeurs;	
-	
-	$nb = $bdd->exec($sql);
-
-	if($nb == 1){
+    try{
+		$sql = "INSERT INTO `feeds` " . $colonnes . $valeurs;	
+		$nb = $bdd->exec($sql);
+		if($nb == 1){
+			
+			$data = array(
+					'channel_id' => $channel->id ,
+					'field1' => $val1 ,
+					'field2' => $val2 ,
+					'field3' => $val3 ,
+					'field4' => $val4 ,
+					'field5' => $val5 ,
+					'field6' => $val6 ,
+					'field7' => $val7 ,
+					'field8' => $val8 ,  
+					'created_at' => $date ,
+					'status' => $status ,
+					'latitude' => $lat ,
+					'longitude' => $long ,
+					'elevation' => $elevation
+				);
 		
-		$data = array(
-                'channel_id' => $channel->id ,
-				'field1' => $val1 ,
-				'field2' => $val2 ,
-				'field3' => $val3 ,
-				'field4' => $val4 ,
-				'field5' => $val5 ,
-				'field6' => $val6 ,
-				'field7' => $val7 ,
-				'field8' => $val8 ,  
-				'created_at' => $date ,
-				'status' => $status ,
-				'latitude' => $lat ,
-				'longitude' => $long ,
-				'elevation' => $elevation
-            );
+		// Y-a t'il des reacts a exécuter à l'insertion pour ce canal ?
+		$sql = "SELECT id FROM `reacts` WHERE `run_on_insertion`=1 AND `channel_id` = {$channel->id}"; 
+		$stmt = $bdd->query($sql);
+		// Exécution des reacts
+		while ($res =  $stmt->fetchObject()){
+			$react = new React($bdd, $res->id );
+			$react->perform();
+		}
 
-        header('HTTP/1.1 200 OK');
-        header('content-type:application/json');
-        echo json_encode($data);
+		
+
+			header('HTTP/1.1 200 OK');
+			header('content-type:application/json');
+			echo json_encode($data);
+		}
+		else{
+			Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+		}
 	}
-	else{
-        Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
-    }
- 
+	catch(\PDOException $ex) {
+		Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+	}
+	
 ?>

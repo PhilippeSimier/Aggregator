@@ -257,10 +257,10 @@ $error = "";
 								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
 								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
 
-								$select_actionable_type = array('' => 'Choose your action', 'thingHTTP' => "ThingHTTP", 'sms' => "Send a SMS", 'email' => "Send a email" );
+								$select_actionable_type = array('' => 'Choose your action', 'thingHTTP' => "ThingHTTP",  'email' => "Send a email" );
 								echo Form::select("actionable_type", $select_actionable_type , "action", $react->actionable_type );
 								
-								echo Form::select("actionable_id", $select_actionable_id , "perform ThingHTTP", $react->actionable_id );
+								echo Form::select("actionable_id", $select_actionable_id , "perform", $react->actionable_id );
 								
 								$select_react_type = array('0'=>'Run action only the first time the condition is met', 
 														   '1' =>'Run action each time condition is met');
@@ -268,6 +268,7 @@ $error = "";
 								
 								$options = array( 'class' => 'form-control', 'readonly' => null);
 								echo Form::input( 'text', 'last_run_at', $react->last_run_at, $options , 'last run at');
+								echo Form::input( 'text', 'action_value', $react->action_value, $options , 'action value');
 
 							?>
 
