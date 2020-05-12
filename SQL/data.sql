@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost:3306
--- Généré le :  Sam 09 Mai 2020 à 09:50
+-- Généré le :  Mar 12 Mai 2020 à 21:43
 -- Version du serveur :  10.3.22-MariaDB-0+deb10u1
 -- Version de PHP :  7.3.14-1~deb10u1
 
@@ -52,10 +52,10 @@ INSERT INTO `channels` (`id`, `name`, `field1`, `field2`, `field3`, `field4`, `f
 (539387, 'Weather - Tessé', ' --', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Illuminance (Lux)', 'Dew point (°C)', '--', '', 'actif', 'weather', '8TA0YDI5T5NLCSVV', NULL, NULL),
 (552430, 'Moyenne Journalière', 'Poids', 'Température', 'Pression', 'Humidité', '', '', '', '', '', 'weather', 'Y3BXR665PTEYRFCG', NULL, NULL),
 (556419, 'Battery', 'Voltage (V)', 'Current (A)', 'Power (W)', 'State Of Charge (%)', 'Capacity (Ah)', '', '', '', '', 'weather', '7VX28B24FEE50ZTO', NULL, NULL),
-(558210, 'Mesures - Tests', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'dew point (°C)', 'Corrected Weight (kg)', 'Derived Weight (g/h)', '', 'test', '3RPCCIIT1JJHM25A', NULL, NULL),
+(558410, 'Mesures - Tests', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'dew point (°C)', 'Corrected Weight (kg)', 'Derived Weight (g/h)', '', 'test', '3RPCCIIT1JJHM25A', NULL, NULL),
 (566173, 'Mesures Danemark', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', 'Corrected Weight (Kg)', '', 'actif', 'danemark', 'NWIA1TIPGT1L9S39', NULL, NULL),
 (569228, 'Dérivée poids Test', 'Dérivée poids Test', '', '', '', '', '', '', '', '', 'test', 'OH5D06IUTUJ7ZAV9', NULL, NULL),
-(602082, 'Tests unitaires', 'Echelon', 'Sinus', 'Carré', 'Impulsions', 'field5', 'field6', 'field7', 'field8', 'passif', 'weather', 'BUNNFRUOOIJ4HM7X', NULL, NULL),
+(602082, 'Tests unitaires', 'Echelon', 'Sinus', 'Carré', 'Impulsions', 'field5', 'field6', 'field7', 'field8', 'passif', 'weather', 'BUNNFRUOOIJ4HM7X', '2020-05-10 10:03:55', 6),
 (622253, 'Weather Le Mans', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Wind speed (m/s)', 'Wind direction (°)', 'dew point (°C)', '', '', '', 'france', 'MEUSWB77H6MMRFHD', NULL, NULL),
 (684316, 'Derivée poids', 'derivée (Kg/h)', '', '', '', '', '', '', '', '', 'danemark', '3EVVIU67Z14GDQHU', NULL, NULL),
 (752839, 'Mesures - France', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', 'Corrected Weight (kg)', '', '', 'france', 'OES0BIVP60Q61248', NULL, NULL),
@@ -83,7 +83,8 @@ CREATE TABLE `failed_logins` (
 INSERT INTO `failed_logins` (`id`, `login`, `password`, `ip_address`, `created_at`) VALUES
 (12, 'root', 'b778ff35a109e2291d9f12016f951d899b3a270bd495fc6a539b83a8650d515d', '192.168.1.26', '2020-04-19 16:43:34'),
 (13, 'philippe', 'c3255ad8dad4cd57a29f3a61293003d5aca4447c0e7846173fb0fb6b186b62ee', '192.168.1.26', '2020-04-19 19:32:30'),
-(30, 'ruche', '9120f78e3582caf2d3896ad0da948ed9dbeb0927a7c3c323d62d02b9d16d111d', '192.168.1.26', '2020-05-09 07:22:12');
+(30, 'ruche', '9120f78e3582caf2d3896ad0da948ed9dbeb0927a7c3c323d62d02b9d16d111d', '192.168.1.26', '2020-05-09 07:22:12'),
+(31, 'admin', '7a525181df3295f9c3859d50ca2ae6bcdad6dff8e32f3a8e06a5c3d7d53dbd42', '192.168.1.26', '2020-05-12 14:37:51');
 
 -- --------------------------------------------------------
 
@@ -108,6 +109,18 @@ CREATE TABLE `feeds` (
   `longitude` decimal(15,10) DEFAULT NULL,
   `elevation` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+--
+-- Contenu de la table `feeds`
+--
+
+INSERT INTO `feeds` (`id`, `id_channel`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `date`, `status`, `latitude`, `longitude`, `elevation`) VALUES
+(1, 602082, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 09:44:20', NULL, NULL, NULL, NULL),
+(2, 602082, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 09:46:02', NULL, NULL, NULL, NULL),
+(3, 602082, 19, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 09:47:34', NULL, NULL, NULL, NULL),
+(4, 602082, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 09:49:03', NULL, NULL, NULL, NULL),
+(5, 602082, 18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 10:03:00', NULL, NULL, NULL, NULL),
+(6, 602082, 24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-05-10 10:03:55', NULL, NULL, NULL, NULL);
 
 --
 -- Déclencheurs `feeds`
@@ -191,8 +204,8 @@ CREATE TABLE `reacts` (
 --
 
 INSERT INTO `reacts` (`id`, `user_id`, `name`, `run_interval`, `run_on_insertion`, `last_run_at`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_id`, `last_result`, `actionable_type`, `action_value`, `latest_value`, `run_action_every_time`) VALUES
-(1, 0, 'React 1 ', 0, 1, NULL, 552430, 2, 'gt', 20, 4, NULL, 'thingHTTP', NULL, NULL, 0),
-(2, 0, 'React 2', 60, 0, NULL, 556419, 4, 'lte', 10, 2, NULL, 'thingHTTP', NULL, NULL, 0),
+(1, 0, 'Réagir cas un', 0, 1, '2020-05-10 10:03:55', 602082, 1, 'gte', 20, 4, 1, 'thingHTTP', 24, 19.5, 0),
+(2, 0, 'React 2', 0, 1, NULL, 556419, 4, 'lte', 10, 2, NULL, 'thingHTTP', NULL, NULL, 0),
 (3, 0, 'Déclencheur 5', 0, 1, NULL, 566173, 1, 'gte', 50, 1, NULL, 'thingHTTP', NULL, NULL, 0),
 (5, 7, 'Réagir cas deux', 10, 0, NULL, 556419, 1, 'lt', 50, 2, NULL, 'thingHTTP', NULL, NULL, 0),
 (6, 1, 'Evenement jour', 0, 1, NULL, 539387, 5, 'neq', 0, 4, NULL, 'thingHTTP', NULL, NULL, 0);
@@ -227,7 +240,7 @@ CREATE TABLE `thinghttps` (
 INSERT INTO `thinghttps` (`id`, `user_id`, `api_key`, `url`, `auth_name`, `auth_pass`, `method`, `content_type`, `http_version`, `host`, `body`, `name`, `parse`, `created_at`) VALUES
 (1, 0, 'BNVZU7JHUHUEQAP1', 'https://philippes.ddns.net/Ruche/api/sendSMS', '', '', 'POST', 'application/x-www-form-urlencoded', '1.1', '', 'key=RC8IK9LVVYEYZNSM&number=0689744235&message=Ruche France : Variation du poids à  la hausse anormale !', 'SMS - Hausse du poids anormale - Ruche France', '', '2019-09-08 16:09:42'),
 (2, 2, 'AZERTYUIOP', 'http://example.com/', '', '', 'GET', '', '1.1', '', '', 'GET Example.com', '', '2019-09-08 18:18:25'),
-(4, 0, 'FPAC2971PZDGB2', 'http://touchardinforeseau.servehttp.com/Ruche/api/sendSMS', '', '', 'POST', 'application/x-www-form-urlencoded', '1.1', '', 'key=RC8IK9LVVYEYZNSM&number=0689744235&message=Ruche%20France%20%3A%20Variation%20du%20poids%20%C3%A0%20la%20hausse%20anormale%20!', 'Send SMS with API DMZ', '', '2019-09-15 07:30:21'),
+(4, 0, 'FPAC2971PZDGB2', 'http://touchardinforeseau.servehttp.com/Ruche/api/sendSMS', '', '', 'POST', 'application/x-www-form-urlencoded', '1.1', '', 'key=RC8IK9LVVYEYZNSM&number=0689744235&message=Température supérieure à 20 °C. ', 'Send SMS température >= 20 °C à philippe', '', '2019-09-15 07:30:21'),
 (5, 0, 'GG58UUU72V02K', 'http://404.php.net/', '', '', 'GET', '', '1.0', '', '', 'Essai avec URL inexistante', 'test', '2019-09-15 20:02:27'),
 (7, 4, '89M57KUW0FN', 'http://google.fr', '', '', 'GET', 'application/x-www-form-urlencoded', '1.1', 'api.aggregate.com', '', 'Redirection 301 moved', '', '2020-04-28 15:00:28');
 
@@ -308,10 +321,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `encrypted_password`, `password_salt`, `email`, `telNumber`, `User_API_Key`, `Created_at`, `sign_in_count`, `last_sign_in_at`, `current_sign_in_at`, `time_zone`, `quotaSMS`, `delaySMS`, `allow`, `droits`, `reset_password_token`, `language`) VALUES
-(0, 'root', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', NULL, '', NULL, 'RDIK9LVVYEYZYZER', '2019-08-11 12:42:44', 335, '2020-05-09 06:50:18', '2020-05-09 07:27:48', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR'),
+(0, 'root', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', NULL, '', NULL, 'RDIK9LVVYEYZYZER', '2019-08-11 12:42:44', 351, '2020-05-12 19:38:01', '2020-05-12 19:39:56', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR'),
 (1, 'touchard', '31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66', NULL, '', '', 'RC8IK9LVVYEYZNSM', '2019-06-18 20:02:20', 64, '2019-09-08 09:41:45', '2020-04-13 16:36:39', 'Europe/Paris', 140, 30, 1, 1, NULL, 'FR'),
 (2, 'philippe', '011311eee2eb1a13e3fb1503397f43f3c7ae184ad30a23c83b102a528c92cb1e', NULL, 'philaure@wanadoo.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '0000-00-00 00:00:00', 87, '2020-04-22 18:46:21', '2020-04-23 19:25:26', 'Europe/Paris', 140, 15, 1, 1, NULL, 'FR'),
-(4, 'essai', '8284654b713eef76588b094c7fd4c0641b9fedb798ffaefc40defc4db17ceb38', 'ABOCH9FPWQ5SRTNZAWXD', 'l.ziani@st.org', NULL, '6BNI1RPKV4M', '2020-03-30 16:15:37', 9, '2020-04-17 16:34:02', '2020-04-19 19:43:40', 'Europe/Prague', 140, 30, 1, 1, NULL, 'FR'),
+(4, 'essai', '8284654b713eef76588b094c7fd4c0641b9fedb798ffaefc40defc4db17ceb38', 'ABOCH9FPWQ5SRTNZAWXD', 'l.ziani@st.org', '', '6BNI1RPKV4M', '2020-03-30 16:15:37', 9, '2020-04-17 16:34:02', '2020-04-19 19:43:40', 'Europe/London', 140, 30, 1, 1, NULL, 'FR'),
 (6, 'didier', '2fd887facce086740cd630d26c79ec00821606047ee56580a6c987aed857889a', NULL, '', NULL, 'GC6SESWGAIOW0', '2020-03-31 18:58:51', 1, '2020-04-13 16:28:07', '2020-04-13 16:28:07', 'Europe/Paris', 140, 30, 1, 1, NULL, 'FR'),
 (7, 'bidochon', 'e743dd1be6bcd0a00ad0de2e561e9341800f5cebf5def5db1218217e5ff62ff0', '1LHIFKUGI6E3MC4LLJ1Y', 'bidochon@gmail.com', '+33612724236', '3G7IMI0INJ683IT', '2020-04-11 09:10:56', 8, '2020-04-14 19:18:16', '2020-05-08 15:04:53', 'Europe/Madrid', 140, 15, 1, 1, NULL, 'FR'),
 (9, 'Robert', '7d4a5ed6d9ee48ebd83d1637628bfa9c5709dd572ff24332e03fbdef502ca2b9', 'JVCZ7VA1BCPG6A1DJKWC', NULL, NULL, 'M5R470BD20KU', '2020-04-17 19:09:20', 5, '2020-04-18 15:11:58', '2020-04-19 19:30:46', 'Europe/Paris', 140, 15, 0, 1, NULL, 'FR'),
@@ -453,6 +466,7 @@ ALTER TABLE `thinghttps`
 --
 ALTER TABLE `things`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tag` (`tag`),
   ADD KEY `id_user` (`user_id`);
 
 --
@@ -468,8 +482,7 @@ ALTER TABLE `things_channels`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `login` (`login`),
-  ADD UNIQUE KEY `tel` (`telNumber`);
+  ADD UNIQUE KEY `login` (`login`);
 
 --
 -- AUTO_INCREMENT pour les tables exportées
@@ -484,12 +497,12 @@ ALTER TABLE `channels`
 -- AUTO_INCREMENT pour la table `failed_logins`
 --
 ALTER TABLE `failed_logins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 --
 -- AUTO_INCREMENT pour la table `feeds`
 --
 ALTER TABLE `feeds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1690;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT pour la table `Matlab_Visu`
 --

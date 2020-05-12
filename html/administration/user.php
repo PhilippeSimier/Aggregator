@@ -12,7 +12,7 @@ use Aggregator\Support\Form;
 
 $bdd = Api::connexionBD(BASE);
 
-
+$error = "";
 
 //------------si des données  sont soumises on les enregistre dans la table data.users ---------
 if( !empty($_POST['envoyer'])){
@@ -34,22 +34,22 @@ if( !empty($_POST['envoyer'])){
 
 				$bdd->exec($sql);
 			}
+			
+			// destruction du tokenCSRF
+			unset($_SESSION['tokenCSRF']);
+			header("Location: users.php");
+			return;	
 		}
 		catch (\PDOException $ex) 
 		{
-		    echo($ex->getMessage());       	   
-		}
-		
-		// destruction du tokenCSRF
-		unset($_SESSION['tokenCSRF']);
-		header("Location: users.php");
-		return;
-		
+		    $error = $ex->getMessage();
+					
+		}	
 	}
 }
-// -------------- sinon lecture de la table data.users  -----------------------------
-else
-{
+
+// --------------- sinon lecture de la table data.users  -----------------------------
+
 	// Le parametre id est obligatoire pour modifier un utilisateur
 	$id = Api::obtenir("id");
 	
@@ -68,7 +68,7 @@ else
 	catch (\PDOException $ex) 
 	{
 	    echo($ex->getMessage()); 
-		return;
+		return;	
 	}
 	
 	
@@ -76,7 +76,7 @@ else
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
 
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -102,6 +102,7 @@ else
 		<div class="row">
 			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
+					<?php echo '<p style="color: #ff0000;">' . $error . '</p>'; ?>
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
 							<?php 	
