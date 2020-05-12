@@ -174,7 +174,7 @@ class Api
     // Fonction pour convertir un dateTime UTC en localTime
 	public static function ObtenirDateTimeLocal($datetime, $timeZone) {
 		if ($datetime != ""){
-			$date = new DateTime($datetime, new DateTimeZone('UTC'));
+			$date = new \DateTime($datetime, new \DateTimeZone('UTC'));
 			$date->setTimezone(new \DateTimeZone($timeZone));
 			return $date->format('Y-m-d H:i:s');
 		}
@@ -191,7 +191,7 @@ class Api
 
     // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
     public static function formatDate($date){
-		$dt = new DateTime($date);
+		$dt = new \DateTime($date);
         return $dt->format('Y-m-d\TH-i-s\Z');
 	}
 	
