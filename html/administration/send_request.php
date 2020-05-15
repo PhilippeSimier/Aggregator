@@ -1,6 +1,6 @@
 <?php
     /** fichier		 : administration/send_request.php
-	    description  : Ce controleur envoie une requête http et affiche la réponse 
+	    description  : Ce controleur envoie une requête http puis affiche la réponse 
 					   
 	    author       : Philippe SIMIER Lycée Touchard Le Mans
 		

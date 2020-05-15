@@ -124,6 +124,7 @@ $error = "";
 			$react->actionable_id = "";
 			$react->run_action_every_time = "";
 			$react->last_run_at = "";
+			$react->action_value = "";
 		
 		//  selecteur mis à jour en ajax   car le channel_id du react est vide à ce stade
 			$select_field_number = array();  
@@ -134,6 +135,7 @@ $error = "";
 
 			
 		// Création du selectUser
+		
 		$sql = "SELECT id,login FROM users ORDER BY id;";
 		$stmt = $bdd->query($sql);
 			
@@ -143,7 +145,11 @@ $error = "";
 		}
 			
 		// Création du select_channel_id
-		$sql = "SELECT id,name FROM channels ORDER BY id;";
+		if($_SESSION['droits'] > 1)
+			$sql = "SELECT id,name FROM channels ORDER BY id;";
+		else
+			$sql = "SELECT id,name FROM users_channels where user_id = {$_SESSION['id']} ORDER BY id;";
+		
 		$stmt = $bdd->query($sql);
 
 		$select_channel_id = array();
@@ -181,11 +187,11 @@ $error = "";
 
 		<title>Channel Settings - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
-		<link rel="stylesheet" href="/Ruche/css/bootstrap.min.css" >
-		<link rel="stylesheet" href="/Ruche/css/ruche.css" />
+		<link rel="stylesheet" href="../css/bootstrap.min.css" >
+		<link rel="stylesheet" href="../css/ruche.css" />
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script src="/Ruche/scripts/bootstrap.min.js"></script>
+		<script src="../scripts/bootstrap.min.js"></script>
 		
 		<script>
 		    

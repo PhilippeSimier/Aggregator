@@ -5,10 +5,10 @@
     <title>Graphique</title>
 
 	<!-- Bootstrap CSS version 4.1.1 -->
-    <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
-    <link rel="stylesheet" href="/Ruche/css/ruche.css" />
+	<script src="./scripts/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="./css/ruche.css" />
 
 
     <script src="//code.highcharts.com/stock/highstock.js"></script>

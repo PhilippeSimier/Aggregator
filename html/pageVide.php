@@ -8,16 +8,12 @@
 
     <title>the connected beehive</title>
     <!-- Bootstrap CSS version 4.1.1 -->
-    <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="/Ruche/scripts/bootstrap.min.js"></script> -->
-    <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css" >
-    <link rel="stylesheet" href="/Ruche/css/ruche.css" />
+	<script src="./scripts/bootstrap.min.js"></script> -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css" >
+    <link rel="stylesheet" href="./css/ruche.css" />
 
-	<link rel="manifest" href="/Ruche/manifest.json">
-	<link rel="icon" type="image/png" href="/Ruche/favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="/Ruche/favicon-16x16.png" sizes="16x16">
-	
 </head>
 
 <body>

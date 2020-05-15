@@ -3,7 +3,10 @@
 <?php
     session_start();
 	require_once('definition.inc.php');
-
+	require_once('./api/Api.php');
+	
+	use Aggregator\Support\Api;
+	
 ?>
 
 <html>
@@ -13,17 +16,16 @@
 
 		<title>Browse sites</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
-		<link rel="stylesheet" href="/Ruche/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="/Ruche/css/ruche.css" />
-		<link rel="stylesheet" href="/Ruche/css/font-awesome.min.css" />
-		<link rel="stylesheet" href="/Ruche/css/file-explore.css" />
-		<!-- <link rel="stylesheet" href="/Ruche/css/app.css" /> -->
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/ruche.css" />
+		<link rel="stylesheet" href="css/font-awesome.min.css" />
+		<link rel="stylesheet" href="css/file-explore.css" />
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script src="/Ruche/scripts/bootstrap.min.js"></script>
-		<script src="/Ruche/scripts/file-explore.js"></script>
+		<script src="scripts/bootstrap.min.js"></script>
+		<script src="scripts/file-explore.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKUqx5vjYkrX15OOMAxFbOkGjDfAPL1J8"></script>
-		<script src="/Ruche/scripts/gmaps.js"></script>
+		<script src="scripts/gmaps.js"></script>
 		
 		<script type="text/javascript">
 			$(document).ready(function () {
@@ -38,32 +40,36 @@
 					});
 						
 					<?php
-						require_once('definition.inc.php');
-						// connexion à la base data
-						$bdd = new PDO('mysql:host=' . SERVEUR . ';dbname=' . BASE, UTILISATEUR,PASSE);
-						
-						if (!isset($_SESSION['id'])) // Personne n'est connecté donc objet publique
-							$sql = 'SELECT * FROM `things` where status = "public";';
-						else if ($_SESSION['id'] != 0)
-							$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
-						else   // C'est root qui est connecté, tous les objets sont affichés
-							$sql = "SELECT * FROM `things`";
-							
-						$reponse = $bdd->query($sql);
-	
-						while ($thing = $reponse->fetchObject()){
-								echo 'map.addMarker({'; 
-									echo 'lat:' . $thing->latitude . ",\n";
-									echo 'lng:' . $thing->longitude . ",\n";
-									echo 'title: "' . $thing->name . "\",\n";
-									echo "infoWindow: {\n";
-									echo 'content: "<p> <b>' . $thing->name . '</b><br />Coordonnées GPS : </br> Lat : ' . $thing->latitude;
-                                    echo '<br /> Lng : ' . $thing->longitude . '</p>"' ;
-									echo "}\n";
-								echo "});\n";
+					
+						$bdd = Api::connexionBD(BASE);
+						try{
+							if (!isset($_SESSION['id'])) // Personne n'est connecté donc objet publique
+								$sql = 'SELECT * FROM `things` where status = "public";';
+							else if ($_SESSION['id'] != 0)
+								$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
+							else   // C'est root qui est connecté, tous les objets sont affichés
+								$sql = "SELECT * FROM `things`";
 								
+							$reponse = $bdd->query($sql);
+		
+							while ($thing = $reponse->fetchObject()){
+									echo 'map.addMarker({'; 
+										echo 'lat:' . $thing->latitude . ",\n";
+										echo 'lng:' . $thing->longitude . ",\n";
+										echo 'title: "' . $thing->name . "\",\n";
+										echo "infoWindow: {\n";
+										echo 'content: "<p> <b>' . $thing->name . '</b><br />Coordonnées GPS : </br> Lat : ' . $thing->latitude;
+										echo '<br /> Lng : ' . $thing->longitude . '</p>"' ;
+										echo "}\n";
+									echo "});\n";
+									
+							}
+							$reponse->closeCursor();
 						}
-						$reponse->closeCursor();
+						catch(\PDOException $ex){
+							echo $ex->getMessage();
+							return;
+						}	
 						?>
 				$(".channels").click(afficheModal);
 				$(".btn-afficher").click(afficherVue);	
@@ -118,7 +124,7 @@
 			} 
 
 			console.log("choix : " + choix); 
-			var url = "/Ruche/thingSpeakView?channel=" + channel_id; // + '&name=' + channel_name;
+			var url = "./thingSpeakView?channel=" + channel_id; // + '&name=' + channel_name;
 			for (i = 0; i < choix.length; i++){
 				url += '&field' + i + '=' + choix[i];	
 			}
@@ -140,10 +146,12 @@
 				<div class="popin" style="margin: 0px; padding : 4px;">
 					<ul class="file-tree ">
 					<?php
-						
+						try{
+							
 						function listerChannels($bdd, $tags){
 							
 							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `tags`='. $bdd->quote($tags);
+							$url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 							
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = 'SELECT * FROM `channels` WHERE `tags`='.  $bdd->quote($tags);
@@ -152,7 +160,7 @@
 								echo "<ul id=\"channel\">\n";
 									while($channel = $reponse->fetchObject()){
 										echo '<li>';
-										echo '<a class="channels" href="https://api.thingspeak.com/channels/' . $channel->id . '/feed.json?results=0" target="_blank" >' . $channel->name . "</a>\n";
+										echo "<a class='channels' href='{$url}/channels/{$channel->id}/feeds.json?results=0' target='_blank' >{$channel->name}</a>\n";
 										echo '</li>';								
 									}
 								
@@ -163,15 +171,15 @@
 						
 						function listerMatlabVisu($bdd, $id){
 							
-							$sql = 'SELECT count(*) as nb FROM `Matlab_Visu` WHERE `things_id`='. $id;					
+							$sql = "SELECT count(*) as nb FROM `Matlab_Visu` WHERE `things_id`={$id}";					
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
-								$sql = 'SELECT * FROM `Matlab_Visu` WHERE `things_id`='. $id;
+								$sql = "SELECT * FROM `Matlab_Visu` WHERE `things_id`={$id}";
 								$reponse2 = $bdd->query($sql);
-								echo '<li  class="folder-matlab"><a href="#">Data Analysis</a>';
+								echo "<li  class='folder-matlab'><a href='#'>Data Analysis</a>\n";
 								echo "<ul>\n";
 									while ($matalVisu = $reponse2->fetchObject()){
-										echo '<li class="analysis">';
-										echo '<a target="_blank" href="/Ruche/MatlabVisualization?id='. $matalVisu->thing_speak_id.'&name='. urlencode($matalVisu->name) .'">'.$matalVisu->name. '</a>';
+										echo "<li class='analysis'>\n";
+										echo '<a target=_blank" href="./MatlabVisualization?id='. $matalVisu->thing_speak_id.'&name='. urlencode($matalVisu->name) .'">'.$matalVisu->name. '</a>';
 										echo '</li>';
 									}
 								echo "</ul>\n";
@@ -179,12 +187,12 @@
 							}	
 						}
 						
-						try{
+						
 							if (!isset($_SESSION['id']))
 								$sql = 'SELECT * FROM `things` where status = "public";';
-							else if ($_SESSION['id'] != 0)
+							else if ($_SESSION['droits'] == 1)
 								$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
-							else   // C'est root qui est connecté
+							else   // C'est un administrateur qui est connecté
 								$sql = "SELECT * FROM `things`";
 							
 							$reponse = $bdd->query($sql);

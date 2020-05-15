@@ -17,7 +17,7 @@
     </head>
     <body>
 	<?php require_once 'menu.php'; ?>
-	<div class="container" style="padding-top: 56px;">
+	<div class="container-fluid" style="padding-top: 56px;">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 			    <div class="popin responsive-video" >

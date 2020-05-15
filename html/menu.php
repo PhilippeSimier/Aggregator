@@ -7,12 +7,23 @@
 ------------------------------------------------------------------------------------>
 <?php 
     require_once('definition.inc.php');
-    
+	require_once('api/Str.php');
+	use Aggregator\Support\Str;
+	
+	$racine = './';
+	$repertoire = array('administration' , 'support' );  // les répertoires de prmier niveau du site
+	if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+		$racine = '../';
+	}
+	$repertoire = array('administration/support' );
+    if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+		$racine = '../../';
+	}
 ?>
 
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand" href="/Ruche/">
-			<img alt="Beehive logo" height="30" id="nav-Beehive-logo" src="/Ruche/images/beehive_logo.png" style="padding: 0 8px; ">
+		<a class="navbar-brand" href="<?php echo $racine ?>">
+			<img alt="Beehive logo" height="30" id="nav-Beehive-logo" src="<?php echo $racine ?>images/beehive_logo.png" style="padding: 0 8px; ">
 		</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -25,10 +36,10 @@
 		<ul class="navbar-nav mr-auto">
 			
 			<li class="nav-item">
-				<a class="nav-link" href="/Ruche/accueil" id="nav-sign-in">Browse Sites</a>
+				<a class="nav-link" href="<?php echo $racine ?>accueil" id="nav-sign-in">Browse Sites</a>
 			</li>					
 			<li class="nav-item">
-				<a class="nav-link" href="/Ruche/webcam" id="nav-sign-in">Webcam</a>
+				<a class="nav-link" href="<?php echo $racine ?>webcam" id="nav-sign-in">Webcam</a>
 			</li>	
         </ul>
 		
@@ -38,36 +49,36 @@
 				
 				<?php 
 				if (!isset($_SESSION['login']))
-					echo '<a class="nav-link" href="/Ruche/administration/" id="nav-sign-in">Sign In</a>';
+					echo "<a class='nav-link' href='{$racine}administration/' id='nav-sign-in'>Sign In</a>\n";
 				else{
-					echo '<li class="nav-item dropdown">';
+					echo "<li class='nav-item dropdown'>\n";
 					
-					echo '<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">';
-						echo '<img alt="Avatar" height="30" id="nav-avatar-logo" src="/Ruche/images/icon-avatar.svg" style="padding: 0 10px; ">';
-						echo $_SESSION['login']; 
-					echo '</a>';
-					echo '<div class="dropdown-menu">';
+					echo "<a class='nav-link dropdown-toggle' href='#' id='navbardrop' data-toggle='dropdown'>\n";
+					echo "<img alt='Avatar' height='30' id='nav-avatar-logo' src='{$racine}images/icon-avatar.svg' style='padding: 0 10px; '>\n";
+					echo $_SESSION['login']; 
+					echo "</a>\n";
+					echo "<div class='dropdown-menu'>\n";
 					if ($_SESSION['droits'] > 1){
-						echo '<a class="dropdown-item" href="/Ruche/administration/users">Users</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTPs</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/reacts">Reacts</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/sms">SMS</a>';
+						echo "<a class='dropdown-item' href='{$racine}administration/users'>Users</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/things'>Things</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/channels'>Channels</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/thingHTTPs'>ThingHTTPs</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/reacts'>Reacts</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/sms'>SMS</a>\n";
 						
 					}	
 					else{
-						echo '<a class="dropdown-item" href="/Ruche/administration/users">My Account</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/things">Things</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/channels">Channels</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/thingHTTPs">ThingHTTPs</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/reacts">Reacts</a>';
-						echo '<a class="dropdown-item" href="/Ruche/administration/sms">SMS</a>';
+						echo "<a class='dropdown-item' href='{$racine}administration/users'>My Account</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/things'>Things</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/channels'>Channels</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/thingHTTPs'>ThingHTTPs</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/reacts'>Reacts</a>\n";
+						echo "<a class='dropdown-item' href='{$racine}administration/sms'>SMS</a>\n";
 					}	
 					
-					echo '<a class="dropdown-item" href="/Ruche/administration/signout" id="nav-sign-in">Sign Out</a>';
-					echo '</div>';
-					echo '</li>';
+					echo "<a class='dropdown-item' href='{$racine}administration/signout' id='nav-sign-in'>Sign Out</a>\n";
+					echo "</div>\n";
+					echo "</li>\n";
 				}	
 				?>
 			</li>

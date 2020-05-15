@@ -58,6 +58,14 @@ class React
 		}	
 	}
 	
+	/** 
+	 * Methode to get the name
+	 */
+	 
+	public function getName(){
+		return $this->property->name;
+	}
+	
 	/** Methode to show property
      *  @return nothing
      */	 

@@ -45,15 +45,15 @@ if(isset($_POST['btn_supprimer'])){
 
     
     <!-- Bootstrap CSS version 4.1.1 -->
-    <link rel="stylesheet" href="/Ruche/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/Ruche/css/ruche.css" />
-	<link rel="stylesheet" href="/Ruche/css/jquery-confirm.min.css" />
-	<link rel="stylesheet" href="/Ruche/css/datatables.min.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/ruche.css" />
+	<link rel="stylesheet" href="../css/jquery-confirm.min.css" />
+	<link rel="stylesheet" href="../css/datatables.min.css"/>
 	<link rel="stylesheet" href="../css/dataTables.css" />	
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="/Ruche/scripts/bootstrap.min.js"></script> 
-	<script src="/Ruche/scripts/jquery-confirm.min.js"></script>
+	<script src="../scripts/bootstrap.min.js"></script> 
+	<script src="../scripts/jquery-confirm.min.js"></script>
 	<script src="//cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
 	
 	<script >

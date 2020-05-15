@@ -138,7 +138,7 @@
 		}
 	}
 	catch(\PDOException $ex) {
-		Api::envoyerErreur(500, "Internal Server Error", "Internal Server Error");
+		Api::envoyerErreur(500, "Internal Server Error", $ex->getMessage());
 	}
 	
 ?>
