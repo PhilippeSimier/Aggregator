@@ -151,7 +151,7 @@
 						function listerChannels($bdd, $tags){
 							
 							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `tags`='. $bdd->quote($tags);
-							$url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
+							$url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 							
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = 'SELECT * FROM `channels` WHERE `tags`='.  $bdd->quote($tags);
