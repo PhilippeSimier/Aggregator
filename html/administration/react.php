@@ -14,7 +14,10 @@ $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 $error = "";
  
 	//------------si des données  sont soumises on les enregistre dans la table data.reacts ---------
-	if( !empty($_POST['envoyer']) && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF'] && $_POST['field_number']!== '' && $_POST['channel_id']!== ''){
+	if( !empty($_POST['envoyer']) && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']  && $_POST['channel_id']!== ''){
+		
+
+		
 		try{
 			  
 				if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
@@ -27,9 +30,10 @@ $error = "";
 						$run_on_insertion = 0;
 					}
 						
-					$sql = sprintf("INSERT INTO `data`.`reacts` (`user_id`, `name`, `run_interval`, `run_on_insertion`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_type`, `actionable_id`, `run_action_every_time` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+					$sql = sprintf("INSERT INTO `data`.`reacts` (`user_id`, `name`, `react_type`, `run_interval`, `run_on_insertion`, `channel_id`, `field_number`, `condition`, `condition_value`, `actionable_type`, `actionable_id`, `run_action_every_time` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
 							, $bdd->quote($_POST['user_id'])
-							, $bdd->quote($_POST['name'])   
+							, $bdd->quote($_POST['name'])
+							, $bdd->quote($_POST['react_type'])
 							, $bdd->quote($run_interval)
 							, $bdd->quote($run_on_insertion)
 							, $bdd->quote($_POST['channel_id'])
@@ -53,9 +57,10 @@ $error = "";
 						$run_on_insertion = 0;
 					}
 					
-					$sql = sprintf("UPDATE `reacts` SET `user_id`= %s, `name` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `run_action_every_time`=%s WHERE `reacts`.`id` = %s;"
+					$sql = sprintf("UPDATE `reacts` SET `user_id`= %s, `name` = %s, `react_type` = %s, `run_interval`=%s, `run_on_insertion`=%s, `channel_id`=%s, `field_number`=%s, `condition`=%s, `condition_value`=%s, `actionable_type`=%s, `actionable_id`=%s, `run_action_every_time`=%s WHERE `reacts`.`id` = %s;"
 							, $bdd->quote($_POST['user_id'])
 							, $bdd->quote($_POST['name'])
+							, $bdd->quote($_POST['react_type'])
 							, $bdd->quote($run_interval)
 							, $bdd->quote($run_on_insertion)
 							, $bdd->quote($_POST['channel_id'])
@@ -114,6 +119,7 @@ $error = "";
 			$react->id = 0;
 			$react->user_id = $_SESSION['id'];
 			$react->name = "React";
+			$react->react_type = "numeric";
 			$react->run_interval = "";
 			$react->run_on_insertion = "";
 			$react->channel_id = "";
@@ -197,6 +203,33 @@ $error = "";
 		    
 		$(document).ready(function(){	
 			
+			console.log($('select#react_type').val());
+			switch($('select#react_type').val()) {
+				case 'numeric':
+				    console.log("numeric");
+					$('#section').append($('#numeric_condition'));
+				    break;
+
+				case 'nodata':
+				    console.log("nodata");
+					$('#section').append($('#numeric_nodata'));
+				    break;
+			}
+			
+			$('#react_type').change(function(){  
+				console.log(this.value);
+				if (this.value === 'numeric'){
+					$('#template').append($('#numeric_nodata'));
+					$('#section').append($( '#numeric_condition'));
+				}
+				if (this.value === 'nodata'){
+					$('#template').append($('#numeric_condition'));
+					$('#section').append($( '#numeric_nodata'));
+				}
+				
+			});
+			
+			
 			// when a channel is changed
 			$('#channel_id').change(function(){  
 				// $("#loader").show();    
@@ -208,6 +241,9 @@ $error = "";
 				);
 			});
     
+
+			
+			
 			
 		});
 		
@@ -229,10 +265,8 @@ $error = "";
 								echo Form::hidden('action', $react->action);
 								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								echo Form::hidden('id', $react->id);
-								
-								
 
-
+								
 								if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
 									echo Form::select("user_id", $selectUser, "User", $react->user_id);
 								else
@@ -240,28 +274,13 @@ $error = "";
 
 								$options = array( 'class' => 'form-control');
 								echo Form::input( 'text', 'name', $react->name, $options);
-
-								$select_interval = array('on_insertion' => "On data insertion", 
-								                         '10' =>"Every 10 minutes", 
-														 '30' =>"Every 30 minutes", 
-														 '60' =>"Every 60 minutes" );
-								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
-
 								
-								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
-								
-								echo Form::select("field_number", $select_field_number , " ", $react->field_number);
-								
-								$select_condition = array(	'gt' => 'is greater than',
-															'gte' => 'is greater or equal to',
-															'lt' => 'is less than',
-															'lte' => 'is less than or equal',
-															'eq' =>  'is equal to',
-															'neq' => 'is not equal' );
-								echo Form::select("condition", $select_condition , " ", $react->condition);
+								$select_react_type = array('numeric' => "Numeric",
+														   'nodata'  => "No data check");
+								echo Form::select( 'react_type', $select_react_type, "Condition Type", $react->react_type);						   
+														   
+								echo "<div id='section'></div>";
 
-								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
-								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
 
 								$select_actionable_type = array('' => 'Choose your action', 'thingHTTP' => "ThingHTTP",  'email' => "Send a email" );
 								echo Form::select("actionable_type", $select_actionable_type , "action", $react->actionable_type );
@@ -283,7 +302,65 @@ $error = "";
 								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
 								<a  class="btn btn-info" role="button" href="reacts">Cancel</a>
 							</div>
-					</form>
+					</form>	
+							
+							<?php
+								
+								// Morceaux de formulaire qui seront switchés en fonction du type de react
+								echo "<div id='template' style='display:none' >";
+								
+								// Condition Numerique
+								echo "<div id='numeric_condition' >";
+								$select_interval = array('on_insertion' => "On data insertion", 
+								                         '10' =>"Every 10 minutes", 
+														 '30' =>"Every 30 minutes", 
+														 '60' =>"Every 60 minutes" );
+								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
+
+								
+								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
+								
+								echo Form::select("field_number", $select_field_number , " ", $react->field_number);
+								
+								$select_condition = array(	'gt' => 'is greater than',
+															'gte' => 'is greater or equal to',
+															'lt' => 'is less than',
+															'lte' => 'is less than or equal',
+															'eq' =>  'is equal to',
+															'neq' => 'is not equal' );
+								echo Form::select("condition", $select_condition , " ", $react->condition);
+
+								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
+								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
+								echo "</div>";
+								// Fin de condition numeric
+								
+								// Condition no data check
+								
+								echo "<div id='numeric_nodata' >";
+								echo Form::hidden('field_number', '0');
+								$select_interval = array('10' =>"Every 10 minutes", 
+														 '30' =>"Every 30 minutes", 
+														 '60' =>"Every 60 minutes" );
+								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
+								
+								echo Form::select("channel_id",   $select_channel_id, "If Channel", $react->channel_id);
+								
+								echo "<div class='form-group row'><div class='col-3'></div><div class='col-9'>Has not been updated for</div></div>";							
+								$optionsNumber = array( 'class' => 'form-control', 'step' => "1");
+								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
+								echo "<div class='form-group row'><div class='col-3'></div><div class='col-9'>minutes</div></div><br />";
+								
+								echo "</div>";
+								// Fin de no data check
+							    echo "</div>";
+							
+							
+							?>
+							
+							
+							
+					
 				</div>
 			</div>
 

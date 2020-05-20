@@ -113,10 +113,39 @@ else
 	    echo($ex->getMessage());
         return;		
 	}
+}
+
+function afficherFormThing($thing, $selectUser){
 	
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
+	
+	echo Form::hidden('action', $thing->action);
+	echo Form::hidden('id', $thing->id);
+	echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
+								
+	if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
+		echo Form::select("user_id", $selectUser, "User ", $thing->user_id);
+	else
+		echo Form::hidden("user_id", $thing->user_id );
+	$options = array( 'class' => 'form-control');
+	echo Form::input( 'text', 'tag', $thing->tag, $options , 'Tag');
+	echo Form::input( 'text', 'name', $thing->name, $options , 'Name');
+								
+	$status = array('private' => "private", 'public' =>"public" );
+	echo Form::select("status", $status, "Status ", $thing->status);
+								
+	$optionsNumber = array( 'class' => 'form-control', 'step' => "0.000001");
+	echo Form::input( 'number', 'latitude',  $thing->latitude,  $optionsNumber , 'latitude');
+	echo Form::input( 'number', 'longitude', $thing->longitude, $optionsNumber , 'longitude');
+	echo Form::input( 'number', 'elevation', $thing->elevation, $optionsNumber , 'elevation');
+								
+	echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , 'local IP');
+								
+	$classes = array('ruche' => "beehive", 'objet' => 'thing', 'weather' => 'weather station');
+	echo Form::select("class", $classes, "Class ", $thing->class);
+
 }
 ?>
 
@@ -297,33 +326,7 @@ else
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
-							<?php
-								echo Form::hidden('action', $thing->action);
-								echo Form::hidden('id', $thing->id);
-								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
-								
-								if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
-									echo Form::select("user_id", $selectUser, "User ", $thing->user_id);
-								else
-									echo Form::hidden("user_id", $thing->user_id );
-								
-								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'tag', $thing->tag, $options , 'Tag');
-								echo Form::input( 'text', 'name', $thing->name, $options , 'Name');
-								
-								$status = array('private' => "private", 'public' =>"public" );
-								echo Form::select("status", $status, "Status ", $thing->status);
-								
-								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.000001");
-								echo Form::input( 'number', 'latitude',  $thing->latitude,  $optionsNumber , 'latitude');
-								echo Form::input( 'number', 'longitude', $thing->longitude, $optionsNumber , 'longitude');
-								echo Form::input( 'number', 'elevation', $thing->elevation, $optionsNumber , 'elevation');
-								
-								echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , 'local IP');
-								
-								$classes = array('ruche' => "beehive", 'objet' => 'thing', 'weather' => 'weather station');
-								echo Form::select("class", $classes, "Class ", $thing->class);
-							?>
+							<?php afficherFormThing($thing, $selectUser); ?>
 							
 							<div class="form-group">
 								</br>

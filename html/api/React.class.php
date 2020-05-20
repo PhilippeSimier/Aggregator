@@ -24,38 +24,79 @@ class React
      */	
     public function perform() {
 		if($this->property) {
-			// lecture de la dernière valeur du champ n° field_number du canal channel_id
-			$sql = "SELECT field" . $this->property->field_number ." as value FROM feeds WHERE id_channel = ". $this->property->channel_id ." ORDER BY `feeds`.`date` desc limit 1";
-			$stmt = $this->bdd->query($sql);
-			$this->property->action_value = $stmt->fetchObject()->value;
-
-			// calcul de la comparaison
-			$condition = $this->comparaison( $this->property->action_value , $this->property->condition , $this->property->condition_value );
-			
-			// Exécution de l'action associé
-			if ($condition && ( !$this->property->last_result || $this->property->run_action_every_time)){
-					
-					try{
-						$http = new ThingHTTP($this->bdd, $this->property->actionable_id);
-						$http->send_request();
-					}
-					catch(ThingHTTPException $e) {
-						echo $e->getMessage();
-					}
-					// Sauvegarde de l'heure d'éxécution & de la valeur d'action
-					$sql = "UPDATE `reacts` SET `last_run_at`= now(), `action_value` = {$this->property->action_value} WHERE `id` = {$this->property->id}";
-					$stmt = $this->bdd->query($sql);
-					
+			switch ($this->property->react_type) {
+				case 'numeric' :
+					$retour = $this->action($this->numeric());
+					break;
+				case 'nodata' :
+					$retour = $this->action($this->nodata());
+					break;
 			}
-			
-			// Sauvegarde de la propriété last_result  dans la base
-			if ($condition)  { $last_result = 1; } else  $last_result = 0;
-			$sql = "UPDATE `reacts` SET `last_result` = '{$last_result}' WHERE `reacts`.`id` = {$this->property->id}";
-			$stmt = $this->bdd->query($sql);
-			return true;
+			return $retour;
 		} else{
 			return false;
 		}	
+	}
+	
+	/** 
+	 * Methode pour tester les conditions  numeriques
+	 * @return boolean
+	 */
+	private function numeric(){
+		// lecture de la dernière valeur du champ n° field_number du canal channel_id
+		$sql = "SELECT field" . $this->property->field_number ." as value FROM feeds WHERE id_channel = ". $this->property->channel_id ." ORDER BY `feeds`.`date` desc limit 1";
+		$stmt = $this->bdd->query($sql);
+		$this->property->action_value = $stmt->fetchObject()->value;
+
+		// calcul de la comparaison
+		$condition = $this->comparaison( $this->property->action_value , $this->property->condition , $this->property->condition_value );
+		
+		return $condition;	 
+	}
+	
+	/** 
+	 * Methode pour tester l'absence d'update d'un canal id channel_id depuis condition_value minutes
+	 * @return boolean true si la condition remplie
+	 */	
+	
+	private function nodata(){
+		
+		$sql = "SELECT count(*) as nb FROM `channels` where `id` = {$this->property->channel_id} and `last_write_at` > DATE_SUB(NOW(), INTERVAL {$this->property->condition_value} MINUTE)";
+	    $stmt = $this->bdd->query($sql);
+	    $nb =  $stmt->fetchObject()->nb;
+		$this->property->action_value = 0;
+		if ($nb == 0) 
+			return true;
+		else
+			return false;	
+    }
+	
+	/** 
+	 * Methode pour exécuter l'action associée
+	 */	
+	private function action($condition){
+		// Exécution de l'action associé
+		if ($condition && ( !$this->property->last_result || $this->property->run_action_every_time)){
+					
+			try{
+				$http = new ThingHTTP($this->bdd, $this->property->actionable_id);
+				$http->send_request();
+			}
+			catch(ThingHTTPException $e) {
+				echo $e->getMessage();
+				return false;
+			}
+			// Sauvegarde de l'heure d'éxécution & de la valeur d'action
+			$sql = "UPDATE `reacts` SET `last_run_at`= now(), `action_value` = {$this->property->action_value} WHERE `id` = {$this->property->id}";
+			$stmt = $this->bdd->query($sql);
+					
+		}
+			
+		// Sauvegarde de la propriété last_result  dans la base
+		if ($condition)  { $last_result = 1; } else  $last_result = 0;
+		$sql = "UPDATE `reacts` SET `last_result` = '{$last_result}' WHERE `reacts`.`id` = {$this->property->id}";
+		$stmt = $this->bdd->query($sql);
+		return true;				
 	}
 	
 	/** 

@@ -27,9 +27,39 @@ if(isset($_POST['btn_supprimer'])){
 		}
 		$supp .= ")";
 
-		
-		$sql = "DELETE FROM `things` WHERE `id` IN " . $supp;
-		$bdd->exec($sql);
+		try{
+			$sql = "DELETE FROM `things` WHERE `id` IN " . $supp;
+			$bdd->exec($sql);
+		}	
+		catch (\PDOException $ex){
+		    echo "erreur BDD";
+		    die('Erreur : ' . $ex->getMessage());
+	    }
+	}
+}
+
+function afficherThings($bdd){
+	try{
+		$sql = "SELECT * FROM `login_things`";
+		if ($_SESSION['droits'] > 1)
+			$sql .= " where 1";	
+		else	
+			$sql .= " where login = '" . $_SESSION['login'] . "'";
+			$sql .= " order by `name` ";
+			$stmt = $bdd->query($sql);
+									
+			while ($thing =  $stmt->fetchObject()){
+				echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
+				echo "<td>" . Str::reduire($thing->name) . "</td>";
+				echo "<td>" . $thing->tag . "</td>";
+				echo "<td>" . $thing->status . "</td>";
+				echo "<td>" . $thing->login . "</td>";
+				echo "<td>" . $thing->local_ip_address . "</td>";
+			}	
+	}
+	catch (\PDOException $ex){
+		echo "erreur BDD";
+		die('Erreur : ' . $ex->getMessage());
 	}
 }
 ?>
@@ -182,28 +212,7 @@ if(isset($_POST['btn_supprimer'])){
 						  </tr>
 						</thead>
 						<tbody>
-							
-							<?php
-								
-								
-								$sql = "SELECT * FROM `login_things`";
-                                if ($_SESSION['droits'] > 1)
-										$sql .= " where 1";	
-								else	
-								        $sql .= " where login = '" . $_SESSION['login'] . "'";
-								$sql .= " order by `name` ";
-								
-								$stmt = $bdd->query($sql);
-								
-								while ($thing =  $stmt->fetchObject()){
-									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . Str::reduire($thing->name) . "</td>";
-									echo "<td>" . $thing->tag . "</td>";
-									echo "<td>" . $thing->status . "</td>";
-									echo "<td>" . $thing->login . "</td>";
-									echo "<td>" . $thing->local_ip_address . "</td>";
-								}
-							?>
+							<?php afficherThings($bdd);	?>
 						</tbody>
 					</table>
 					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">

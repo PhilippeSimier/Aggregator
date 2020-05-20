@@ -17,7 +17,7 @@ if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
 		try{
 			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-				$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `tags`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+				$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `thing_id`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
 							  , $bdd->quote($_POST['name'])   // utf8_decode()
 							  , $bdd->quote($_POST['field1'])
 							  , $bdd->quote($_POST['field2'])
@@ -28,14 +28,14 @@ if( !empty($_POST['envoyer'])){
 							  , $bdd->quote($_POST['field7'])
 							  , $bdd->quote($_POST['field8'])
 							  , $bdd->quote($_POST['status'])
-							  , $bdd->quote($_POST['tags'])
+							  , $bdd->quote($_POST['thing_id'])
 							  , $bdd->quote($_POST['write_api_key'])
 							  ); 	
 				$bdd->exec($sql);
 
 			}
 			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-				$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `tags`=%s WHERE `channels`.`id` = %s;"
+				$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `thing_id`=%s WHERE `channels`.`id` = %s;"
 							  , $bdd->quote($_POST['name'])
 							  , $bdd->quote($_POST['field1'])
 							  , $bdd->quote($_POST['field2'])
@@ -46,7 +46,7 @@ if( !empty($_POST['envoyer'])){
 							  , $bdd->quote($_POST['field7'])
 							  , $bdd->quote($_POST['field8'])
 							  , $bdd->quote($_POST['status'])
-							  , $bdd->quote($_POST['tags'])
+							  , $bdd->quote($_POST['thing_id'])
 							  , $_POST['id']
 							  );
 
@@ -81,6 +81,7 @@ else
 		}else {
 			$channel->action = "insert";
 			$channel->id = 0;
+			$channel->thing_id = 0;
 			$channel->name = "";
 			$channel->field1 = "";
 			$channel->field2 = "";
@@ -96,13 +97,13 @@ else
 			$channel->last_write_at = "";
 		}
 
-		// Création du selectTag
-		$sql = "SELECT tag FROM `things`";
+		// Création du selectThing
+		$sql = "SELECT id,name FROM `things`";
 		$stmt = $bdd->query($sql);
 		
-		$selectTag = array();
+		$selectThing = array();
 		while ($thing = $stmt->fetchObject()){
-			$selectTag[$thing->tag] = $thing->tag;
+			$selectThing[$thing->id] = $thing->name;
 		}
 	}
 	catch (\PDOException $ex) 
@@ -110,10 +111,37 @@ else
 	    echo($ex->getMessage());
 		return;
 	}
+
+
 	
-	// Création du tokenCSRF
-	$tokenCSRF = STR::genererChaineAleatoire(32);
-	$_SESSION['tokenCSRF'] = $tokenCSRF;
+	function afficherFormChannel($channel,$selectThing ){
+		
+		// Création du tokenCSRF
+		$tokenCSRF = STR::genererChaineAleatoire(32);
+		$_SESSION['tokenCSRF'] = $tokenCSRF;
+		
+		echo Form::hidden('action', $channel->action);
+		echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
+
+		$options = array( 'class' => 'form-control', 'readonly' => null);
+		echo Form::input( 'int', 'id', $channel->id, $options, 'Id' );
+		echo Form::input( 'text', 'write_api_key', $channel->write_api_key, $options, 'write api key' );
+		echo Form::input( 'text', 'last_write_at', $channel->last_write_at, $options, 'last write at' );
+								
+		$options = array( 'class' => 'form-control');
+		echo Form::input( 'text', 'name', $channel->name, $options);
+								
+		echo Form::select("thing_id", $selectThing , "Thing", $channel->thing_id);
+		echo Form::input( 'field1', 'field1', $channel->field1, $options);
+		echo Form::input( 'field2', 'field2', $channel->field2, $options);
+		echo Form::input( 'field3', 'field3', $channel->field3, $options);
+		echo Form::input( 'field4', 'field4', $channel->field4, $options);
+		echo Form::input( 'field5', 'field5', $channel->field5, $options);
+		echo Form::input( 'field6', 'field6', $channel->field6, $options);
+		echo Form::input( 'field7', 'field7', $channel->field7, $options);
+		echo Form::input( 'field8', 'field8', $channel->field8, $options);
+		echo Form::input( 'status', 'status', $channel->status, $options);
+	}	
 }
 ?>
 
@@ -141,30 +169,7 @@ else
 			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
-							<?php
-								echo Form::hidden('action', $channel->action);
-								echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
-								
-								$options = array( 'class' => 'form-control', 'readonly' => null);
-								echo Form::input( 'int', 'id', $channel->id, $options, 'Id' );
-								echo Form::input( 'text', 'write_api_key', $channel->write_api_key, $options, 'write api key' );
-								echo Form::input( 'text', 'last_write_at', $channel->last_write_at, $options, 'last write at' );
-								
-								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'name', $channel->name, $options);
-								
-								echo Form::select("tags", $selectTag , "Tag", $channel->tags);
-								echo Form::input( 'field1', 'field1', $channel->field1, $options);
-								echo Form::input( 'field2', 'field2', $channel->field2, $options);
-								echo Form::input( 'field3', 'field3', $channel->field3, $options);
-								echo Form::input( 'field4', 'field4', $channel->field4, $options);
-								echo Form::input( 'field5', 'field5', $channel->field5, $options);
-								echo Form::input( 'field6', 'field6', $channel->field6, $options);
-								echo Form::input( 'field7', 'field7', $channel->field7, $options);
-								echo Form::input( 'field8', 'field8', $channel->field8, $options);
-								echo Form::input( 'status', 'status', $channel->status, $options);
-							
-							?>
+							<?php  afficherFormChannel($channel,$selectThing );	?>
 
 							<div class="form-group">
 								</br>

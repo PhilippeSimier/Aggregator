@@ -34,6 +34,34 @@ if(isset($_POST['btn_supprimer'])){
 	}
 }
 
+function afficherChannels($bdd){
+    try{
+	    $sql = "SELECT * FROM `users_channels`";
+		if ($_SESSION['droits'] > 1)
+			$sql .= " where 1";	
+		else	
+			$sql .= " where user_id = '" . $_SESSION['id'] . "'";
+			$sql .= " order by `tags` ";
+									
+			$stmt = $bdd->query($sql);
+									
+			while ($channel =  $stmt->fetchObject()){
+				echo "<tr><td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>";
+				echo "<td>" . $channel->id . "</td>";
+				echo "<td>" . $channel->name . "</td>";  
+				echo "<td>" . $channel->tags . "</td>";
+				echo "<td>" . $channel->write_api_key . "</td>";
+				echo "<td>" . $channel->last_entry_id . "</td>";
+				echo "<td>" . $channel->last_write_at . "</td>";
+				echo "</tr>";								
+			}
+	}
+	catch (\PDOException $ex) 
+	{
+		echo($ex->getMessage());
+		return;
+	}
+}
 ?>
 <!DOCTYPE html>
 
@@ -358,6 +386,64 @@ if(isset($_POST['btn_supprimer'])){
 			
 			});
 			
+			$( "#btn_val" ).click(function() {
+				console.log("Bouton View last values cliqué");
+				
+			    // Ce tableau va stocker les valeurs des checkbox cochées
+				var checkbox_val = [];
+
+				// Parcours de toutes les checkbox checkées"
+				$('.selection:checked').each(function(){
+					checkbox_val.push($(this).val());
+				});
+				if(checkbox_val.length == 0){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous n'avez sélectionné aucun objet !"
+					});
+				}
+				if(checkbox_val.length > 1){
+					$.alert({
+					theme: 'bootstrap',
+					title: 'Alert!',
+					content: "Vous avez sélectionné plusieurs objets !"
+					});
+				}
+				if(checkbox_val.length == 1){
+					let feeds = "../api/feeds.php?channelId=" + checkbox_val[0] + "&type=json&results=1";
+					console.log (feeds);
+					$.getJSON( feeds ,  function( data ) {
+						let contenu = '';
+						if (typeof data.feeds[0] !==  'undefined'){
+							let d = data.feeds[0].created_at;
+							let date = Date.UTC(d.substring(0, 4), d.substring(5, 7) - 1, d.substring(8, 10), d.substring(11, 13), d.substring(14, 16), d.substring(17, 19));
+							let options = {timeZone: '<?php echo $_SESSION['time_zone']?>', year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'};
+							let _resultDate = new Intl.DateTimeFormat('fr-FR', options).format(date);
+							contenu = _resultDate;
+							contenu += "<table class='table display table-striped table-sm'><tr><th>Field</th><th>Value</th></tr>";
+							if (data.channel.field1) contenu += '<tr><td>'+ data.channel.field1 + '</td><td>' + data.feeds[0].field1 + '<td/></tr>';
+							if (data.channel.field2) contenu += '<tr><td>'+ data.channel.field2 + '</td><td>' + data.feeds[0].field2 + '<td/></tr>';
+							if (data.channel.field3) contenu += '<tr><td>'+ data.channel.field3 + '</td><td>' + data.feeds[0].field3 + '<td/></tr>';
+							if (data.channel.field4) contenu += '<tr><td>'+ data.channel.field4 + '</td><td>' + data.feeds[0].field4 + '<td/></tr>';
+							if (data.channel.field5) contenu += '<tr><td>'+ data.channel.field5 + '</td><td>' + data.feeds[0].field5 + '<td/></tr>';
+							if (data.channel.field6) contenu += '<tr><td>'+ data.channel.field6 + '</td><td>' + data.feeds[0].field6 + '<td/></tr>';
+							if (data.channel.field7) contenu += '<tr><td>'+ data.channel.field7 + '</td><td>' + data.feeds[0].field7 + '<td/></tr>';
+							if (data.channel.field8) contenu += '<tr><td>'+ data.channel.field8 + '</td><td>' + data.feeds[0].field8 + '<td/></tr>';
+							contenu += '</table>';
+						}else{
+							contenu = "not data to show";
+						}
+						$.alert({	
+							theme: 'bootstrap',
+							title: data.channel.name,
+							content: contenu
+						});
+						});	
+
+				}
+			});
+			
 		});
 		
 	</script>
@@ -385,40 +471,14 @@ if(isset($_POST['btn_supprimer'])){
 						  </tr>
 						</thead>
 						<tbody>
-							<?php					
-								try{
-									$sql = "SELECT * FROM `users_channels`";
-									if ($_SESSION['droits'] > 1)
-											$sql .= " where 1";	
-									else	
-											$sql .= " where user_id = '" . $_SESSION['id'] . "'";
-									$sql .= " order by `tags` ";
-									
-									$stmt = $bdd->query($sql);
-									
-									while ($channel =  $stmt->fetchObject()){
-										echo "<tr><td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>";
-										echo "<td>" . $channel->id . "</td>";
-										echo "<td>" . $channel->name . "</td>";  
-										echo "<td>" . $channel->tags . "</td>";
-										echo "<td>" . $channel->write_api_key . "</td>";
-										echo "<td>" . $channel->last_entry_id . "</td>";
-										echo "<td>" . $channel->last_write_at . "</td>";
-										echo "</tr>";								
-									}
-								}
-								catch (\PDOException $ex) 
-								{
-									echo($ex->getMessage());
-									return;
-								}
-							?>
+							<?php afficherChannels($bdd); ?>
 						</tbody>
 					</table>
 					
-					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
+					<button id="btn_mod" type="button" class="btn btn-secondary">Settings</button>
 					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
 					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
+					<button id="btn_val" type="button" class="btn btn-secondary">View last values</button>
 					<button id="btn_csv" type="button" class="btn btn-secondary">Download CSV</button>
 					<button id="btn_clear" type="button" class="btn btn-danger">Clear all feed</button>
 					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">

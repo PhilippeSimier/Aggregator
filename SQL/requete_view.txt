@@ -1,4 +1,0 @@
-CREATE
- ALGORITHM = UNDEFINED
- VIEW `users_things`
- AS SELECT `things`.`id`, `name`, `USER_API_Key`,`tag` FROM `things`,`users` where `user_id`=`users`.id

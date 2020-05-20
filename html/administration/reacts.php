@@ -191,19 +191,25 @@ if(isset($_POST['btn_supprimer'])){
 									else
 											$sql .= " where login = '" . $_SESSION['login'] . "'";
 									$sql .= " order by `id` ";
-
-
 									$stmt = $bdd->query($sql);
 
 									while ($react =  $stmt->fetchObject()){
-										$sql2 = "select field{$react->field_number} as field from channels where id = {$react->channelId}";
-										$stmt2 = $bdd->query($sql2);
-										$channel = $stmt2->fetchObject();
+	
 										echo "<tr><td><input class='selection' type='checkbox' name='table_array[$react->id]' value='$react->id' ></td>";
 										echo "<td>" . $react->login . "</td>";
 										echo "<td>" . $react->name . "</td>";
 										echo "<td>" . $react->channelCheck . "</td>";
-										echo "<td>" . $channel->field . " " . Str::mathOperator($react->condition) . " " . $react->condition_value ."</td>";
+										switch ($react->react_type){
+											case "numeric" :
+												$sql2 = "select field{$react->field_number} as field from channels where id = {$react->channelId}";
+												$stmt2 = $bdd->query($sql2);
+												$channel = $stmt2->fetchObject();
+												echo "<td>" . $channel->field . " " . Str::mathOperator($react->condition) . " " . $react->condition_value ."</td>";
+												break;
+											case "nodata" :
+												echo "<td> Has not been updated for {$react->condition_value} minutes </td>";
+												break;
+										}
 										echo "<td>" . $react->actionName . "</td>";
 										echo "</tr>";
 									}

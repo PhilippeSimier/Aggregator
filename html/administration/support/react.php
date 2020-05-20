@@ -3,7 +3,7 @@
     @auteur   Philippe SIMIER (Touchard Washington le Mans)
     @date     Avril 2020
     @version  v1.0 - First release						
-    @details  support pour la page administration/sms.php
+    @details  support pour la page administration/react.php
 ------------------------------------------------------------------------------------>
 
 <?php session_start(); ?>

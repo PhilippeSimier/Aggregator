@@ -11,11 +11,11 @@
 	use Aggregator\Support\Str;
 	
 	$racine = './';
-	$repertoire = array('administration' , 'support' );  // les répertoires de prmier niveau du site
+	$repertoire = array('administration' , 'support' );  // les répertoires de premier niveau du site
 	if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
 		$racine = '../';
 	}
-	$repertoire = array('administration/support' );
+	$repertoire = array('administration/support' );      // les répertoires de second niveau du site
     if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
 		$racine = '../../';
 	}

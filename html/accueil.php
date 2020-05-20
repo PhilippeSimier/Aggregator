@@ -148,22 +148,21 @@
 					<?php
 						try{
 							
-						function listerChannels($bdd, $tags){
+						function listerChannels($bdd, $id){
 							
-							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `tags`='. $bdd->quote($tags);
+							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `thing_id`='. $bdd->quote($id);
 							$url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 							
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
-								$sql = 'SELECT * FROM `channels` WHERE `tags`='.  $bdd->quote($tags);
+								$sql = 'SELECT * FROM `channels` WHERE `thing_id`='.  $bdd->quote($id);
 								$reponse = $bdd->query($sql);
 								echo '<li  class="folder-data"><a href="#">Data visualisation</a>';
 								echo "<ul id=\"channel\">\n";
-									while($channel = $reponse->fetchObject()){
-										echo '<li>';
-										echo "<a class='channels' href='{$url}/channels/{$channel->id}/feeds.json?results=0' target='_blank' >{$channel->name}</a>\n";
-										echo '</li>';								
-									}
-								
+								while($channel = $reponse->fetchObject()){
+									echo '<li>';
+									echo "<a class='channels' href='{$url}/channels/{$channel->id}/feeds.json?results=0' target='_blank' >{$channel->name}</a>\n";
+									echo '</li>';								
+								}
 								echo "</ul>\n";
 								echo "</li>\n";
 							}
@@ -199,7 +198,7 @@
 							while ($thing = $reponse->fetchObject()){
 									echo '<li class="folder-root ' .$thing->class .'">	<a href="#">' . $thing->name . '</a>'; 
 										echo '<ul>';
-										listerChannels($bdd, $thing->tag);
+										listerChannels($bdd, $thing->id);
 										listerMatlabVisu($bdd, $thing->id);
 										echo '</ul>';
 									echo '</li>';
@@ -207,9 +206,9 @@
 							}
 							$reponse->closeCursor();
 						}
-						catch (Exception $e){
+						catch (\PDOException $ex){
 							echo "erreur BDD";
-							die('Erreur : ' . $e->getMessage());
+							die('Erreur : ' . $ex->getMessage());
 						}
 						?>								
 					</ul>
