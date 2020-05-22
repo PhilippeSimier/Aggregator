@@ -17,8 +17,9 @@ if( !empty($_POST['envoyer'])){
 	if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
 		try{
 			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-				$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `thing_id`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-							  , $bdd->quote($_POST['name'])   // utf8_decode()
+				$sql = sprintf("INSERT INTO `data`.`channels` (`name`, `description`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `thing_id`,`write_api_key` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+							  , $bdd->quote($_POST['name'])
+							  , $bdd->quote($_POST['description'])
 							  , $bdd->quote($_POST['field1'])
 							  , $bdd->quote($_POST['field2'])
 							  , $bdd->quote($_POST['field3'])
@@ -35,8 +36,9 @@ if( !empty($_POST['envoyer'])){
 
 			}
 			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-				$sql = sprintf("UPDATE `channels` SET `name` = %s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `thing_id`=%s WHERE `channels`.`id` = %s;"
+				$sql = sprintf("UPDATE `channels` SET `name` = %s, `description`=%s, `field1`=%s, `field2`=%s, `field3`=%s, `field4`=%s, `field5`=%s, `field6`=%s , `field7`=%s , `field8`=%s , `status`=%s, `thing_id`=%s WHERE `channels`.`id` = %s;"
 							  , $bdd->quote($_POST['name'])
+							  , $bdd->quote($_POST['description'])
 							  , $bdd->quote($_POST['field1'])
 							  , $bdd->quote($_POST['field2'])
 							  , $bdd->quote($_POST['field3'])
@@ -83,6 +85,7 @@ else
 			$channel->id = 0;
 			$channel->thing_id = 0;
 			$channel->name = "";
+			$channel->description = "";
 			$channel->field1 = "";
 			$channel->field2 = "";
 			$channel->field3 = "";
@@ -130,7 +133,7 @@ else
 								
 		$options = array( 'class' => 'form-control');
 		echo Form::input( 'text', 'name', $channel->name, $options);
-								
+		echo Form::textarea( 'description', $channel->description, $options); 						
 		echo Form::select("thing_id", $selectThing , "Thing", $channel->thing_id);
 		echo Form::input( 'field1', 'field1', $channel->field1, $options);
 		echo Form::input( 'field2', 'field2', $channel->field2, $options);
