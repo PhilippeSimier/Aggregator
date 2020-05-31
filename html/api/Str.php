@@ -122,7 +122,24 @@ class Str
         return $retour;
     }
 	
-	
+	/** Fonction pour Convertir un nombre à virgule flottante 
+	 *  en chaîne de caractères
+     * @param  string $operateur
+     * @param  int    $precision	 
+	 */
+    public static function floatToString($valeur, $precision){
+	if($valeur == null)
+		return "nan";
+	else 
+		$format = "%.". $precision ."f";
+	    return sprintf($format, $valeur);
+    }
+
+    // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
+    public static function formatDate($date){
+		$dt = new \DateTime($date);
+        return $dt->format('Y-m-d\TH-i-s\Z');
+	}
 
     	
 

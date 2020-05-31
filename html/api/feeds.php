@@ -15,15 +15,17 @@
 			callback  (Optional) le nom de la fonction de retour JSONP
 			start	  (Optional) la date de départ
 			end	      (Optional) la date de fin
+			round     (Optional) Le nombre optionnel de décimales à arrondir.
 				
 		Retour :  les données au format json ou csv suivant la demande
 	**/
 	
 	require_once('../definition.inc.php');
 	require_once('Api.php');
-
-	use Aggregator\Support\Api;
+	require_once('Str.php');
 	
+	use Aggregator\Support\Api;
+	use Aggregator\Support\Str;	
    
 	// Lecture des paramétres obligatoires
 	$channelId = Api::obtenir("channelId", FILTER_VALIDATE_INT);
@@ -34,7 +36,8 @@
 	$callback  = Api::facultatif("callback", NULL);
 	$start     = Api::facultatif("start", NULL);
 	$end       = Api::facultatif("end", NULL);
-
+    $round     = Api::facultatif("round", 3);
+	
 	// Connexion à la base avec session heure UTC
 	$bdd = Api::connexionBD(BASE, "+00:00");
 	
@@ -50,8 +53,8 @@
 	
 		// Mise en forme des données 
 		if ($type == "json"){
-			// Lecture des informations correspondant au channel dans la table channels
-			$sqlChannels = "SELECT * FROM `channels` WHERE `id` = " . $channelId;
+			// Lecture des informations correspondant au channel dans la vue channels things
+			$sqlChannels = "SELECT * FROM `vue_channels` WHERE `id` = " . $channelId;
 			
 			$stmt = $bdd->query($sqlChannels);
 			if ($result =  $stmt->fetchObject()){
@@ -59,7 +62,9 @@
 				$channel = array(
 					'id' => intval($result->id),
 					'name' => $result->name,
-
+					'description' => $result->description,
+					'latitude' =>    $result->latitude,
+					'longitude' =>	 $result->longitude,
 				);
 				if ($result->field1 != "") $channel['field1'] = $result->field1;
 				if ($result->field2 != "") $channel['field2'] = $result->field2;
@@ -69,26 +74,28 @@
 				if ($result->field6 != "") $channel['field6'] = $result->field6;
 				if ($result->field7 != "") $channel['field7'] = $result->field7;
 				if ($result->field8 != "") $channel['field8'] = $result->field8;
-				
+				$channel['elevation'] =	$result->elevation;
+				$channel['last_entry_id'] = intval($result->last_entry_id);				
+
 				
 				$stmt = $bdd->query($sql);
 				
 				$feeds = array();
 				while ($feed =  $stmt->fetchObject()){
 					$data = array(
-							'created_at' => Api::formatDate($feed->date),
+							'created_at' => Str::formatDate($feed->date),
 							'entry_id' => intval($feed->id), 
 						);
 						
 						
-					if ($result->field1 != "") $data['field1'] = Api::nan($feed->field1);
-					if ($result->field2 != "") $data['field2'] = Api::nan($feed->field2);
-					if ($result->field3 != "") $data['field3'] = Api::nan($feed->field3);
-					if ($result->field4 != "") $data['field4'] = Api::nan($feed->field4);
-					if ($result->field5 != "") $data['field5'] = Api::nan($feed->field5);
-					if ($result->field6 != "") $data['field6'] = Api::nan($feed->field6);	
-					if ($result->field7 != "") $data['field7'] = Api::nan($feed->field7);	
-					if ($result->field8 != "") $data['field8'] = Api::nan($feed->field8);			
+					if ($result->field1 != "") $data['field1'] = Str::floatToString($feed->field1, $round);
+					if ($result->field2 != "") $data['field2'] = Str::floatToString($feed->field2, $round);
+					if ($result->field3 != "") $data['field3'] = Str::floatToString($feed->field3, $round);
+					if ($result->field4 != "") $data['field4'] = Str::floatToString($feed->field4, $round);
+					if ($result->field5 != "") $data['field5'] = Str::floatToString($feed->field5, $round);
+					if ($result->field6 != "") $data['field6'] = Str::floatToString($feed->field6, $round);	
+					if ($result->field7 != "") $data['field7'] = Str::floatToString($feed->field7, $round);	
+					if ($result->field8 != "") $data['field8'] = Str::floatToString($feed->field8, $round);			
 					array_push($feeds, $data);							
 				}
 				
@@ -100,7 +107,8 @@
 				);
 				
 				header("Access-Control-Allow-Origin: *");
-				header('Content-type: application/json');
+				header("cache-control: max-age=0, private, must-revalidate");
+				header('Content-type: application/json; charset=utf-8');
 				if ($callback !== NULL){ 	
 					echo $callback . '('; 
 				}
@@ -123,14 +131,14 @@
 			while ($data = $stmt->fetchObject()){
 					echo $data->date." UTC,";
 					echo $data->id.",";
-					echo Api::nan($data->field1).",";
-					echo Api::nan($data->field2).",";
-					echo Api::nan($data->field3).",";
-					echo Api::nan($data->field4).",";
-					echo Api::nan($data->field5).",";
-					echo Api::nan($data->field6).",";
-					echo Api::nan($data->field7).",";
-					echo Api::nan($data->field8).",";
+					echo Str::floatToString($data->field1, $round).",";
+					echo Str::floatToString($data->field2, $round).",";
+					echo Str::floatToString($data->field3, $round).",";
+					echo Str::floatToString($data->field4, $round).",";
+					echo Str::floatToString($data->field5, $round).",";
+					echo Str::floatToString($data->field6, $round).",";
+					echo Str::floatToString($data->field7, $round).",";
+					echo Str::floatToString($data->field8, $round).",";
 					echo $data->latitude.",";
 					echo $data->longitude.",";
 					echo $data->elevation.",";			

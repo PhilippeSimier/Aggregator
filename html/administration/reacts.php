@@ -4,6 +4,7 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
+require_once('./lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -67,10 +68,18 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false},  {type:"text"} , {type:"text"} , {type:"text"}, {orderable:false}, {type:"text"}]
-
+				columns: [{orderable:false},  {type:"text"} , {type:"text"} , {type:"text"}, {orderable:false}, {type:"text"}],
+				"language": {
+					"url": "<?php echo $lang['dataTables'] ?>"
+				}
             };
+		
+			
 			$('#tableau').DataTable(options);
+			
+			
+			
+        
 
 			function cocherTout(etat)
 			{
@@ -168,18 +177,20 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row popin card">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $title ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped table-sm">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>User</th>
-							<th>Name</th>
-							<th>Channel To Check</th>
-							<th>Condition</th>
-							<th>Action</th>
+							
+							    <th><?= $lang['user'] ?></th>
+							    <th><?= $lang['name'] ?></th>
+							    <th><?= $lang['channel_to_check'] ?></th>
+							    <th><?= $lang['condition'] ?></th>
+							    <th><?= $lang['action'] ?></th>
+							
 						  </tr>
 						</thead>
 						<tbody>
@@ -207,7 +218,7 @@ if(isset($_POST['btn_supprimer'])){
 												echo "<td>" . $channel->field . " " . Str::mathOperator($react->condition) . " " . $react->condition_value ."</td>";
 												break;
 											case "nodata" :
-												echo "<td> Has not been updated for {$react->condition_value} minutes </td>";
+												echo "<td>{$lang['Has_not_been_updated_for']} {$react->condition_value} minutes </td>";
 												break;
 										}
 										echo "<td>" . $react->actionName . "</td>";
@@ -222,9 +233,9 @@ if(isset($_POST['btn_supprimer'])){
 						</tbody>
 					</table>
 
-					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
-					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_add" type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
+					<button id="btn_mod" type="button" class="btn btn-secondary"><?= $lang['edit_settings'] ?></button>
+					<input  id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly>
 					</form>
 				</div>
 			</div>

@@ -126,6 +126,8 @@ $error = "";
 			$react->field_number = "";
 			$react->condition = "";
 			$react->condition_value = "0";
+			$react->condition_lat = "0";
+			$react->condition_long = "0";
 			$react->actionable_type = "";
 			$react->actionable_id = "";
 			$react->run_action_every_time = "";
@@ -214,17 +216,26 @@ $error = "";
 				    console.log("nodata");
 					$('#section').append($('#numeric_nodata'));
 				    break;
+					
+				case 'geo':
+				    console.log("geo");
+					$('#section').append($('#numeric_geo'));
+				    break;	
 			}
 			
 			$('#react_type').change(function(){  
 				console.log(this.value);
 				if (this.value === 'numeric'){
-					$('#template').append($('#numeric_nodata'));
+					$('#template').append($('#section > div'));
 					$('#section').append($( '#numeric_condition'));
 				}
 				if (this.value === 'nodata'){
-					$('#template').append($('#numeric_condition'));
+					$('#template').append($('#section > div'));
 					$('#section').append($( '#numeric_nodata'));
+				}
+				if (this.value === 'geo'){
+					$('#template').append($('#section > div'));
+					$('#section').append($( '#numeric_geo'));
 				}
 				
 			});
@@ -276,7 +287,8 @@ $error = "";
 								echo Form::input( 'text', 'name', $react->name, $options);
 								
 								$select_react_type = array('numeric' => "Numeric",
-														   'nodata'  => "No data check");
+														   'nodata'  => "No data check",
+														   'geo'     => "Geographic location");
 								echo Form::select( 'react_type', $select_react_type, "Condition Type", $react->react_type);						   
 														   
 								echo "<div id='section'></div>";
@@ -310,7 +322,7 @@ $error = "";
 								echo "<div id='template' style='display:none' >";
 								
 								// Condition Numerique
-								echo "<div id='numeric_condition' >";
+								echo "<div  id='numeric_condition' >";
 								$select_interval = array('on_insertion' => "On data insertion", 
 								                         '10' =>"Every 10 minutes", 
 														 '30' =>"Every 30 minutes", 
@@ -337,7 +349,7 @@ $error = "";
 								
 								// Condition no data check
 								
-								echo "<div id='numeric_nodata' >";
+								echo "<div  id='numeric_nodata' >";
 								echo Form::hidden('field_number', '0');
 								$select_interval = array('10' =>"Every 10 minutes", 
 														 '30' =>"Every 30 minutes", 
@@ -353,6 +365,33 @@ $error = "";
 								
 								echo "</div>";
 								// Fin de no data check
+								
+								// Condition geographique
+								echo "<div  id='numeric_geo' >";
+								$select_interval = array('on_insertion' => "On data insertion", 
+								                         '10' =>"Every 10 minutes", 
+														 '30' =>"Every 30 minutes", 
+														 '60' =>"Every 60 minutes" );
+								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
+
+								
+								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
+								
+								
+								
+								$select_condition = array(	'within' => 'is within',
+															'further' => 'is further'
+														 );
+								echo Form::select("condition", $select_condition , " ", $react->condition);
+
+								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
+								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, "km from");
+								echo Form::input( 'number', 'lat', $react->condition_lat, $optionsNumber, "latitude");
+								echo Form::input( 'number', 'long', $react->condition_long, $optionsNumber, "longitude");
+								echo "</div>";
+								// Fin de condition numeric
+								
+								
 							    echo "</div>";
 							
 							
