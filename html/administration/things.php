@@ -1,10 +1,10 @@
 <?php
 include "authentification/authcheck.php" ;
 
-//require_once('../ini/ini.php');
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -93,7 +93,10 @@ function afficherThings($bdd){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'asc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau').DataTable(options);			

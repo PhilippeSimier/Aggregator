@@ -4,7 +4,7 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
-require_once('./lang/lang.conf.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -12,7 +12,6 @@ use Aggregator\Support\Str;
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
-$title = "Reacts";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -70,7 +69,7 @@ if(isset($_POST['btn_supprimer'])){
                 order: [[1, 'desc']],
 				columns: [{orderable:false},  {type:"text"} , {type:"text"} , {type:"text"}, {orderable:false}, {type:"text"}],
 				"language": {
-					"url": "<?php echo $lang['dataTables'] ?>"
+					"url": "<?= $lang['dataTables'] ?>"
 				}
             };
 		
@@ -177,7 +176,7 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row popin card">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?= $title ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['react'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped table-sm">

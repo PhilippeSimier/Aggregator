@@ -4,6 +4,7 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -107,7 +108,10 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau1').DataTable(options);
@@ -147,14 +151,14 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						content: 'Confirmez-vous la suspension sur ' + nbCaseCochees + ' utilisateur(s) ?',
 						buttons: {
 							confirm: {
-								text: 'Apply', 
+								text: '<?= $lang['Apply'] ?>', 
 								btnClass: 'btn-blue', 
 								action: function () {
 								$( "#suspending" ).submit(); // soumission du formulaire suspending
 								}
 							},
 					 		cancel: {
-								text: 'Cancel', 
+								text: '<?= $lang['Cancel'] ?>', 
 								action: function () {}
 							}
 						}
@@ -184,7 +188,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						content: 'Confirmez-vous l\'annulation sur ' + nbCaseCochees + ' utilisateur(s) ?',
 						buttons: {
 							confirm: {
-								text: 'Apply', 
+								text: '<?= $lang['Apply'] ?>', 
 								btnClass: 'btn-blue', 
 								action: function () {
 								$( "#action" ).val("cancel"); // Mise à jour du champ caché action
@@ -192,7 +196,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 								}
 							},
 					 		cancel: {
-								text: 'Cancel', // text for button
+								text: '<?= $lang['Cancel'] ?>', // text for button
 								action: function () {}
 							}
 						}
@@ -222,7 +226,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						content: 'Confirmez-vous la suppression sur ' + nbCaseCochees + ' utilisateur(s) ?',
 						buttons: {
 							confirm: {
-								text: 'Apply', 
+								text: '<?= $lang['Apply'] ?>', 
 								btnClass: 'btn-blue', 
 								action: function () {
 								$( "#action" ).val("delete");	
@@ -230,7 +234,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 								}
 							},
 					 		cancel: {
-								text: 'Cancel', // text for button
+								text: '<?= $lang['Cancel'] ?>', // text for button
 								action: function () {}
 							}
 						}
@@ -280,7 +284,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						theme: 'bootstrap',
 						closeIcon: true, 
 						columnClass: 'col-md-6 col-md-offset-3',
-						title: 'Change Password',
+						title: '<?= $lang['Change_Password'] ?>',
 						content: '' +
 						'<form action="" class="passwd form-horizontal">' +
 						'<div class="form-group">' +
@@ -296,7 +300,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						'</form>',
 						buttons: {
 							formSubmit: {
-								text: 'Apply',
+								text: '<?= $lang['Apply'] ?>',
 								btnClass: 'btn-blue',
 								action: function () {
 									var pwd = this.$content.find('#pwd').val();
@@ -329,9 +333,10 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 									});	
 								}
 							},
-							cancel: function () {
-								//close
-							},
+							cancel: {
+								text: '<?= $lang['Cancel'] ?>', 
+								action : function () {}
+							}
 						},
 						onContentReady: function () {
 							// bind to events
@@ -376,7 +381,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 					'</form>',
 					buttons: {
 						formSubmit: {
-							text: 'Apply',
+							text: '<?= $lang['Apply'] ?>',
 							btnClass: 'btn-blue',
 							action: function () {
 								var login = this.$content.find('#login').val();
@@ -505,7 +510,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						'</form>',
 						buttons: {
 							formSubmit: {
-								text: 'Apply',
+								text: '<?= $lang['Apply'] ?>',
 								btnClass: 'btn-blue',
 								action: function () {
 									
@@ -540,9 +545,10 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 									});	
 								}
 							},
-							cancel: function () {
-								//close
-							},
+							cancel: {
+								text: '<?= $lang['Cancel'] ?>', 
+								action : function () {}
+							}	
 						},
 						onContentReady: function () {
 							// bind to events
@@ -600,8 +606,8 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 	<div class="container" style="padding-top: 65px; max-width: 90%">
 	<div class="popin">
 		<nav class="nav nav-tabs">
-			<a class="nav-item nav-link active" href="#p0" data-toggle="tab">Users</a>
-			<a class="nav-item nav-link" href="#p1" data-toggle="tab">Suspended Users</a>
+			<a class="nav-item nav-link active" href="#p0" data-toggle="tab"><?= $lang['Users'] ?></a>
+			<a class="nav-item nav-link" href="#p1" data-toggle="tab"><?= $lang['Users_suspending'] ?></a>
 		</nav>
 	
 		<div class="tab-content">
@@ -616,11 +622,11 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 								<thead>
 								  <tr>
 									<th><input type='checkbox' name='all' value='all' id='all1' ></th>
-									<th>Login</th>
-									<th>API Key</th>
-									<th>Time Zone</th>
-									<th>Last sign in</th>
-									<th>Count</th>
+									<th><?= $lang['login'] ?></th>
+									<th><?= $lang['API_Key'] ?></th>
+									<th><?= $lang['Time_Zone'] ?></th>
+									<th><?= $lang['last_sign_in'] ?></th>
+									<th><?= $lang['count'] ?></th>
 								  </tr>
 								</thead>
 								<tbody>
@@ -637,12 +643,12 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 											$stmt = $bdd->query($sql);
 											
 											while ($thing =  $stmt->fetchObject()){
-												echo "<tr><td><input type='checkbox' class='array_suspending' name='array_suspending[$thing->id]' value='$thing->id' ></td>";
-												echo "<td>" . $thing->login . "</td>";
-												echo "<td>" . $thing->User_API_Key . "</td>";
-												echo "<td>" . $thing->time_zone . "</td>";
-												echo "<td>" . $thing->last_sign_in_at . "</td>";
-												echo "<td>" . $thing->sign_in_count . "</td></tr>";								
+												echo "<tr><td><input type='checkbox' class='array_suspending' name='array_suspending[$thing->id]' value='$thing->id' ></td>\n";
+												echo "<td>{$thing->login}</td>\n";
+												echo "<td>{$thing->User_API_Key}</td>\n";
+												echo "<td>{$thing->time_zone}</td>\n";
+												echo "<td>{$thing->last_sign_in_at}</td>\n";
+												echo "<td>{$thing->sign_in_count}</td></tr>\n";								
 											}
 										} 
 										catch (\PDOException $ex) 
@@ -654,14 +660,14 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 								</tbody>
 							</table>
 
-							<button id="btn_mod" type="button" class="btn btn-warning">Change Password</button>
-							<button id="btn_typeZone" type="button" class="btn btn-warning">Change Time Zone</button>
-							<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
+							<button id="btn_mod" type="button" class="btn btn-warning"><?= $lang['Change_Password'] ?></button>
+							<button id="btn_typeZone" type="button" class="btn btn-warning"><?= $lang['Change_Time_Zone'] ?></button>
+							<button id="btn_key" type="button" class="btn btn-warning"><?= $lang['New_API_Key'] ?></button>
 							<?php
 							if ($_SESSION['droits'] > 1){
-								echo ' <input id="btn_suspending" name="suspending" value="Suspending" class="btn btn-danger" readonly >';
-								echo ' <button id="btn_add" type="button" class="btn btn-secondary">Add</button>';
-								echo ' <button id="btn_setting" type="button" class="btn btn-secondary">Setting</button>';
+							    echo " <input id='btn_suspending' name='suspending' value='{$lang['Suspending']}' class='btn btn-danger' readonly >";
+							    echo " <button id='btn_add' type='button' class='btn btn-secondary'>{$lang['add']}</button>";
+								echo " <button id='btn_setting' type='button' class='btn btn-secondary'>{$lang['edit_settings']}</button>";
 								echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>";
 							}	
 							?>					
@@ -681,11 +687,11 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 							<thead>
 							  <tr>
 								<th><input type='checkbox' name='all' value='all' id='all0' ></th>
-								<th>Login</th>
-								<th>API Key</th>
-								<th>Time Zone</th>
-								<th>Last sign in</th>
-								<th>Count</th>
+								<th><?= $lang['login'] ?></th>
+								<th><?= $lang['API_Key'] ?></th>
+								<th><?= $lang['Time_Zone'] ?></th>
+								<th><?= $lang['last_sign_in'] ?></th>
+								<th><?= $lang['count'] ?></th>
 							  </tr>
 							</thead>
 							<tbody>
@@ -703,12 +709,12 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 									$stmt = $bdd->query($sql);
 									
 									while ($thing =  $stmt->fetchObject()){
-										echo "<tr><td><input type='checkbox' class='array_cancel' name='array_cancel[$thing->id]' value='$thing->id' ></td>";
-										echo "<td>" . $thing->login . "</td>";
-										echo "<td>" . $thing->User_API_Key . "</td>";
-										echo "<td>" . $thing->time_zone . "</td>";
-										echo "<td>" . $thing->last_sign_in_at . "</td>";
-										echo "<td>" . $thing->sign_in_count . "</td>";								
+										echo "<tr><td><input type='checkbox' class='array_cancel' name='array_cancel[$thing->id]' value='$thing->id' ></td>\n";
+										echo "<td>{$thing->login}</td>\n";
+										echo "<td>{$thing->User_API_Key}</td>\n";
+										echo "<td>{$thing->time_zone}</td>\n";
+										echo "<td>{$thing->last_sign_in_at}</td>\n";
+										echo "<td>{$thing->sign_in_count}</td>\n";								
 									}
 								}
 								catch (\PDOException $ex) 
@@ -720,11 +726,11 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						</table>
 						<?php
 						if ($_SESSION['droits'] > 1){
-							echo ' <input id="btn_cancel" name="cancel" value="Cancel" class="btn btn-warning" readonly > ';	
-							echo ' <input id="btn_delete" name="Delete" value="Delete" class="btn btn-danger" readonly > ';
-							echo '<a class="btn btn-warning" href="failed_login">Failed login</a>';
-							echo ' <input type="hidden" id="action" name="action" value="cancel" >';
-							echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>";
+							echo " <input id='btn_cancel' name='cancel' value='{$lang['Cancel']}' class='btn btn-warning' readonly >\n";	
+							echo " <input id='btn_delete' name='Delete' value='{$lang['delete']}' class='btn btn-danger' readonly >\n";
+							echo " <a class='btn btn-warning' href='failed_login'>{$lang['Failed_logins']}</a>\n";
+							echo " <input type='hidden' id='action' name='action' value='{$lang['Cancel']}' >\n";
+							echo " <input type='hidden' name='tokenCSRF' value='{$tokenCSRF}'>\n";
 						}	
 						?>					
 						</form>	

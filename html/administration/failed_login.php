@@ -3,13 +3,13 @@ include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 
 // connexion à la base
     
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-	$title = "Failed logins";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -35,7 +35,7 @@ if(isset($_POST['btn_supprimer'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo $title ?></title>
+    <title><?php echo $lang['Failed_logins'] ?></title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -61,7 +61,10 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau').DataTable(options);			
@@ -129,16 +132,16 @@ if(isset($_POST['btn_supprimer'])){
 		<div class="row popin card">
 			
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['Failed_logins'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau"  class="display table table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>date</th>
-							<th>Login</th>
-							<th>Ip address</th>							
+							<th>Date</th>
+							<th><?= $lang['login'] ?></th>
+							<th><?= $lang['Ip_address'] ?></th>							
 						  </tr>
 						</thead>
 						<tbody>
@@ -150,16 +153,16 @@ if(isset($_POST['btn_supprimer'])){
 								$stmt = $bdd->query($sql);
 								
 								while ($thing =  $stmt->fetchObject()){
-									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-									echo "<td>" . $thing->created_at . "</td>";
-									echo "<td>" . $thing->login . "</td>";
-									echo "<td>" . $thing->ip_address . "</td></tr>\n";
+									echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>\n";
+									echo "<td>{$thing->created_at}</td>\n";
+									echo "<td>{$thing->login}</td>\n";
+									echo "<td>{$thing->ip_address}</td></tr>\n";
 
 								}
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
 					</form>	
 				</div>
 			</div>	

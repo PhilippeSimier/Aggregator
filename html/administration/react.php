@@ -5,6 +5,7 @@ require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
 require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -12,6 +13,7 @@ use Aggregator\Support\Form;
 
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 $error = "";
+$afficher = false;
  
 	//------------si des données  sont soumises on les enregistre dans la table data.reacts ---------
 	if( !empty($_POST['envoyer']) && $_SESSION['tokenCSRF'] === $_POST['tokenCSRF']  && $_POST['channel_id']!== ''){
@@ -85,6 +87,10 @@ $error = "";
 		}catch (\PDOException $ex) 
 		{
 			$error = $ex->getMessage();
+			if (Str::contains($error, "Duplicate entry")){
+				$error = "Un react de même nom à dèjà été créé";
+				$afficher = true;
+			}
 		}	
 		
 	}
@@ -161,7 +167,7 @@ $error = "";
 		$stmt = $bdd->query($sql);
 
 		$select_channel_id = array();
-		$select_channel_id[''] = "Choose your channel";
+		$select_channel_id[''] = $lang['Choose_your_channel'];
 		while ($channel = $stmt->fetchObject()){
 			$select_channel_id[$channel->id] = $channel->name;
 		}
@@ -204,7 +210,11 @@ $error = "";
 		<script>
 		    
 		$(document).ready(function(){	
-			
+			<?php
+			if ($afficher){
+			 echo "$('#ModalCenter').modal('show');";
+			}
+			?>
 			console.log($('select#react_type').val());
 			switch($('select#react_type').val()) {
 				case 'numeric':
@@ -269,7 +279,7 @@ $error = "";
 		<div class="row">
 			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
-					<?php echo '<p style="color: #ff0000;">' . $error . '</p>'; ?>
+					
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 							<?php
 
@@ -279,12 +289,12 @@ $error = "";
 
 								
 								if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
-									echo Form::select("user_id", $selectUser, "User", $react->user_id);
+									echo Form::select("user_id", $selectUser, $lang['user'], $react->user_id);
 								else
 									echo Form::hidden("user_id", $react->user_id );
 
 								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'name', $react->name, $options);
+								echo Form::input( 'text', 'name', $react->name,  $options, $lang['name']);
 								
 								$select_react_type = array('numeric' => "Numeric",
 														   'nodata'  => "No data check",
@@ -293,15 +303,11 @@ $error = "";
 														   
 								echo "<div id='section'></div>";
 
-
-								$select_actionable_type = array('' => 'Choose your action', 'thingHTTP' => "ThingHTTP",  'email' => "Send a email" );
-								echo Form::select("actionable_type", $select_actionable_type , "action", $react->actionable_type );
+								echo Form::select("actionable_type", $lang['select_actionable_type'] , "action", $react->actionable_type );
 								
 								echo Form::select("actionable_id", $select_actionable_id , "perform", $react->actionable_id );
 								
-								$select_react_type = array('0'=>'Run action only the first time the condition is met', 
-														   '1' =>'Run action each time condition is met');
-								echo Form::select("run_action_every_time", $select_react_type , "Option", $react->run_action_every_time ); 
+								echo Form::select("run_action_every_time", $lang['select_react_type'] , "Option", $react->run_action_every_time ); 
 								
 								$options = array( 'class' => 'form-control', 'readonly' => null);
 								echo Form::input( 'text', 'last_run_at', $react->last_run_at, $options , 'last run at');
@@ -311,8 +317,8 @@ $error = "";
 
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
-								<a  class="btn btn-info" role="button" href="reacts">Cancel</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+								<a  class="btn btn-info" role="button" href="reacts"><?= $lang['Cancel'] ?></a>
 							</div>
 					</form>	
 							
@@ -323,24 +329,14 @@ $error = "";
 								
 								// Condition Numerique
 								echo "<div  id='numeric_condition' >";
-								$select_interval = array('on_insertion' => "On data insertion", 
-								                         '10' =>"Every 10 minutes", 
-														 '30' =>"Every 30 minutes", 
-														 '60' =>"Every 60 minutes" );
-								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
 
+								echo Form::select('shedule', $lang['select_interval'] , "Test Frequency", $react->run_interval);
 								
 								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
 								
 								echo Form::select("field_number", $select_field_number , " ", $react->field_number);
 								
-								$select_condition = array(	'gt' => 'is greater than',
-															'gte' => 'is greater or equal to',
-															'lt' => 'is less than',
-															'lte' => 'is less than or equal',
-															'eq' =>  'is equal to',
-															'neq' => 'is not equal' );
-								echo Form::select("condition", $select_condition , " ", $react->condition);
+								echo Form::select("condition", $lang['select_condition'] , " ", $react->condition);
 
 								$optionsNumber = array( 'class' => 'form-control', 'step' => "0.001");
 								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
@@ -358,7 +354,7 @@ $error = "";
 								
 								echo Form::select("channel_id",   $select_channel_id, "If Channel", $react->channel_id);
 								
-								echo "<div class='form-group row'><div class='col-3'></div><div class='col-9'>Has not been updated for</div></div>";							
+								echo "<div class='form-group row'><div class='col-3'></div><div class='col-9'>{$lang['Has_not_been_updated_for']}</div></div>\n";							
 								$optionsNumber = array( 'class' => 'form-control', 'step' => "1");
 								echo Form::input( 'number', 'condition_value', $react->condition_value, $optionsNumber, " ");
 								echo "<div class='form-group row'><div class='col-3'></div><div class='col-9'>minutes</div></div><br />";
@@ -368,11 +364,8 @@ $error = "";
 								
 								// Condition geographique
 								echo "<div  id='numeric_geo' >";
-								$select_interval = array('on_insertion' => "On data insertion", 
-								                         '10' =>"Every 10 minutes", 
-														 '30' =>"Every 30 minutes", 
-														 '60' =>"Every 60 minutes" );
-								echo Form::select('shedule', $select_interval, "Test Frequency", $react->run_interval);
+								
+								echo Form::select('shedule', $lang['select_interval'], "Test Frequency", $react->run_interval);
 
 								
 								echo Form::select("channel_id", $select_channel_id, "Condition", $react->channel_id);
@@ -393,37 +386,39 @@ $error = "";
 								
 								
 							    echo "</div>";
-							
-							
 							?>
-							
-							
-							
-					
 				</div>
 			</div>
 
 			<div class="col-md-6 col-sm-12 col-12">
 			    <div class="popin">
-				<h3>Reacts Settings</h3>
-				<ul>
-					<li>React Name: Enter a unique name for your React.</li>
-
-					<li>Test Frequency: Choose whether to test your condition every time data enters the channel or on a periodic basis.</li>
-
-					<li>Condition: Select a channel, a field and the condition for your React.</li>
-
-
-					<li>Action: Select ThingHTTP, Send a SMS, Send a email to run when the condition is met.</li>
-					
-					<li>Options: Select when the React runs.</li>
-					
-				</ul>
+					<?= $lang['react_aide'] ?>
 				</div>
 			</div>
 		</div>
 
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
+	
+	<!--Fenêtre Modal -->
+		<div class="modal" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenter" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="ModalLongTitle">Message !</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body" id="modal-contenu">
+				<?php echo '<p style="color: #ff0000;">' . $error . '</p>'; ?>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!--Fin de fenêtre Modal -->
 
 </body>

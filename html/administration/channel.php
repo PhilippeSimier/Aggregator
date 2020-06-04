@@ -81,6 +81,7 @@ else
 			   
 		   } 
 		}else {
+			$channel = new stdClass();
 			$channel->action = "insert";
 			$channel->id = 0;
 			$channel->thing_id = 0;
@@ -101,7 +102,12 @@ else
 		}
 
 		// Création du selectThing
-		$sql = "SELECT id,name FROM `things`";
+		
+		if($_SESSION['droits'] > 1)
+			$sql = "SELECT id,name FROM `things` ORDER BY id;";
+		else
+			$sql = "SELECT id,name FROM `things` where user_id = {$_SESSION['id']} ORDER BY id;";
+		
 		$stmt = $bdd->query($sql);
 		
 		$selectThing = array();
