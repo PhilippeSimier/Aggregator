@@ -3,6 +3,10 @@
 <?php
     session_start();
 	require_once('definition.inc.php');
+	require_once('./api/Str.php');
+	require_once('./lang/lang.conf.php');
+	
+	use Aggregator\Support\Str;
  
 ?>
 
@@ -11,7 +15,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Webcam</title>
+    <title>Webcam - Aggregator</title>
     <!-- Bootstrap CSS version 4.1.1 -->
         <link rel="stylesheet" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" href="./css/ruche.css" />
@@ -74,7 +78,9 @@
 		</div>
 		
 		<div class="row">
-			<a  class="btn btn-info" role="button" href = "export_webcam.php">Download picture</a>
+			<div class="col-md-12 col-sm-12 col-xs-12">
+			<p style="margin-top: 1rem;"><a  class="btn btn-info" role="button" href = "export_webcam.php"><?= $lang['download_picture']?></a></p>
+			</div>
 		</div>	
 		<?php require_once 'piedDePage.php'; ?>
 	</div>

@@ -11,7 +11,9 @@
         <hr>
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<p><a href = "<?php echo './support/'.basename($_SERVER['SCRIPT_NAME']) ?>">Aggregator - docs for this page</a></p>
+				<?php 
+				$lien =  basename($_SERVER['SCRIPT_NAME']);
+				echo "<p><a href = './support/{$langue}/{$lien}'>{$lang['docs_page']}</a></p>" ?>
 			</div>
 		
 			<div class="col-md-6 col-sm-6 col-xs-12">

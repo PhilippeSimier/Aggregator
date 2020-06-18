@@ -6,6 +6,7 @@
 	require_once('../definition.inc.php');
 	require_once('../api/Api.php');
 	require_once('../api/Str.php');
+	require_once('../lang/lang.conf.php');
 	
 	use Aggregator\Support\Api;
 	use Aggregator\Support\Str;
@@ -131,7 +132,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Authentification</title>
+    <title>Aggregator : <?= $lang['Sign_in'] ?></title>
     <!-- Bootstrap CSS version 4.1.1 -->
     <link rel="stylesheet" href="../css/bootstrap.min.css">
 	<link rel="stylesheet" href="../css/ruche.css" />
@@ -153,25 +154,27 @@
 			
 			<div  class="col-md-6 col-sm-6 col-xs-12">
 				<div class="popin">
-				<h2>Sign in to Aggregator</h2>
+				<h2><?= $lang['Sign_in'] ?></h2>
 				
 				  <?php echo '<p style="color: #ff0000;">' . $erreur . '</p>'; ?>
 				
-				<form method="POST" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>"  name="form2" id="form2">
+				<form method="POST" action="<?= $_SERVER['SCRIPT_NAME'] ?>"  name="form2" id="form2">
+					
 					<input type='hidden' name='md5' />
 					<input type='hidden' name='retour' value = "<?php if (isset($_GET["retour"])) echo $_GET["retour"]; ?>" />
 					<input type='hidden' name='token' value = "<?php echo $token; ?>" />
+					
 						<div class="form-group">
-							<label for="login" class="font-weight-bold">User login :</label>
+							<label for="login" class="font-weight-bold"><?= $lang['User login'] ?> :</label>
 							<input type="text"  name="login" class="form-control"  required="">
 						</div>
 						
 						<div class="form-group">
-							<label for="password" class="font-weight-bold">Password :</label>
+							<label for="password" class="font-weight-bold"><?= $lang['Password'] ?> :</label>
 							<input type="password" name="passe" class="form-control" required="">
 						</div>
 						<br />
-						<input   id="Valider" class="btn btn-primary" value="Valider" name="B1"   readonly size="9">		
+						<input   id="Valider" class="btn btn-primary" value="<?= $lang['Validate'] ?>" name="B1"   readonly size="9">		
 				</form>
 				</div>
 			</div>

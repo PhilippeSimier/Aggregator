@@ -12,7 +12,6 @@ use Aggregator\Support\Str;
 // connexion à la base
     
 	$bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-	$title = "Things";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -67,7 +66,7 @@ function afficherThings($bdd){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Things - Aggregator</title>
+    <title><?= $lang['things'] ?>  - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -200,27 +199,27 @@ function afficherThings($bdd){
 		<div class="row popin card">
 			
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['things'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau"  class="display table table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>Name</th>
-							<th>Tag</th>
-							<th>Access</th>
-							<th>Author</th>
-							<th>Local IP</th>
+							<th><?= $lang['name'] ?></th>
+							<th><?= $lang['tag'] ?></th>
+							<th><?= $lang['access'] ?></th>
+							<th><?= $lang['author'] ?></th>
+							<th><?= $lang['Ip_address'] ?></th>
 						  </tr>
 						</thead>
 						<tbody>
 							<?php afficherThings($bdd);	?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-secondary">Edit settings</button>
-					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
+					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
+					<button id="btn_mod" type="button" class="btn btn-secondary"><?= $lang['edit_settings'] ?></button>
+					<button id="btn_add" type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
 					</form>	
 				</div>
 			</div>	

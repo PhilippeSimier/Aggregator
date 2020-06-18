@@ -7,19 +7,22 @@
 	if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
 		$racine = '../';
 	}
-	$repertoire = array('administration/support' );      // les répertoires de second niveau du site
+	$repertoire = array('administration/support',  'support/fr', 'support/en' );      // les répertoires de second niveau du site
     if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
 		$racine = '../../';
 	}
-
-	if(isset($_SESSION["language"]) and $_SESSION["language"] !== ''){
-		$lang_file = "lang.{$_SESSION["language"]}.php";
-	}else{
-		$langue = autoSelectLanguage(array('fr','en'), 'en');
-		
-		$lang_file = 'lang.' . strtoupper($langue) . '.php';
+	$repertoire = array('administration/support/fr', 'administration/support/en');      // les répertoires de troisième niveau du site
+    if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+		$racine = '../../../';
 	}
 
+	if(isset($_SESSION["language"]) and $_SESSION["language"] !== ''){
+		$langue = strtolower($_SESSION["language"]);
+	}else{
+		$langue = autoSelectLanguage(array('fr','en'), 'en');
+	}
+	
+	$lang_file = 'lang.' . strtoupper($langue) . '.php';
  	include_once "{$racine}lang/{$lang_file}";
 
 	

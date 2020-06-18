@@ -4,14 +4,13 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-
-$title = "Channels";
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -67,7 +66,7 @@ function afficherChannels($bdd){
 
 <html>
 <head>
-    <title>Channels - Aggregator</title>
+    <title><?= $lang['Channels'] ?> - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -93,7 +92,10 @@ function afficherChannels($bdd){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau').DataTable(options);		
@@ -455,19 +457,19 @@ function afficherChannels($bdd){
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin card">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?php echo $title ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['Channels'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped table-sm">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>id</th>
-							<th>Name</th>
-							<th>tags</th>
-							<th>Write API Key</th>
-							<th>Last entry id</th>
-							<th>Last write entry</th>
+							<th>Id</th>
+							<th><?= $lang['name'] ?></th>
+							<th><?= $lang['tag'] ?></th>
+							<th><?= $lang['write_API_Key'] ?></th>
+							<th><?= $lang['last_entry_id'] ?></th>
+							<th><?= $lang['last_write_entry'] ?></th>
 						  </tr>
 						</thead>
 						<tbody>
@@ -475,13 +477,13 @@ function afficherChannels($bdd){
 						</tbody>
 					</table>
 					
-					<button id="btn_mod" type="button" class="btn btn-secondary">Settings</button>
-					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
-					<button id="btn_key" type="button" class="btn btn-warning">Generate New API Key</button>
-					<button id="btn_val" type="button" class="btn btn-secondary">View last values</button>
-					<button id="btn_csv" type="button" class="btn btn-secondary">Download CSV</button>
-					<button id="btn_clear" type="button" class="btn btn-danger">Clear all feed</button>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
+					<button id="btn_mod" type="button" class="btn btn-secondary"><?= $lang['edit_settings'] ?></button>
+					<button id="btn_add" type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
+					<button id="btn_key" type="button" class="btn btn-warning"><?= $lang['generate_New_API_Key'] ?></button>
+					<button id="btn_val" type="button" class="btn btn-secondary"><?= $lang['view_last_values'] ?></button>
+					<button id="btn_csv" type="button" class="btn btn-secondary"><?= $lang['download_CSV'] ?></button>
+					<button id="btn_clear" type="button" class="btn btn-danger"><?= $lang['clear_all_feed'] ?></button>
+					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
 					</form>	
 				</div>
 			</div>

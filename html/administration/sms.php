@@ -4,6 +4,7 @@ include "authentification/authcheck.php" ;
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -94,7 +95,10 @@ $stmt = $bdd->query($sql);
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau0').DataTable(options0);
@@ -105,7 +109,10 @@ $stmt = $bdd->query($sql);
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau1').DataTable(options1);
@@ -368,8 +375,8 @@ $stmt = $bdd->query($sql);
 	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="popin">
 			<nav class="nav nav-tabs">
-				<a class="nav-item nav-link active" href="#p0" data-toggle="tab">SMS sent</a>
-				<a class="nav-item nav-link" href="#p1" data-toggle="tab">SMS Received</a>
+				<a class="nav-item nav-link active" href="#p0" data-toggle="tab">SMS <?= $lang['sent'] ?></a>
+				<a class="nav-item nav-link" href="#p1" data-toggle="tab">SMS <?= $lang['received'] ?></a>
 				<a class="nav-item nav-link" href="#p2" data-toggle="tab">GSM Modem</a>
 			</nav>
 			<div class="tab-content">
@@ -382,10 +389,10 @@ $stmt = $bdd->query($sql);
 								<thead>
 								  <tr>
 									<th><input type='checkbox' name='all_sent' value='all_sent' id='all_sent' ></th>
-									<th>Date of issue</th>
-									<th>To</th>
+									<th><?= $lang['date_of_issue'] ?></th>
+									<th><?= $lang['to'] ?></th>
 									<th>Message</th>
-									<th>Creator</th>
+									<th><?= $lang['author'] ?></th>
 									
 								  </tr>
 								</thead>
@@ -404,9 +411,11 @@ $stmt = $bdd->query($sql);
 									?>
 								</tbody>
 							</table>
-							<input id="btn_supp_sent" name="btn_supp_sent" value="Delete" class="btn btn-danger" readonly size="9">
-							<button id="btn_lire_sent" type="button" class="btn btn-info">Read</button>
-							<button  type="button" class="btn btn-info btn_ecrire">Write</button>
+							
+							<button id="btn_lire_sent" type="button" class="btn btn-info"><?= $lang['read'] ?></button>
+							<button  type="button" class="btn btn-info btn_ecrire"><?= $lang['write'] ?></button>
+							<input id="btn_supp_sent" name="btn_supp_sent" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
+							
 							</form>	
 						</div>			
 					</div>
@@ -421,8 +430,8 @@ $stmt = $bdd->query($sql);
 									<thead>
 									  <tr>
 										<th><input type='checkbox' name='all_receive' value='all_receive' id='all_receive' ></th>
-										<th>Date of receipt</th>
-										<th>From</th>
+										<th><?= $lang['date_of_receipt'] ?></th>
+										<th><?= $lang['to']?></th>
 										<th>Message</th>														
 									  </tr>
 									</thead>
@@ -445,9 +454,11 @@ $stmt = $bdd->query($sql);
 										?>
 									</tbody>
 								</table>
-								<input id="btn_supp_receive" name="btn_supp_receive" value="Delete" class="btn btn-danger" readonly size="9">
-								<button id="btn_lire_receive" type="button" class="btn btn-info">Read</button>
-								<button  type="button" class="btn btn-info btn_ecrire">Write</button>			
+								
+								<button id="btn_lire_receive" type="button" class="btn btn-info"><?= $lang['read'] ?></button>
+								<button  type="button" class="btn btn-info btn_ecrire"><?= $lang['write'] ?></button>
+								<input id="btn_supp_receive" name="btn_supp_receive" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
+								
 							</form>	
 						</div>
 						</div>

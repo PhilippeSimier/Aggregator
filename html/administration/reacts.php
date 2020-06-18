@@ -40,7 +40,7 @@ if(isset($_POST['btn_supprimer'])){
 
 <html>
 <head>
-    <title>Reacts - Aggregator</title>
+    <title><?= $lang['Reacts'] ?> - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -176,7 +176,7 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px; max-width: 90%;">
 		<div class="row popin card">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4><?= $lang['react'] ?></h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['Reacts'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped table-sm">

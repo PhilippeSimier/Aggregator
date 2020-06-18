@@ -11,6 +11,34 @@ $lang['edit_settings'] = "Modifier";
 $lang['delete'] = "Supprimer";
 $lang['Cancel'] = "Annuler";
 $lang['Apply'] = "Appliquer";
+$lang['Validate'] = "Valider";
+$lang['close'] = "Fermer";
+$lang['display'] = "Afficher";
+
+/* index & Menu*/
+$lang['Sign_in'] = "Se connecter";
+$lang['User login'] = "Identifiant";
+$lang['Password'] = "Mot de Passe";
+$lang['Users'] = "Utilisateurs";
+$lang['Browse_Sites'] = "Parcourir";
+$lang['Things'] = "Objets";
+$lang['Channels'] = "Canaux";
+$lang['ThingHTTPs'] = "Actions HTTP";
+$lang['Reacts'] = "Déclencheurs";
+$lang['Sign_Out'] = "Se déconnecter";
+$lang['My_Account'] = "Mon compte";
+$lang['docs_page'] = "Documentation Aggregator pour cette page";
+$lang['Data_visualisation'] = "Visualisation des données";
+$lang['Data_Analysis'] = "Analyse des données";
+
+/* thingView */
+$lang['graphic'] = "Graphique";
+$lang['hide_all'] = "Cacher tout";
+$lang['more_historical_data'] = "Plus de données historiques";
+$lang['setting filter'] = "Réglage du filtre";
+$lang['simple_moving_average'] = "Moyenne Mobile Simple";
+$lang['exponential_moving_average'] = "Moyenne Mobile Exponentielle";
+$lang['period'] = "Periode";
 
 /* Users */
 $lang['Change_Password'] = "Mot de passe";
@@ -28,8 +56,37 @@ $lang['Time_Zone'] = "Fuseau horaire";
 $lang['last_sign_in'] = "Dernière connexion";
 $lang['count'] = "Total";
 
-/* Failed login */
+/* things */
+$lang['things'] = "Objets";
+$lang['access'] = "Accès";
+$lang['tag'] = "Etiquette";
+$lang['author'] = "Créateur";
 $lang['Ip_address'] = "Adresse IP";
+
+/* channels */
+$lang['channel'] = "Canal";
+$lang['write_API_Key'] = "Clé API";
+$lang['last_write_entry'] = "Date dernière entrée";
+$lang['last_entry_id'] = "Nb Valeurs";
+$lang['generate_New_API_Key'] = "Générer une nouvelle clé API";
+$lang['view_last_values'] = "Afficher les dernières valeurs";
+$lang['download_CSV'] = "Télécharger CSV";
+$lang['clear_all_feed'] = "Effacer tout le flux";
+
+/* thingHTTPs */
+$lang['created'] = "Créé"; 
+$lang['method']  = "Méthode";
+$lang['send']    = "Envoyer";
+
+/* SMS */
+$lang['read'] = "Lire";
+$lang['write'] = "Ecrire";
+$lang['date_of_issue'] = "Date d'émission";
+$lang['date_of_receipt'] = "Date de reception";
+$lang['to'] = "à";
+$lang['from'] = "de";
+$lang['sent'] = "Envoyés";
+$lang['received'] = "Reçus";
 
 /* Reacts */
 $lang['user'] = "Utilisateur";
@@ -42,9 +99,10 @@ $lang['condition'] = "Condition";
 $lang['action'] = "Action à Effectuer";
 $lang['Has_not_been_updated_for'] = "N'a pas été mis à jour depuis";
 
+/* webcam */
+$lang['download_picture'] = "Télécharger l'image";
 
 /* react formulaire */
-$lang['react'] = "Réagir";
 $lang['select_react_type'] = array('0' => "Uniquement la première fois que la condition est remplie",
                                    '1' => "Chaque fois que la condition est remplie");
 
@@ -69,38 +127,6 @@ $lang['select_condition'] = array(	'gt' => "est supérieur à",
 
 $lang['select_react_type'] = array ('0' => "Exécuter l'action uniquement la première fois que la condition est remplie",
                                     '1' => "Exécuter une action chaque fois que la condition est remplie");
-
-
-
-
-///////////////support/Reacts///////////////
-$lang['reacts_title1'] = "Vue d'ensemble de reacts (réagir aux évènements)";
-$lang['reacts_text1a'] = "Réagissez lorsque les données d'un canal remplissent certaines conditions";
-$lang['reacts_text1b'] = "les Reacts fonctionnent avec les applications ThingHTTP, pour effectuer des actions lorsque les données d'un canal remplissent une certaine condition.
-                          Vous pouvez configurer un react pour notifier un évenement par SMS ou Mail.
-                          Par exemple lorsque le poids d'une ruche chute soudainement, demandez à ThingHTTP d'envoyer un SMS contenant une description de l'évènement.";
-$lang['reacts_title2'] = "Lire les reacts archivés";
-$lang['reacts_text2a'] = "Choisir Reacts dans le menu utilisateur pour afficher le tableau des reacts archivés.";
-$lang['reacts_text2b'] = "Pour chacun des reacts les informations suivantes sont affichées.";
-$lang['reacts_text2c'] = "Le login de l'utilisateur propriétaire";
-$lang['reacts_text2d'] = "Le nom du react";
-$lang['reacts_text2e'] = "La désignation du canal à vérifier";
-$lang['reacts_text2f'] = "La condition logique permettant de déclencher l'action. Cette condition est composée de trois parties :";
-$lang['reacts_text2g'] = "Un champs du canal";
-$lang['reacts_text2h'] = "Un opérateur de comparaison numérique";
-$lang['reacts_text2i'] = "Une valeur numérique";
-$lang['reacts_text2j'] = "La désignation de l'application thingHtttp (cette application déclenche le service demandé via une requête http)";
-$lang['reacts_title3'] = "Supprimer les Reacts";
-$lang['reacts_text3a'] = "Vous pouvez supprimer un ou plusieurs Reacts archivés. Cocher les Reacts à supprimer puis cliquer sur le bouton Delete. Une fenêtre de confirmation s'ouvre.
-                          Valider l'action";
-$lang['reacts_title4'] = "Modifier un React";
-$lang['reacts_text4a'] = "Cochet le react à modifier puis cliquer sur le bouton setting. Un formulaire s'ouvre.";
-
-
-
-///////////////React///////////////
-
-
 
 
 //------------Text sur le coté du Formulaire---------------//

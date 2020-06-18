@@ -11,6 +11,34 @@ $lang['edit_settings'] = "Settings";
 $lang['delete'] = "Delete";
 $lang['Cancel'] = "Cancel";
 $lang['Apply'] = "Apply";
+$lang['Validate'] = "Valider";
+$lang['close'] = "Close";
+$lang['display'] = "Display";
+
+/* index & Menu*/
+$lang['Sign_in'] = "Sign in";
+$lang['User login'] = "User login";
+$lang['Password'] = "Password";
+$lang['Users'] = "Users";
+$lang['Browse_Sites'] = "Browse Sites";
+$lang['Things'] = "Things";
+$lang['Channels'] = "Channels";
+$lang['ThingHTTPs'] = "ThingHTTPs";
+$lang['Reacts'] = "Reacts";
+$lang['Sign_Out'] = "Sign Out";
+$lang['My_Account'] = "My Account";
+$lang['docs_page'] = "Aggregator Docs for this page";
+$lang['Data_visualisation'] = "Data visualisation";
+$lang['Data_Analysis'] = "Data Analysis";
+
+/* thingView */
+$lang['graphic'] = "Graphic";
+$lang['hide_all'] = "Hide All";
+$lang['More_Historical_Data'] = "More Historical Data";
+$lang['setting filter'] = "Setting filter";
+$lang['simple_moving_average'] = "Simple Moving Average";
+$lang['exponential_moving_average'] = "Exponential Moving Average";
+$lang['period'] = "Period";
 
 /* Users */
 $lang['Change_Password'] = "Change Password";
@@ -28,6 +56,38 @@ $lang['Time_Zone'] = "Time Zone";
 $lang['last_sign_in'] = "Last Sign In";
 $lang['count'] = "Count";
 
+/* things */
+$lang['things'] = "Things";
+$lang['access'] = "Access";
+$lang['tag'] = "Tag";
+$lang['author'] = "Author";
+$lang['Ip_address'] = "IP Address";
+
+/* channels */
+$lang['channel'] = "Channel";
+$lang['write_API_Key'] = "Write API Key";
+$lang['last_write_entry'] = "Date last entry";
+$lang['last_entry_id'] = "Nb of values";
+$lang['generate_New_API_Key'] = "Generate New API Key";
+$lang['view_last_values'] = "View last values";
+$lang['download_CSV'] = "Download CSV";
+$lang['clear_all_feed'] = "Clear all feed"; 
+
+/* thingHTTPs */
+$lang['created'] = "Created";
+$lang['method'] = "Method";
+$lang['send']    = "Send";
+
+/* SMS */
+$lang['read'] = "Read";
+$lang['write'] = "Write";
+$lang['date_of_issue'] = "Date of issue";
+$lang['date_of_receipt'] = "Date of receipt";
+$lang['to'] = "To";
+$lang['from'] = "From";
+$lang['sent'] = "Sent";
+$lang['received'] = "Received";
+
 /* Reacts */
 $lang['user'] = "User";
 $lang['name'] = "Name";
@@ -39,11 +99,10 @@ $lang['condition'] = "Condition";
 $lang['action'] = "Action perform";
 $lang['Has_not_been_updated_for'] = "Has not been updated for";
 
-/* Failed login */
-$lang['Ip_address'] = "Adresse IP";
+/* webcam */
+$lang['download_picture'] = "Download picture";
 
 /* react formulaire */
-$lang['react'] = "React";
 $lang['select_react_type'] = array('0'=>'Run action only the first time the condition is met',
                                    '1'=>'Run action each time condition is met');
 								   
@@ -68,33 +127,7 @@ $lang['select_condition'] = array(	'gt' => 'is greater than',
 $lang['select_react_type'] = array('0'=>'Run action only the first time the condition is met',
                                   '1' =>'Run action each time condition is met');
 
-
-
-///////////////support/Reacts///////////////
-$lang['reacts_title1'] = "Overview of reacts (react to events)";
-$lang['reacts_text1a'] = "Respond when a channel's data meets certain conditions";
-$lang['reacts_text1b'] = "Reacts work with ThingHTTP applications, to perform actions when the data of a channel meets a certain condition.
-                          You can configure a react to notify an event by SMS or Mail.
-                          For example, when the weight of a hive suddenly drops, ask ThingHTTP to send an SMS containing a description of the event.";
-$lang['reacts_title2'] = "Read archived reacts";
-$lang['reacts_text2a'] = "Choose Reacts in the user menu to display the table of archived reacts.";
-$lang['reacts_text2b'] = "For each of the reacts the following information is displayed.";
-$lang['reacts_text2c'] = "The login of the owner user";
-$lang['reacts_text2d'] = "The name of the react";
-$lang['reacts_text2e'] = "The designation of the channel to be checked";
-$lang['reacts_text2f'] = "The logical condition for triggering the action. This condition is made up of three parts :";
-$lang['reacts_text2g'] = "A canal field";
-$lang['reacts_text2h'] = "A digital comparison operator";
-$lang['reacts_text2i'] = "A numerical value";
-$lang['reacts_text2j'] = "The designation of the thingHtttp application (this application triggers the service requested via an http request)";
-$lang['reacts_title3'] = "Delete Reacts";
-$lang['reacts_text3a'] = "You can delete one or more archived Reacts. Check the Reacts to delete then click on the Delete button. A confirmation window opens.
-                          Validate the action";
-$lang['reacts_title4'] = "Edit a React";
-$lang['reacts_text4a'] = "Check the react to modify then click on the setting button. A form opens.";
-
-
-//------------Text sur le coté du Formulaire---------------//
+//------------Text sur le coté du Formulaire React---------------//
 $lang['react_aide'] = "<h3>Reacts Settings</h3>
 <ul>
 	<li>React Name: Enter a unique name for your React.</li>

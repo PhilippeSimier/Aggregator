@@ -3,12 +3,13 @@ include "authentification/authcheck.php" ;
 
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
-$title = "ThingHTTPs - Aggregator";
+
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -38,7 +39,7 @@ if(isset($_POST['btn_supprimer'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo $title ?></title>
+    <title><?= $lang['ThingHTTPs'] ?> - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -64,7 +65,10 @@ if(isset($_POST['btn_supprimer'])){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'asc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}]
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}],
+				"language": {
+					"url": "<?= $lang['dataTables'] ?>"
+				}
                 
             };
 			$('#tableau').DataTable(options);				
@@ -198,17 +202,17 @@ if(isset($_POST['btn_supprimer'])){
 	<div class="container" style="padding-top: 65px;">
 		<div class="row popin card">	
 			<div class="col-md-12 col-sm-12 col-xs-12">
-			<div  class="card-header" style=""><h4>ThingHTTPs</h4></div>
+			<div  class="card-header" style=""><h4><?= $lang['ThingHTTPs'] ?></h4></div>
 				<div class="table-responsive">
 					<form method="post" id="supprimer">
 					<table id="tableau" class="table display table-striped">
 						<thead>
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
-							<th>User</th>
-							<th>Name</th>
-							<th>Created</th>
-							<th>Method</th>
+							<th><?= $lang['user'] ?></th>
+							<th><?= $lang['name'] ?></th>
+							<th><?= $lang['created'] ?></th>
+							<th><?= $lang['method'] ?></th>
 						  </tr>
 						</thead>
 						<tbody>
@@ -238,10 +242,12 @@ if(isset($_POST['btn_supprimer'])){
 							?>
 						</tbody>
 					</table>
-					<input id="btn_supp" name="btn_supprimer" value="Delete" class="btn btn-danger" readonly size="9">
-					<button id="btn_mod" type="button" class="btn btn-secondary">Setting</button>
-					<button id="btn_add" type="button" class="btn btn-secondary">Add</button>
-					<button id="btn_send" type="button" class="btn btn-secondary">Send</button>
+					
+					<button id="btn_mod" type="button" class="btn btn-secondary"><?= $lang['edit_settings'] ?></button>
+					<button id="btn_add" type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
+					<button id="btn_send" type="button" class="btn btn-secondary"><?= $lang['send'] ?></button>
+					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
+					
 					</form>	
 				</div>
 			</div>

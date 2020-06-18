@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>the connected beehive</title>
+    <title>Aggregator</title>
     <!-- Bootstrap CSS version 4.1.1 -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -35,13 +35,13 @@
 	<div class="row popin" style="padding-top: 35px; ">
 		<div class="col-lg-12">
 			<h2>La ruche connectée</h2>
-			<p>Gagnez en sérénité ! Suivez vos ruches en direct depuis votre smartphone. Economisez votre temps et vos déplacements.</p>
+			<p>Gagnez en sérénité et en réactivité! Suivez vos ruches en direct depuis votre smartphone. Economisez votre temps et vos déplacements.</p>
 			<p>D’une installation facile et rapide, le système se positionne sous n’importe quelle ruche et délivre en temps réel un suivi précis des grandeurs mesurées, 
-			via des vues graphiques. Ces données sont autant d’indices qui permettent à l’apiculteur de surveiller la production à distance. Plus besoin d’inspecter au petit bonheur
+			via des vues graphiques. Ces données sont autant d’indices qui permettent à l’apiculteur de surveiller ses ruches à distance. Plus besoin d'inspecter au petit bonheur
 			la chance ses ruches disséminées dans la nature, dans des endroits souvent d’accès malaisé.</p> 
-			<p> Un SMS prévient de l’augmentation du poids de la ruche, signe du début de la miellée. C'est le moment crucial qui ne dure que de une à trois semaines pour transhumer
+			<p> Un SMS prévient des variations de poids à la hausse, signe du début de la miellée qui ne dure que de une à trois semaines. C'est le moment crucial  pour transhumer
             un rucher complet sur les lieux de la floraison.
-			En cas de besoin d’intervention, des alertes sont transmises par mail, sms, ou notification sur votre smartphone. Ce service est assurée par IFTTT (if this then that).</p>
+			En cas de besoin d’intervention, des notifications sont transmises par SMS sur smartphone. Vous pouvez configurer vous même vos déclencheurs pour les ajuster à vos préferences</p>
 		</div>
 	</div>
 	
@@ -50,29 +50,39 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<p style="text-align:center;"><img src="images/picto_masse.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Masse</strong></p>
-		<p><span class="span_ent_defaut"> La balance indique le bon moment pour : </span></p>
+		<p><span class="span_ent_defaut"> La balance donne des indications pour : </span></p>
 		<ul>
-		<li> installer les « hausses » sur lesquelles les abeilles vont travailler </li>
-		<li> retirer les hausses, afin de récolter le fruit de leur butinage.</li>
+		<li> Installer les nouvelles « hausses » sur lesquelles les abeilles vont travailler </li>
+		<li> Détecter le début et la fin d'une miéllée. </li>
+		<li> Mesurer en hiver, le niveau de consommation des réserves.</li>
+		<li> Signaler la possibilité d'un essaimage suite à une baisse brutale du poids de la ruche – entre 2 et 4 kilos en une heure – .</li>
 		</ul>
-		<p> A la fin de la miellée, une baisse brutale du poids de la ruche – entre 2 et 4 kilos – signale l’essaimage.</p>
+		<p> En visualisant la courbe de poids en période de miéllée, on observe le matin,  un baisse de poids  correspondant au départ des butineuses. 
+		Puis au cours de la journée une augmentation du poids correspondant à la rentrée du nectar. L'augmentation cesse à la tombée de la nuit lorsque toutes les butineuses sont rentrées. 
+		La diminution du poids la nuit est due au séchage du miel. En effet les jeunes ouvrières dont c'est le travail, 
+		s'emploient en permanence à faire s'évaporer l'eau dans le nectar, fraichement apporté</p>
+		
+		
+		
 		
 		<p style="text-align:center;"><img src="images/picto_eclairement.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Eclairement</strong>
-		<br><span class="span_ent_defaut">la mesure de l'éclairement évalue la période de pollinisation des abeilles dans la journée</span></p>
+		<br><span class="span_ent_defaut">La mesure de l'éclairement permet d'évaluer la durée d'activité des butineuses au cours de la la journée</span></p>
 	</div>
 	
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<p style="text-align:center;"><img src="images/picto_temperature.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Température</strong></p>
-		<p><span class="span_ent_defaut">La température idéale au sein de la ruche est de 35°C. Les abeilles peuvent produire de la chaleur en utilisant leurs muscles. 
-		Cette tension musculaire sans mouvement produit de la chaleur qui réchauffe la partie de la ruche réservée au couvain. 
-		En été, lorsque la température du couvain dépasse les 35 °C, le développement des larves est en danger. 
-		La thermo-régulation est assurée par l'évaporation de l'eau dans la ruche. ainsi que par la ventilation des ouvrières.</span></p>
+		<p><span class="span_ent_defaut">La température au sein du couvain dans la ruche est de 35,6 °C. Pour mesurer cette valeur le capteur de température doit impérativement
+		être placé au centre de la ruche au coeur du couvain. 
+		La colonie maintient cette température constante à plus au moins 4 dixièmes de degré. 
+		Sachez que les abeilles peuvent chauffer la partie de la ruche réservée au couvain, en utilisant leurs muscles. La tension musculaire sans mouvement produit de la chaleur. 
+		En été, lorsque la température extérieur est caniculaire, le développement des larves peut être en danger. 
+		Le rafraichissement est assurée par évaporation de l'eau dans la ruche qui est provoquée par  la ventilation des ouvrières.</span></p>
 		
 		<p style="text-align:center;"><img src="images/picto_humidite.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Humidité</strong>
-		<br><span class="span_ent_defaut">Suivi de l’état de la ruche (ouverture possible, ajout d’un abreuvoir nécessaire...)</span></p>
+		<br><span class="span_ent_defaut">Le taux d'humidité à l'intérieur de la ruche est relativement constant. En été comme en hiver, le taux est compris entre 45 et 60% </span></p>
 		
 	</div>
 	
@@ -83,7 +93,7 @@
 		
 		<p style="text-align:center;"><img src="images/picto_autres.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Autres fonctionnalités</strong>
-		<br><span class="span_ent_defaut">Le tableau de bord intègre également un état des capteurs et de la batterie.</span></p>
+		<br><span class="span_ent_defaut">Un suivi de l'état de charge de la batterie est intégré.</span></p>
 	</div>
 	
 	</div>

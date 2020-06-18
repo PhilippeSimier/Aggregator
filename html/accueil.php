@@ -4,8 +4,10 @@
     session_start();
 	require_once('definition.inc.php');
 	require_once('./api/Api.php');
+	require_once('./lang/lang.conf.php');
 	
 	use Aggregator\Support\Api;
+	use Aggregator\Support\Str;
 	
 ?>
 
@@ -14,7 +16,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Browse sites</title>
+		<title><?= $lang['Browse_Sites'] ?> - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/ruche.css" />
@@ -124,7 +126,7 @@
 			} 
 
 			console.log("choix : " + choix); 
-			var url = "./thingSpeakView?channel=" + channel_id; // + '&name=' + channel_name;
+			var url = "./thingView?channel=" + channel_id; 
 			for (i = 0; i < choix.length; i++){
 				url += '&field' + i + '=' + choix[i];	
 			}
@@ -148,7 +150,7 @@
 					<?php
 						try{
 							
-						function listerChannels($bdd, $id){
+						function listerChannels($bdd, $id, $titre){
 							
 							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `thing_id`='. $bdd->quote($id);
 							$url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
@@ -156,25 +158,25 @@
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = 'SELECT * FROM `channels` WHERE `thing_id`='.  $bdd->quote($id);
 								$reponse = $bdd->query($sql);
-								echo '<li  class="folder-data"><a href="#">Data visualisation</a>';
+								echo "<li  class='folder-data'><a href='#'>{$titre}</a>\n";
 								echo "<ul id=\"channel\">\n";
 								while($channel = $reponse->fetchObject()){
-									echo '<li>';
+									echo "<li>\n";
 									echo "<a class='channels' href='{$url}/channels/{$channel->id}/feeds.json?results=0' target='_blank' >{$channel->name}</a>\n";
-									echo '</li>';								
+									echo "</li>\n";								
 								}
 								echo "</ul>\n";
 								echo "</li>\n";
 							}
 						}	
 						
-						function listerMatlabVisu($bdd, $id){
+						function listerMatlabVisu($bdd, $id, $titre){
 							
 							$sql = "SELECT count(*) as nb FROM `Matlab_Visu` WHERE `things_id`={$id}";					
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = "SELECT * FROM `Matlab_Visu` WHERE `things_id`={$id}";
 								$reponse2 = $bdd->query($sql);
-								echo "<li  class='folder-matlab'><a href='#'>Data Analysis</a>\n";
+								echo "<li  class='folder-matlab'><a href='#'>{$titre}</a>\n";
 								echo "<ul>\n";
 									while ($matalVisu = $reponse2->fetchObject()){
 										echo "<li class='analysis'>\n";
@@ -198,8 +200,8 @@
 							while ($thing = $reponse->fetchObject()){
 									echo '<li class="folder-root ' .$thing->class .'">	<a href="#">' . $thing->name . '</a>'; 
 										echo '<ul>';
-										listerChannels($bdd, $thing->id);
-										listerMatlabVisu($bdd, $thing->id);
+										listerChannels($bdd, $thing->id, $lang['Data_visualisation']);
+										listerMatlabVisu($bdd, $thing->id, $lang['Data_Analysis']);
 										echo '</ul>';
 									echo '</li>';
 									
@@ -236,8 +238,8 @@
 				...
 			  </div>
 			  <div class="modal-footer">
-			    <button type="button" class="btn btn-primary btn-afficher">Afficher</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			    <button type="button" class="btn btn-primary btn-afficher"><?= $lang['display'] ?></button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang['close'] ?></button>
 			  </div>
 			</div>
 		  </div>
