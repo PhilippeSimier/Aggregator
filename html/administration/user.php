@@ -5,10 +5,12 @@ require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
 require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
 use Aggregator\Support\Form;
+
 
 $bdd = Api::connexionBD(BASE);
 
@@ -85,7 +87,7 @@ if( !empty($_POST['envoyer'])){
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>User Settings - Aggregator</title>
+		<title><?= $lang['user'] ?> - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="../css/bootstrap.min.css" >
 		<link rel="stylesheet" href="../css/ruche.css" />
@@ -111,28 +113,26 @@ if( !empty($_POST['envoyer'])){
 								
 								$options = array( 'class' => 'form-control', 'readonly' => null);
 								echo Form::input( 'number', 'id', $user->id, $options, 'Id ' ); 
-								echo Form::input( 'text', 'User_API_Key', $user->User_API_Key, $options , 'Api key ');
-								echo Form::input( 'text', 'time_zone', $user->time_zone, $options , 'Time zone ');
+								echo Form::input( 'text', 'User_API_Key', $user->User_API_Key, $options , $lang['API_Key']);
+								echo Form::input( 'text', 'time_zone', $user->time_zone, $options , $lang['Time_Zone']);
 								
 								$options = array( 'class' => 'form-control');
-								echo Form::input( 'text', 'login', $user->login, $options , 'Login ');
+								echo Form::input( 'text', 'login', $user->login, $options , $lang['login']);
 								
-								$droits = array(1 => "Utilisateur", 2 =>"Administrateur" );
-								echo Form::select("droits", $droits,     "Droits  ", $user->droits);
+								echo Form::select("droits", $lang['sel_rights'],  $lang['rights'] , $user->droits);
 								
 								echo Form::input( 'email' , 'email',     $user->email,     $options , 'E mail ');
-								echo Form::input( 'text'  , 'telNumber', $user->telNumber, $options , 'Tel number ');
+								echo Form::input( 'text'  , 'telNumber', $user->telNumber, $options , $lang['tel_number']);
 								echo Form::input( 'number'   , 'quotaSMS',  $user->quotaSMS,  $options , 'Quota SMS ');
-								echo Form::input( 'number'   , 'delaySMS',  $user->delaySMS,  $options , 'Delay SMS ');
+								echo Form::input( 'number'   , 'delaySMS',  $user->delaySMS,  $options , $lang['delay_SMS']);
 								
-								$language = array('FR' => "French", 'EN' => "English" );
-								echo Form::select("language", $language,     "language  ", $user->language);
+								echo Form::select("language", $lang['sel_language'],  $lang['language'] , $user->language);
 							?>
 																		
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
-								<a  class="btn btn-info" role="button" href="users">Cancel</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+								<a  class="btn btn-info" role="button" href="users"><?= $lang['Cancel']?></a>
 							</div>	
 					</form>
 				</div>
@@ -140,13 +140,7 @@ if( !empty($_POST['envoyer'])){
 			
 			<div class="col-md-6 col-sm-12 col-12">
 			    <div class="popin">
-				<h3>User Settings</h3>
-				<ul>
-					<li><b>Login</b>: Enter a unique login for your user.</li>
-					<li><b>API Key</b>: Auto generated API key for the user.</li>
-					<li><b>Quota</b>: Enter the quota of daily SMS</li>			
-					<li><b>Delay</b>: Enter the delay  in seconds between two SMS transmissions </li>					
-				</ul>
+				   <?= $lang['user_aide'] ?>
 				</div>
 			</div>
 		</div>

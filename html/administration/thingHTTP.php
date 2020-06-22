@@ -5,6 +5,7 @@ require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
 require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -66,36 +67,25 @@ else
 		$sql = sprintf("SELECT * FROM `thinghttps` WHERE `id`=%s", $bdd->quote($_GET['id']));
 		$stmt = $bdd->query($sql);
 		if ($thinghttp =  $stmt->fetchObject()){
-		   $_POST['action'] = "update";
-		   $_POST['id']     = $thinghttp->id;
-		   $_POST['user_id']   = $thinghttp->user_id;
-		   $_POST['api_key'] = $thinghttp->api_key;
-		   $_POST['url'] = $thinghttp->url;
-		   $_POST['auth_name'] = $thinghttp->auth_name;
-		   $_POST['auth_pass'] = $thinghttp->auth_pass;
-		   $_POST['method'] = $thinghttp->method;
-		   $_POST['content_type'] = $thinghttp->content_type;
-		   $_POST['http_version'] = $thinghttp->http_version;
-		   $_POST['host'] = $thinghttp->host;
-		   $_POST['body'] = $thinghttp->body;
-		   $_POST['name'] = $thinghttp->name;
-		   $_POST['parse'] = $thinghttp->parse;
+		   $thinghttp->action = "update";
+		   
 	   } 
 	}else {
-		$_POST['action'] = "insert";
-		$_POST['id'] = 0;
-		$_POST['user_id'] = $_SESSION['id'];
-		$_POST['api_key'] = Str::genererChaineAleatoire();
-		$_POST['url'] = "";
-		$_POST['auth_name'] = "";
-		$_POST['auth_pass'] = "";
-		$_POST['method'] = "";
-		$_POST['content_type'] = "";
-		$_POST['http_version'] = "";
-		$_POST['host'] = "";
-		$_POST['body'] = "";
-		$_POST['name'] = "";
-		$_POST['parse'] = "";		
+		$thinghttp = new stdClass();
+		$thinghttp->action = "insert";
+		$thinghttp->id = 0;
+		$thinghttp->user_id = $_SESSION['id'];
+		$thinghttp->api_key = Str::genererChaineAleatoire();
+		$thinghttp->url = "";
+		$thinghttp->auth_name = "";
+		$thinghttp->auth_pass = "";
+		$thinghttp->method = "";
+		$thinghttp->content_type = "";
+		$thinghttp->http_version = "";
+		$thinghttp->host = "";
+		$thinghttp->body = "";
+		$thinghttp->name = "";
+		$thinghttp->parse = "";		
    }
 
     // Création du selectUser 
@@ -107,10 +97,46 @@ else
 		$selectUser[$user->id] = $user->login;
 	}
 
-	// Création du tokenCSRF
-	$tokenCSRF = STR::genererChaineAleatoire(32);
-	$_SESSION['tokenCSRF'] = $tokenCSRF;
-   
+
+	
+	function afficherFormThingHTTP($thinghttp){    
+		
+		global $lang;
+		global $selectUser;
+		
+		// Création du tokenCSRF
+		$tokenCSRF = STR::genererChaineAleatoire(32);
+		$_SESSION['tokenCSRF'] = $tokenCSRF;
+		
+		echo Form::hidden('action', $thinghttp->action);
+		echo Form::hidden('user_id', $thinghttp->user_id);
+		echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
+		
+							
+		$options = array( 'class' => 'form-control', 'readonly' => null);
+		echo Form::input( 'int', 'id', $thinghttp->id, $options, 'Id' );
+		echo Form::input( 'text', 'api_key', $thinghttp->api_key, $options, $lang['API_Key'] );
+							
+		if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
+		    echo Form::select("user_id", $selectUser, $lang['user'], $thinghttp->user_id);
+		else
+			echo Form::hidden("user_id", $thinghttp->user_id);
+							
+		$options = array( 'class' => 'form-control');							
+		echo Form::input( 'text', 'name', $thinghttp->name, $options, $lang['name'] );
+		echo Form::input( 'text', 'url', $thinghttp->url, $options, 'url' );
+		echo Form::input( 'text', 'auth_name', $thinghttp->auth_name, $options, 'auth name' );
+		echo Form::input( 'text', 'auth_pass', $thinghttp->auth_pass, $options, 'Auth Password' );
+		$listMethod = array('GET'=>'GET' , 'POST'=>'POST' , 'PUT'=>'PUT' , 'DELETE'=>'DELETE' );
+		echo Form::select("method", $listMethod , $lang['method'], $thinghttp->method);
+		echo Form::input( 'text', 'content_type', $thinghttp->content_type, $options, 'content type' );
+		$listVersion = array('1.0' => '1.0', '1.1' => '1.1');
+		echo Form::select("http_version", $listVersion , "http version", $thinghttp->http_version);
+		echo Form::input( 'text', 'host', $thinghttp->host, $options, 'host' );
+		$optionsArea = array( 'class' => 'form-control', 'rows' => '4');
+		echo Form::textarea("body", $thinghttp->body, $optionsArea, 'body');
+		echo Form::input( 'text', 'parse', $thinghttp->parse, $options, 'parse' );
+	}
 }
 ?>
 
@@ -120,7 +146,7 @@ else
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>thingHTTP Settings - Aggregator</title>
+		<title><?= $lang['thingHTTP'] ?> - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="../css/bootstrap.min.css" >
 		<link rel="stylesheet" href="../css/ruche.css" />
@@ -139,75 +165,20 @@ else
 				<div class="popin">
 					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
-						<?php
-							echo Form::hidden('action', $_POST['action']);
-							echo Form::hidden('user_id', $_POST['user_id']);
-							echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
-							
-							
-							$options = array( 'class' => 'form-control', 'readonly' => null);
-							echo Form::input( 'int', 'id', $_POST['id'], $options, 'Id' );
-							echo Form::input( 'text', 'api_key', $_POST['api_key'], $options, 'api key' );
-							
-							if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
-								echo Form::select("user_id", $selectUser, "User ", $_POST["user_id"]);
-							else
-								echo Form::hidden("user_id", $_POST["user_id"]);
-							
-							$options = array( 'class' => 'form-control');							
-							echo Form::input( 'text', 'name', $_POST['name'], $options, 'name' );
-							echo Form::input( 'text', 'url', $_POST['url'], $options, 'url' );
-							echo Form::input( 'text', 'auth_name', $_POST['auth_name'], $options, 'auth name' );
-							echo Form::input( 'text', 'auth_pass', $_POST['auth_pass'], $options, 'Auth Password' );
-							$listMethod = array('GET'=>'GET' , 'POST'=>'POST' , 'PUT'=>'PUT' , 'DELETE'=>'DELETE' );
-							echo Form::select("method", $listMethod , "method", $_POST['method']);
-							echo Form::input( 'text', 'content_type', $_POST['content_type'], $options, 'content type' );
-							$listVersion = array('1.0' => '1.0', '1.1' => '1.1');
-							echo Form::select("http_version", $listVersion , "http version", $_POST['http_version']);
-							echo Form::input( 'text', 'host', $_POST['host'], $options, 'host' );
-							$optionsArea = array( 'class' => 'form-control', 'rows' => '4');
-							echo Form::textarea("body", $_POST['body'], $optionsArea, 'body');
-							echo Form::input( 'text', 'parse', $_POST['parse'], $options, 'parse' );
-							
-						?>
+						<?php afficherFormThingHTTP($thinghttp); ?>
 														
-							<div class="form-group">
-								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Appliquer</button>
-								<a  class="btn btn-info" role="button" href="thingHTTPs">Annuler</a>
-							</div>	
+						<div class="form-group">
+						    </br>
+							<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+							<a  class="btn btn-info" role="button" href="thingHTTPs"><?= $lang['Cancel'] ?></a>
+						</div>	
 					</form>
 				</div>
 			</div>
 			
 			<div class="col-md-6 col-sm-12 col-xs-12">
 			    <div class="popin">
-				<h3>ThingHTTP Settings</h3>
-				<ul>
-					<li><b>Name</b>: Enter a unique name for your ThingHTTP request.</li>
-
-					<li><b>API Key</b>: Auto generated API key for the ThingHTTP request.</li>
-
-					<li><b>URL</b>: Enter the address of the website you are requesting data from or writing data to starting with either http:// or https://.</li>
-					
-					<li><b>HTTP Auth Username</b>: If your URL requires authentication, enter the username for authentication to access private channels or websites.</li>
-					
-					<li><b>HTTP Auth Password</b>: If your URL requires authentication, enter the password for authentication to access private channels or websites.</li>
-
-					<li><b>Method</b>: Select the HTTP method required to access the URL.</li>
-
-					<li><b>Content Type</b>: Enter the MIME or form type of the request content. For example, application/x-www-form-urlencoded.</li>
-
-					<li><b>HTTP Version</b>: Select the version of HTTP on your server.</li>
-					
-					<li><b>Host</b>: If your ThingHTTP request requires a host address, enter the domain name here. For example, api.aggregate.com.</li>
-					
-					<li><b>Headers</b>: If your ThingHTTP request requires custom headers, enter the information here. You must specify the name of the header and a value.</li>
-					
-					<li><b>Body</b>: Enter the message you want to include in your request.</li>
-					
-					<li><b>Parse String</b>: If you want to parse the response, enter the exact string to look for in the response data.</li>
-				</ul>
+					<?= $lang['thingHTTP_aide'] ?>
 				</div>
 			</div>
 		</div>

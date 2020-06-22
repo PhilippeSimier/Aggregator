@@ -4,6 +4,9 @@ $lang = array();
 
 /* DataTables */
 $lang['dataTables'] = "lang/dataTable.French.json";
+$lang['any_entrie'] = "Vous n'avez sélectionné aucune entrée !";
+$lang['several_entries'] = "Vous avez sélectionné plusieurs entrées !";
+$lang['alert'] = "Alerte !";
 
 /* Buttons */
 $lang['add'] = "Ajouter";
@@ -44,17 +47,36 @@ $lang['period'] = "Periode";
 $lang['Change_Password'] = "Mot de passe";
 $lang['Change_Time_Zone'] = "Changer fuseau horaire";
 $lang['New_API_Key'] = "Nouvelle clé API";
-$lang['Suspending'] = "suspendre";
+$lang['Suspending'] = "Suspendre";
 $lang['Failed_login'] = "Échec de la connexion";
 $lang['Failed_logins'] = "Échecs de la connexion";
 
-$lang['Users'] = "Utilisateurs";
+$lang['user'] = "Utilisateur";
 $lang['Users_suspending'] = "Utilisateurs suspendus";
 $lang['login'] = "Identifiant";
 $lang['API_Key'] = "Clé API";
-$lang['Time_Zone'] = "Fuseau horaire";
 $lang['last_sign_in'] = "Dernière connexion";
 $lang['count'] = "Total";
+$lang['language'] = "Langue";
+$lang['rights'] = "Droits";
+$lang['tel_number'] = "Téléphone";
+$lang['delay_SMS'] = "Limite d'intervalle d'envoi SMS";
+$lang['confirm_password'] = "Confirmez le mot de passe";
+$lang['confirm_password_not_match'] = "Le mot de passe et la confirmation du mot de passe ne correspondent pas";
+
+/* Time Zone */
+$lang['Time_Zone'] = "Fuseau horaire";
+
+/* thing */
+$lang['thing'] = "Objet";
+$lang['elevation'] = "Altitude";
+$lang['class'] = "Catégorie";
+$lang['classes'] = array('ruche' => "Ruche", 'objet' => 'Objet', 'weather' => 'Station météo');
+$lang['sel_status'] = array('private' => "Privé", 'public' =>"Public" );
+
+/* User formulaire */
+$lang['sel_language'] = array('FR' => "Français", 'EN' => "Anglais" );
+$lang['sel_rights'] = array(1 => "Utilisateur", 2 =>"Administrateur" );
 
 /* things */
 $lang['things'] = "Objets";
@@ -73,10 +95,16 @@ $lang['view_last_values'] = "Afficher les dernières valeurs";
 $lang['download_CSV'] = "Télécharger CSV";
 $lang['clear_all_feed'] = "Effacer tout le flux";
 
+/* Channel */
+$lang['field'] = "Champ";
+$lang['status'] = "Statut";
+$lang['last_write_at'] = "Dernière écriture à"; 
+
 /* thingHTTPs */
 $lang['created'] = "Créé"; 
 $lang['method']  = "Méthode";
 $lang['send']    = "Envoyer";
+$lang['thingHTTP'] = "Objet HTTP";
 
 /* SMS */
 $lang['read'] = "Lire";
@@ -93,7 +121,7 @@ $lang['user'] = "Utilisateur";
 $lang['name'] = "Nom";
 $lang['channel_to_check'] = "Canal à Vérifier";
 $lang['Choose_your_channel'] = "Choisir votre canal";
-$lang['field'] = "Champs à Vérifier";
+$lang['field_check'] = "Champs à Vérifier";
 $lang['Choose_your_field'] = "Choisir votre champ";
 $lang['condition'] = "Condition";
 $lang['action'] = "Action à Effectuer";
@@ -124,21 +152,57 @@ $lang['select_condition'] = array(	'gt' => "est supérieur à",
                                     'eq' =>  "est égal à",
                                     'neq' => "est différent de" );
 
-
 $lang['select_react_type'] = array ('0' => "Exécuter l'action uniquement la première fois que la condition est remplie",
                                     '1' => "Exécuter une action chaque fois que la condition est remplie");
 
-
-//------------Text sur le coté du Formulaire---------------//
-
-$lang['react_aide'] = "<h3>Option du Reagir aux évenements</h3>
+//------------Aide pour les formulaires ---------------//
+$lang['react_aide'] = "<h3>Options du déclencheur</h3>
 <ul>
-	<li>Nom du React : Saisissez un nom unique pour votre React.</li>
+	<li>Nom du déclencheur : Saisissez un nom unique pour votre déclencheur.</li>
 	<li>Fréquence de test : Choisissez de tester votre condition à chaque fois que des données entrent dans le canal ou périodiquement.</li>
-	<li>Condition : Sélectionnez un canal, un champ et la condition de votre React.</li>
+	<li>Condition : Sélectionnez un canal, un champ et la condition de votre déclencheur.</li>
 	<li>Action : Sélectionnez Requête HTTP, Envoyer un Email, à exécuter lorsque la condition est remplie.</li>
-	<li>Option : Sélectionnez le moment où React s'exécute.</li>
+	<li>Option : Sélectionnez le moment où le déclencheur s'exécute.</li>
 </ul>";
+
+$lang['user_aide'] = "<h3>Options pour l'utilisateur</h3>
+<ul>
+	<li><b>Identifiant</b>: Saisissez un identifiant unique pour l'utilisateur.</li>
+	<li><b>Clé API</b>: Clé API auto générée pour l'utilisateur.</li>
+	<li><b>Quota</b>: Entrez le quota d'envoi de SMS quotidiens </li>			
+	<li><b>Limite d'intervalle d'envoi SMS</b>: Entrez la limite d'intervalle de temps entre deux émissions consécutives de SMS </li>					
+</ul>";
+
+$lang['time_zone_aide'] = "<h3>Paramètres de fuseau horaire</h3>
+<ul>
+	<li>Le fuseau horaire est utilisé lors de l'affichage des données dans vos graphiques et lors de la planification de vos applications d'agrégateur.</li>
+</ul>";
+
+$lang['channel_aide'] = "<h3>Paramètres du canal</h3>
+<ul>
+	<li>Nom du canal: entrez un nom unique pour le canal.</li>
+	<li>Description: entrez une description du canal.</li>
+	<li>Canal #: entrez un nom de champ. Chaque canal peut avoir jusqu'à 8 champs.</li>
+</ul>";
+
+$lang['thingHTTP_aide'] = "<h3>Paramètres de la requète HTTP</h3>
+<ul>
+	<li><b>Nom</b>: entrez un nom unique pour votre requète HTTP.</li>
+	<li><b>API Key</b>: clé API générée automatiquement pour la requète HTTP.</li>
+	<li><b>URL</b>: saisissez l'adresse du site Web à partir duquel vous demandez ou écrivez des données en commençant par http: // ou https: //.</li>
+	<li><b>Auth Username</b>: si votre URL nécessite une authentification, entrez le nom d'utilisateur pour accéder aux canaux ou sites Web privés.</li>
+	<li><b>Auth Password</b>: si votre URL nécessite une authentification, entrez le mot de passe pour l'authentification pour accéder aux canaux ou sites Web privés.</li>
+	<li><b>Method</b>: sélectionnez la méthode HTTP requise pour accéder à l'URL.</li>
+	<li><b>Content Type</b>: entrez le MIME ou le type du formulaire pour le contenu de la demande. Par exemple, application/x-www-form-urlencoded.</li>
+	<li><b>HTTP Version</b>: sélectionnez la version du protocol HTTP sur votre serveur.</li>
+	<li><b>Host</b>: si votre demande ThingHTTP nécessite une adresse d'hôte, entrez le nom de domaine ici. Par exemple, api.aggregate.com.</li>
+	<li><b>Headers</b>: si votre demande ThingHTTP nécessite des en-têtes personnalisés, entrez les informations ici. Vous devez spécifier le nom de l'en-tête et une valeur.</li>
+	<li><b>Body</b>: saisissez le message que vous souhaitez inclure dans votre requète.</li>
+	<li><b>Parse</b>: si vous souhaitez analyser la réponse, entrez la chaîne exacte à rechercher dans les données de la réponse.</li>
+</ul>
+";
+
+
 
 
 

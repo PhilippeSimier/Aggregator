@@ -5,6 +5,7 @@ require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
 require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -125,6 +126,7 @@ else
 	
 	function afficherFormChannel($channel,$selectThing ){
 		
+		global $lang;
 		// Création du tokenCSRF
 		$tokenCSRF = STR::genererChaineAleatoire(32);
 		$_SESSION['tokenCSRF'] = $tokenCSRF;
@@ -134,22 +136,22 @@ else
 
 		$options = array( 'class' => 'form-control', 'readonly' => null);
 		echo Form::input( 'int', 'id', $channel->id, $options, 'Id' );
-		echo Form::input( 'text', 'write_api_key', $channel->write_api_key, $options, 'write api key' );
-		echo Form::input( 'text', 'last_write_at', $channel->last_write_at, $options, 'last write at' );
+		echo Form::input( 'text', 'write_api_key', $channel->write_api_key, $options, $lang['write_API_Key'] );
+		echo Form::input( 'text', 'last_write_at', $channel->last_write_at, $options, $lang['last_write_at'] );
 								
 		$options = array( 'class' => 'form-control');
-		echo Form::input( 'text', 'name', $channel->name, $options);
+		echo Form::input( 'text', 'name', $channel->name, $options, $lang['name']);
 		echo Form::textarea( 'description', $channel->description, $options); 						
-		echo Form::select("thing_id", $selectThing , "Thing", $channel->thing_id);
-		echo Form::input( 'field1', 'field1', $channel->field1, $options);
-		echo Form::input( 'field2', 'field2', $channel->field2, $options);
-		echo Form::input( 'field3', 'field3', $channel->field3, $options);
-		echo Form::input( 'field4', 'field4', $channel->field4, $options);
-		echo Form::input( 'field5', 'field5', $channel->field5, $options);
-		echo Form::input( 'field6', 'field6', $channel->field6, $options);
-		echo Form::input( 'field7', 'field7', $channel->field7, $options);
-		echo Form::input( 'field8', 'field8', $channel->field8, $options);
-		echo Form::input( 'status', 'status', $channel->status, $options);
+		echo Form::select("thing_id", $selectThing, $lang['thing'], $channel->thing_id);
+		echo Form::input( 'field1', 'field1', $channel->field1, $options, $lang['field'] . " 1");
+		echo Form::input( 'field2', 'field2', $channel->field2, $options, $lang['field'] . " 2");
+		echo Form::input( 'field3', 'field3', $channel->field3, $options, $lang['field'] . " 3");
+		echo Form::input( 'field4', 'field4', $channel->field4, $options, $lang['field'] . " 4");
+		echo Form::input( 'field5', 'field5', $channel->field5, $options, $lang['field'] . " 5");
+		echo Form::input( 'field6', 'field6', $channel->field6, $options, $lang['field'] . " 6");
+		echo Form::input( 'field7', 'field7', $channel->field7, $options, $lang['field'] . " 7");
+		echo Form::input( 'field8', 'field8', $channel->field8, $options, $lang['field'] . " 8");
+		echo Form::input( 'status', 'status', $channel->status, $options, $lang['status']);
 	}	
 }
 ?>
@@ -160,7 +162,7 @@ else
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Channel Settings - Aggregator</title>
+		<title><?= $lang['channel'] ?> - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="../css/bootstrap.min.css" >
 		<link rel="stylesheet" href="../css/ruche.css" />
@@ -177,13 +179,13 @@ else
 		<div class="row">
 			<div class="col-md-6 col-sm-12 col-12">
 				<div class="popin">
-					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
+					<form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 							<?php  afficherFormChannel($channel,$selectThing );	?>
 
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
-								<a  class="btn btn-info" role="button" href="channels">Cancel</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+								<a  class="btn btn-info" role="button" href="channels"><?= $lang['Cancel']?></a>
 							</div>	
 					</form>
 				</div>
@@ -191,27 +193,7 @@ else
 			
 			<div class="col-md-6 col-sm-12 col-12">
 			    <div class="popin">
-				<h3>Channel Settings</h3>
-				<ul>
-					<li>Channel Name: Enter a unique name for the channel.</li>
-
-					<li>Description: Enter a description of the channel.</li>
-
-					<li>Field#: Check the box to enable the field, and enter a field name. Each  channel can have up to 8 fields.</li>
-
-
-					<li>Tags: Enter keywords that identify the thing. Separate tags with commas.</li>
-
-					<li>Show Channel Location:
-						<ul>
-							<li>Latitude: Specify the latitude position in decimal degrees. For example, the latitude of the city of London is 51.5072.</li>
-
-							<li>Longitude: Specify the longitude position in decimal degrees. For example, the longitude of the city of London is -0.1275.</li>
-
-							<li>Elevation: Specify the elevation position meters. For example, the elevation of the city of London is 35.052.</li>
-						</ul>
-					</li>	
-				</ul>
+				<?= $lang['channel_aide'] ?>
 				</div>
 			</div>
 		</div>	

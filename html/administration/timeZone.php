@@ -3,9 +3,13 @@ include "authentification/authcheck.php" ;
 	
 require_once('../definition.inc.php');
 require_once('../api/Api.php');
+require_once('../api/Str.php');
+require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
-
+use Aggregator\Support\Str;
+use Aggregator\Support\Form;
 
 
 $bdd = Api::connexionBD(BASE);
@@ -95,6 +99,8 @@ function get_tz_options($selectedzone)
   echo timezonechoice($selectedzone);
   echo '</select>';
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +109,7 @@ function get_tz_options($selectedzone)
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Edit Profile - Aggregator</title>
+		<title><?= $lang['Time_Zone'] ?> - Aggregator</title>
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="../css/bootstrap.min.css" >
 		<link rel="stylesheet" href="../css/ruche.css" />
@@ -119,20 +125,20 @@ function get_tz_options($selectedzone)
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="popin">
-					<form class="form-horizontal" method="post" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
+					<form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
 						
-							<input type='hidden' name='action' value="<?php  echo $_POST["action"]; ?>" />
+							<input type='hidden' name='action' value="<?= $_POST["action"]; ?>" />
 							
 							
 							<div class="form-group row">
-								<label for="id"  class="font-weight-bold col-sm-4 col-form-label">id : </label>
+								<label for="id"  class="font-weight-bold col-sm-4 col-form-label">id  </label>
 								<div class="col-sm-8">
-									<input type="text"  name="id" class="form-control" readonly value="<?php echo  $_POST['id']; ?>" />
+									<input type="text"  name="id" class="form-control" readonly value="<?=  $_POST['id']; ?>" />
 								</div>
 							</div>
 							
 							<div class="form-group row">
-								<label for="name"  class="font-weight-bold col-sm-4 col-form-label">Time Zone : </label>
+								<label for="name"  class="font-weight-bold col-sm-4 col-form-label"><?= $lang['Time_Zone'] ?></label>
 								<div class="col-sm-8">
 								<?php
 								   get_tz_options($_POST['time_zone']);
@@ -142,8 +148,8 @@ function get_tz_options($selectedzone)
 							
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Appliquer</button>
-								<a  class="btn btn-info" role="button" href="users">Annuler</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" ><?= $lang['Apply'] ?></button>
+								<a  class="btn btn-info" role="button" href="users"><?= $lang['Cancel'] ?></a>
 							</div>	
 					</form>
 				</div>
@@ -151,12 +157,7 @@ function get_tz_options($selectedzone)
 			
 			<div class="col-md-6 col-sm-6 col-xs-12">
 			    <div class="popin">
-				<h3>Time Zone Settings</h3>
-				<ul>
-					<li>Time Zone is used when displaying data in your charts, and when scheduling your aggregator apps.</li>
-
-					
-				</ul>
+				<?= $lang['time_zone_aide'] ?>
 				</div>
 			</div>
 	

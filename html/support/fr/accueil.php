@@ -38,7 +38,8 @@
 	
 	<div class="container" >
 		<div style="min-height : 500px">	
-			<h2> Page support Parcourir les données enregistrées </h2>
+			<h3>Parcourir les données enregistrées </h3>
+			
 		</div>
 		<?php require_once 'piedDePage.php'; ?>
 	</div>

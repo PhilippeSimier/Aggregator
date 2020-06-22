@@ -5,6 +5,7 @@ require_once('../definition.inc.php');
 require_once('../api/Api.php');
 require_once('../api/Str.php');
 require_once('../api/Form.php');
+require_once('../lang/lang.conf.php');
 
 use Aggregator\Support\Api;
 use Aggregator\Support\Str;
@@ -117,6 +118,7 @@ else
 
 function afficherFormThing($thing, $selectUser){
 	
+	global $lang;
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
@@ -126,25 +128,23 @@ function afficherFormThing($thing, $selectUser){
 	echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								
 	if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
-		echo Form::select("user_id", $selectUser, "User ", $thing->user_id);
+		echo Form::select("user_id", $selectUser, $lang['user'], $thing->user_id);
 	else
 		echo Form::hidden("user_id", $thing->user_id );
 	$options = array( 'class' => 'form-control');
-	echo Form::input( 'text', 'tag', $thing->tag, $options , 'Tag');
-	echo Form::input( 'text', 'name', $thing->name, $options , 'Name');
+	echo Form::input( 'text', 'tag', $thing->tag, $options , $lang['tag']);
+	echo Form::input( 'text', 'name', $thing->name, $options , $lang['name']);
 								
-	$status = array('private' => "private", 'public' =>"public" );
-	echo Form::select("status", $status, "Status ", $thing->status);
+	echo Form::select("status", $lang['sel_status'], $lang['status'], $thing->status);
 								
 	$optionsNumber = array( 'class' => 'form-control', 'step' => "0.000001");
 	echo Form::input( 'number', 'latitude',  $thing->latitude,  $optionsNumber , 'latitude');
 	echo Form::input( 'number', 'longitude', $thing->longitude, $optionsNumber , 'longitude');
-	echo Form::input( 'number', 'elevation', $thing->elevation, $optionsNumber , 'elevation');
+	echo Form::input( 'number', 'elevation', $thing->elevation, $optionsNumber , $lang['elevation']);
 								
-	echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , 'local IP');
+	echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , $lang['Ip_address']);
 								
-	$classes = array('ruche' => "beehive", 'objet' => 'thing', 'weather' => 'weather station');
-	echo Form::select("class", $classes, "Class ", $thing->class);
+	echo Form::select("class", $lang['classes'], $lang['class'], $thing->class);
 
 }
 ?>
@@ -155,7 +155,7 @@ function afficherFormThing($thing, $selectUser){
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Thing - Aggregator</title>
+    <title><?= $lang['thing'] ?> - Aggregator</title>
     <!-- Bootstrap CSS version 4.1.1 -->
 	<link rel="stylesheet" href="../css/bootstrap.min.css" >
     <link rel="stylesheet" href="../css/ruche.css" />
@@ -330,8 +330,8 @@ function afficherFormThing($thing, $selectUser){
 							
 							<div class="form-group">
 								</br>
-								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > Apply</button>
-								<a  class="btn btn-info" role="button" href="things">Cancel</a>
+								<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+								<a  class="btn btn-info" role="button" href="things"><?= $lang['Cancel']?></a>
 							</div>	
 					</form>
 				</div>

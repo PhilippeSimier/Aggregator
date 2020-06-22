@@ -84,7 +84,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Users - Aggregator</title>
+    <title><?= $lang['Users'] ?> - Aggregator</title>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -168,8 +168,8 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				else{
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 			
 				}
@@ -206,8 +206,8 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				else{
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 			
 				}
@@ -244,8 +244,8 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				else{
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 			
 				}
@@ -266,15 +266,15 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				if(checkbox_val.length == 0){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You have selected several users!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['several_entries'] ?>"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -284,15 +284,15 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 						theme: 'bootstrap',
 						closeIcon: true, 
 						columnClass: 'col-md-6 col-md-offset-3',
-						title: '<?= $lang['Change_Password'] ?>',
+						title: "<?= $lang['Change_Password'] ?>",
 						content: '' +
 						'<form action="" class="passwd form-horizontal">' +
 						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Password : </label>' +
+						"<label class='col-sm-4 control-label'><?= $lang['Password'] ?> : </label>" +
 						'<input type="password" id="pwd" name="pwd" size="30"  /><br />' +				
 						'</div>' +
 						'<div class="form-group">' +
-						'<label class="col-sm-4 control-label">Confirm Password : </label>' +
+						"<label class='col-sm-4 control-label'><?= $lang['confirm_password'] ?> : </label>" +
 						'<input type="password" id="conf_pwd" name="conf_pwd" size="30"  /><br />' +				
 						'</div>' +
 						'<input type="hidden"  name="id" value="' + checkbox_val[0] + '"  />' +
@@ -308,7 +308,7 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 									var form_data = this.$content.find('.passwd').serialize();
 																	
 									if (pwd != conf_pwd){
-										$.alert('Password and Confirm Password not OK');
+										$.alert("<?= $lang['confirm_password_not_match'] ?>");
 										return false;
 									}
 									console.log(' form_data : ' + form_data);
@@ -450,15 +450,15 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				if(checkbox_val.length == 0){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You have selected several users!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['several_entries'] ?>"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -480,15 +480,15 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				if(checkbox_val.length == 0){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You have selected several users!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['several_entries'] ?>"
 					});
 				}
 				if(checkbox_val.length == 1){
@@ -578,15 +578,15 @@ $_SESSION['tokenCSRF'] = $tokenCSRF;
 				if(checkbox_val.length == 0){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You haven't selected any user!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['any_entrie'] ?>"
 					});
 				}
 				if(checkbox_val.length > 1){
 					$.alert({
 					theme: 'bootstrap',
-					title: 'Alert!',
-					content: "You have selected several users!"
+					title: "<?= $lang['alert'] ?>",
+					content: "<?= $lang['several_entries'] ?>"
 					});
 				}
 				if(checkbox_val.length == 1){
