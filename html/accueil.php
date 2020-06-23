@@ -9,6 +9,45 @@
 	use Aggregator\Support\Api;
 	use Aggregator\Support\Str;
 	
+	$bdd = Api::connexionBD(BASE);
+	
+	function makeMarker(){
+		
+		global $bdd;
+		try{
+			if (!isset($_SESSION['id'])) // Personne n'est connecté donc objet publique
+				$sql = 'SELECT * FROM `things` where status = "public";';
+			else if ($_SESSION['id'] != 0)
+				$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
+			else   // C'est root qui est connecté, tous les objets sont affichés
+				$sql = "SELECT * FROM `things`";
+								
+			$reponse = $bdd->query($sql);
+			$marker = "var markers = [\n";
+			$infoWindowContent = "var infoWindowContent = [\n";
+			$deb = true;
+			while ($thing = $reponse->fetchObject()){
+				if (!$deb) {
+					$marker .= ","; 
+				    $infoWindowContent .= ",";
+				}
+				$marker .= "['{$thing->name}', {$thing->latitude} , {$thing->longitude} ]\n";
+				$infoWindowContent .= "['<div class=\"info_content\"><h5>{$thing->name}</h5></div>']\n";
+				$deb = false;
+			}
+			$marker .= "];\n";
+			$infoWindowContent .= "];\n"; 
+			$reponse->closeCursor();
+			echo $marker;
+			echo $infoWindowContent;
+			
+		}
+		catch(\PDOException $ex){
+			echo $ex->getMessage();
+			return;
+		}
+		
+	}
 ?>
 
 <html>
@@ -20,62 +59,74 @@
 		<!-- Bootstrap CSS version 4.1.1 -->
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/ruche.css" />
-		<link rel="stylesheet" href="css/font-awesome.min.css" />
 		<link rel="stylesheet" href="css/file-explore.css" />
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="scripts/bootstrap.min.js"></script>
 		<script src="scripts/file-explore.js"></script>
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKUqx5vjYkrX15OOMAxFbOkGjDfAPL1J8"></script>
-		<script src="scripts/gmaps.js"></script>
+		<!--<script src="scripts/gmaps.js"></script>-->
 		
 		<script type="text/javascript">
 			$(document).ready(function () {
                 $(".file-tree").filetree();
-						
-				var	map = new GMaps({
-					div: '#map-canvas',
-					lat: 48.01 , 
-					lng: 0.206 ,
-					zoom : 13 ,
-					mapType : 'terrain',
-					});
-						
-					<?php
-					
-						$bdd = Api::connexionBD(BASE);
-						try{
-							if (!isset($_SESSION['id'])) // Personne n'est connecté donc objet publique
-								$sql = 'SELECT * FROM `things` where status = "public";';
-							else if ($_SESSION['id'] != 0)
-								$sql = "SELECT * FROM `things` where user_id = ". $_SESSION['id'];
-							else   // C'est root qui est connecté, tous les objets sont affichés
-								$sql = "SELECT * FROM `things`";
-								
-							$reponse = $bdd->query($sql);
-		
-							while ($thing = $reponse->fetchObject()){
-									echo 'map.addMarker({'; 
-										echo 'lat:' . $thing->latitude . ",\n";
-										echo 'lng:' . $thing->longitude . ",\n";
-										echo 'title: "' . $thing->name . "\",\n";
-										echo "infoWindow: {\n";
-										echo 'content: "<p> <b>' . $thing->name . '</b><br />Coordonnées GPS : </br> Lat : ' . $thing->latitude;
-										echo '<br /> Lng : ' . $thing->longitude . '</p>"' ;
-										echo "}\n";
-									echo "});\n";
-									
-							}
-							$reponse->closeCursor();
-						}
-						catch(\PDOException $ex){
-							echo $ex->getMessage();
-							return;
-						}	
-						?>
 				$(".channels").click(afficheModal);
-				$(".btn-afficher").click(afficherVue);	
+				$(".btn-afficher").click(afficherVue);
+				
+				// Asynchronously Load the map API 
+				var script = document.createElement('script');
+				script.src = "//maps.googleapis.com/maps/api/js?key=AIzaSyBKUqx5vjYkrX15OOMAxFbOkGjDfAPL1J8&language=<?= $langue ?>&sensor=false&callback=initialize";
+				document.body.appendChild(script);
 			});
+			
+		function initialize() {
+			var map;
+			var bounds = new google.maps.LatLngBounds();
+			var mapOptions = {
+				mapTypeId: 'roadmap'
+			};
+							
+			// Display a map on the page
+			map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+			map.setTilt(45);
+				
+			// Multiple Markers
+			<?php makeMarker() ?>
+											
+			// Display multiple markers on a map
+			var infoWindow = new google.maps.InfoWindow(), marker, i;
+			
+			// Parcoure le tableau des marqueurs et place chacun sur la carte  
+			for( i = 0; i < markers.length; i++ ) {
+				var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+				bounds.extend(position);
+				marker = new google.maps.Marker({
+					position: position,
+					map: map,
+					title: markers[i][0]
+				});
+				
+				// Autorise chaque marqueur à avoir une fenêtre d'informations    
+				google.maps.event.addListener(marker, 'click', (function(marker, i) {
+					return function() {
+						infoWindow.setContent(infoWindowContent[i][0]);
+						infoWindow.open(map, marker);
+					}
+				})(marker, i));
+
+				// Centre automatiquement la carte en ajustant tous les marqueurs sur l'écran
+				map.fitBounds(bounds);
+			}
+
+			// Si le niveau de zoom est supérieur à 18
+			// Remplace le niveau de zoom sur la carte une fois la fonction fitBounds exécutée
+			var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+				
+				if(this.getZoom() > 15){
+					this.setZoom(15);
+				}
+				google.maps.event.removeListener(boundsListener);
+			});	
+		}
 			
 	    function afficheModal(event){
 			
@@ -150,15 +201,16 @@
 					<?php
 						try{
 							
-						function listerChannels($bdd, $id, $titre){
-							
+						function listerChannels($id){
+							global $lang;
+							global $bdd;
 							$sql = 'SELECT count(*) as nb FROM `channels` WHERE `thing_id`='. $bdd->quote($id);
 							$url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 							
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = 'SELECT * FROM `channels` WHERE `thing_id`='.  $bdd->quote($id);
 								$reponse = $bdd->query($sql);
-								echo "<li  class='folder-data'><a href='#'>{$titre}</a>\n";
+								echo "<li  class='folder-data'><a href='#'>{$lang['Data_visualisation']}</a>\n";
 								echo "<ul id=\"channel\">\n";
 								while($channel = $reponse->fetchObject()){
 									echo "<li>\n";
@@ -170,13 +222,14 @@
 							}
 						}	
 						
-						function listerMatlabVisu($bdd, $id, $titre){
-							
+						function listerMatlabVisu($id){
+							global $lang;
+							global $bdd;
 							$sql = "SELECT count(*) as nb FROM `Matlab_Visu` WHERE `things_id`={$id}";					
 							if ($bdd->query($sql)->fetchObject()->nb > 0){
 								$sql = "SELECT * FROM `Matlab_Visu` WHERE `things_id`={$id}";
 								$reponse2 = $bdd->query($sql);
-								echo "<li  class='folder-matlab'><a href='#'>{$titre}</a>\n";
+								echo "<li  class='folder-matlab'><a href='#'>{$lang['Data_Analysis']}</a>\n";
 								echo "<ul>\n";
 									while ($matalVisu = $reponse2->fetchObject()){
 										echo "<li class='analysis'>\n";
@@ -200,8 +253,8 @@
 							while ($thing = $reponse->fetchObject()){
 									echo '<li class="folder-root ' .$thing->class .'">	<a href="#">' . $thing->name . '</a>'; 
 										echo '<ul>';
-										listerChannels($bdd, $thing->id, $lang['Data_visualisation']);
-										listerMatlabVisu($bdd, $thing->id, $lang['Data_Analysis']);
+										listerChannels($thing->id);
+										listerMatlabVisu($thing->id);
 										echo '</ul>';
 									echo '</li>';
 									

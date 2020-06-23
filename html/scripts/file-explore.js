@@ -23,7 +23,7 @@
                             .on('click', 'a[href="#"]', function(e){ // Add a click override for the folder root links
                                 e.preventDefault();
                                 $(this).parent().toggleClass('closed').toggleClass('open');
-                                
+								console.log($(this).text());
                                 
                                 return false;
                             });
