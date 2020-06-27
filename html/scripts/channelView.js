@@ -40,7 +40,11 @@ function getChartDate(d) {
  */
 $(document).ready(function () {
 
-    // La variable menu est un selecteur qui permet de choisir un canal
+    // Chargement des options pour les langues
+
+	Highcharts.setOptions(language.hightchart);
+	
+	// La variable menu est un selecteur qui permet de choisir un canal
     let menu = document.getElementById("Channel_Select");
     let last_date; // letiable pour la dernière date du data dans le chart
 
@@ -237,7 +241,8 @@ $(document).ready(function () {
                 borderColor: '#4b85b7',
                 backgroundColor: '#edf1c8',
                 valueDecimals: 2,
-                xDateFormat: '%A %e %B à  %Hh%M',
+  //              xDateFormat: '%A %e %B à  %Hh%M',
+				xDateFormat: language.xDateFormat,
                 enabledIndicators: true
             },
             xAxis: {
@@ -289,25 +294,7 @@ $(document).ready(function () {
             series: []
         };
 
-        Highcharts.setOptions({
-            lang: {
-                months: ["Janvier ", "Février ", "Mars ", "Avril ", "Mai ", "Juin ", "Juillet ", "Août ", "Septembre ", "Octobre ", "Novembre ", "Décembre "],
-                weekdays: ["Dimanche ", "Lundi ", "Mardi ", "Mercredi ", "Jeudi ", "Vendredi ", "Samedi "],
-                shortMonths: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
-                decimalPoint: ',',
-                resetZoom: 'Reset zoom',
-                resetZoomTitle: 'Reset zoom à  1:1',
-                downloadPNG: "Télécharger au format PNG image",
-                downloadJPEG: "Télécharger au format JPEG image",
-                downloadPDF: "Télécharger au format PDF document",
-                downloadSVG: "Télécharger au format SVG vector image",
-                exportButtonTitle: "Exporter image ou document",
-                printChart: "Imprimer le graphique",
-                noData: "Aucune donnée à  afficher",
-                loading: "Chargement..."
-            }
-
-        });
+ 
 
         // ajoute le titre au graphique
         chartOptions.title.text = channelKeys[0].name;
@@ -336,7 +323,7 @@ $(document).ready(function () {
             for (let fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++)  
             {
                 let nameSerie = channelKeys[channelIndex].fieldList[fieldIndex].name;
-                let nameSerieSMA = 'Smoothed ' + nameSerie;
+                let nameSerieSMA = nameSerie + ' ' + language.smoothed;
                 let id = 'ID' + fieldIndex + channelIndex * 10;
                 chartOptions.series.push({
                     yAxis: channelKeys[channelIndex].fieldList[fieldIndex].axis,
@@ -525,3 +512,4 @@ function loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoad
 
     });
 }
+

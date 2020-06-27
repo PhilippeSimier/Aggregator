@@ -35,6 +35,25 @@ $lang['Data_visualisation'] = "Visualisation des données";
 $lang['Data_Analysis'] = "Analyse des données";
 
 /* thingView */
+$lang['hightchart'] = '{
+    lang: {
+        months: ["Janvier ", "Février ", "Mars ", "Avril ", "Mai ", "Juin ", "Juillet ", "Août ", "Septembre ", "Octobre ", "Novembre ", "Décembre "],
+        weekdays: ["Dimanche ", "Lundi ", "Mardi ", "Mercredi ", "Jeudi ", "Vendredi ", "Samedi "],
+        shortMonths: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"],
+        decimalPoint: ",",
+        resetZoom: "Reset zoom",
+        resetZoomTitle: "Reset zoom à  1:1",
+        downloadPNG: "Télécharger au format PNG image",
+        downloadJPEG: "Télécharger au format JPEG image",
+        downloadPDF: "Télécharger au format PDF document",
+        downloadSVG: "Télécharger au format SVG image vectorielle",
+        printChart: "Imprimer le graphique",
+        noData: "Aucune donnée à  afficher",
+        loading: "Chargement...",
+		viewFullscreen : "Afficher en plein écran"
+    }
+}';
+
 $lang['graphic'] = "Graphique";
 $lang['hide_all'] = "Cacher tout";
 $lang['more_historical_data'] = "Plus de données historiques";
@@ -42,6 +61,8 @@ $lang['setting filter'] = "Réglage du filtre";
 $lang['simple_moving_average'] = "Moyenne Mobile Simple";
 $lang['exponential_moving_average'] = "Moyenne Mobile Exponentielle";
 $lang['period'] = "Periode";
+$lang['smoothed'] = "lissé(e)";
+$lang['xDateFormat'] = "%A %e %B à  %Hh%M";
 
 /* Users */
 $lang['Change_Password'] = "Mot de passe";
