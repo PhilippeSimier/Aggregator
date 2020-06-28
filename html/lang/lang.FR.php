@@ -17,6 +17,7 @@ $lang['Apply'] = "Appliquer";
 $lang['Validate'] = "Valider";
 $lang['close'] = "Fermer";
 $lang['display'] = "Afficher";
+$lang['refuse'] = "Refuser";
 
 /* index & Menu*/
 $lang['Sign_in'] = "Se connecter";
@@ -205,7 +206,6 @@ $lang['channel_aide'] = "<h3>Paramètres du canal</h3>
 	<li>Description: entrez une description du canal.</li>
 	<li>Canal #: entrez un nom de champ. Chaque canal peut avoir jusqu'à 8 champs.</li>
 </ul>";
-
 $lang['thingHTTP_aide'] = "<h3>Paramètres de la requète HTTP</h3>
 <ul>
 	<li><b>Nom</b>: entrez un nom unique pour votre requète HTTP.</li>
@@ -223,6 +223,8 @@ $lang['thingHTTP_aide'] = "<h3>Paramètres de la requète HTTP</h3>
 </ul>
 ";
 
+$lang['cookieConsent'] = "Nous aimerions utiliser des cookies pour mieux comprendre votre utilisation de ce site Web. Vous trouverez plus d'informations à ce sujet et sur vos droits en tant qu'utilisateur dans notre"; 
+$lang['privacy_policy'] = "politique de confidentialité";		
 
 
 

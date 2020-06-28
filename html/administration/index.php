@@ -60,6 +60,8 @@
 			$_SESSION['time_zone']   = $utilisateur->time_zone;
 			$_SESSION['droits'] 	 = $utilisateur->droits;
 			$_SESSION['language'] 	 = $utilisateur->language;
+			$_SESSION['language'] 	 = $utilisateur->language;
+			$_SESSION['cookieConsent'] = $utilisateur->cookieConsent;
        
 			// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
 	        try{

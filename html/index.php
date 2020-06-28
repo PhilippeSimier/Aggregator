@@ -1,7 +1,10 @@
-<?php session_start(); ?>
+<?php
+	require_once 'cookieConfirm.php';
+?>
+
 
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -45,7 +48,6 @@
 		</div>
 	</div>
 	
-	
 	<div class="row popin">
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<p style="text-align:center;"><img src="images/picto_masse.png" alt="" width="60" height="60">
@@ -53,17 +55,15 @@
 		<p><span class="span_ent_defaut"> La balance donne des indications pour : </span></p>
 		<ul>
 		<li> Installer les nouvelles « hausses » sur lesquelles les abeilles vont travailler </li>
-		<li> Détecter le début et la fin d'une miéllée. </li>
+		<li> Détecter le début et la fin d'une miellée. </li>
 		<li> Mesurer en hiver, le niveau de consommation des réserves.</li>
 		<li> Signaler la possibilité d'un essaimage suite à une baisse brutale du poids de la ruche – entre 2 et 4 kilos en une heure – .</li>
 		</ul>
-		<p> En visualisant la courbe de poids en période de miéllée, on observe le matin,  un baisse de poids  correspondant au départ des butineuses. 
-		Puis au cours de la journée une augmentation du poids correspondant à la rentrée du nectar. L'augmentation cesse à la tombée de la nuit lorsque toutes les butineuses sont rentrées. 
-		La diminution du poids la nuit est due au séchage du miel. En effet les jeunes ouvrières dont c'est le travail, 
+		<p> En visualisant la courbe de poids en période de miellée, on peut observer le matin  au départ des butineuses,  une baisse du poids. 
+		Puis au cours de la journée, à la rentrée du nectar une augmentation du poids. A la tombée de la nuit lorsque toutes les butineuses sont rentrées, le poids cesse d'augmenter  . 
+		Au cours de la nuit, La diminution du poids est due au séchage du miel. Les jeunes ouvrières dont c'est le travail, 
 		s'emploient en permanence à faire s'évaporer l'eau dans le nectar, fraichement apporté</p>
-		
-		
-		
+				
 		
 		<p style="text-align:center;"><img src="images/picto_eclairement.png" alt="" width="60" height="60">
 		<br><strong style="font-size:18px;color:#000000;line-height:1.4;">Eclairement</strong>
@@ -99,8 +99,8 @@
 	</div>
 	
 	<?php 
-		require_once 'piedDePage.php'; 
+		require_once 'piedDePage.php';
+		require_once 'cookieConsent.php';
 	?>
-
 	</div>
 </body>	

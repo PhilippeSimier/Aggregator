@@ -107,7 +107,33 @@ a {
 
 .copyright {
 	float: right;
-}	
+}
+
+#cookieConsent {
+    background-color: rgba(20, 20, 20, 0.8);
+    min-height: 70px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 26px;
+    padding: 8px 0 8px 0px;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    text-align: center;
+}
+
+#cookieConsent a:hover {
+    color: #67bfd4;
+    text-decoration: none;
+}
+#cookieConsent a {
+    color: #8fd0df;
+    text-decoration: none;
+}
+	
 
 /* La règle  @font-face permet de définir les polices d'écriture 
    à utiliser pour afficher le texte de pages web. */

@@ -1,7 +1,5 @@
-<!DOCTYPE html>
-
 <?php
-    session_start();
+    require_once 'cookieConfirm.php';
 	require_once('definition.inc.php');
 	require_once('./api/Api.php');
 	require_once('./lang/lang.conf.php');
@@ -49,7 +47,7 @@
 		
 	}
 ?>
-
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -273,7 +271,9 @@
 					</div>
 				</div>
 			</div>
-		<?php require_once 'piedDePage.php'; ?>
+		<?php require_once 'piedDePage.php'; 
+		      require_once 'cookieConsent.php'; 
+	    ?>
 		</div>
 		<!--Fenêtre Modal -->
 		<div class="modal" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenter" aria-hidden="true">

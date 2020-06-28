@@ -17,6 +17,7 @@ $lang['Apply'] = "Apply";
 $lang['Validate'] = "Valider";
 $lang['close'] = "Close";
 $lang['display'] = "Display";
+$lang['refuse'] = "Refuse";
 
 /* index & Menu*/
 $lang['Sign_in'] = "Sign in";
@@ -221,4 +222,7 @@ $lang['thingHTTP_aide'] = "<h3>ThingHTTP Settings</h3>
 	<li><b>Parse</b>: If you want to parse the response, enter the exact string to look for in the response data.</li>
 </ul>
 ";
+
+$lang['cookieConsent'] = "We would like to use cookies to better understand your use of this website. More information about this and your rights as a user can be found in our"; 
+$lang['privacy_policy'] = "privacy policy";	
  ?>
