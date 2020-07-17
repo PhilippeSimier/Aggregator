@@ -18,7 +18,7 @@
 
 <div id="cookieConsent" <?= $style ?>> 
  
-	<?= $lang['cookieConsent'] ?><a href='support/en/privacy.php' target='_blank'> <?= $lang['privacy_policy'] ?>.</a><br/>
+	<?= $lang['cookieConsent'] ?><a href='support/<?= strtolower($_SESSION["language"]); ?>/privacy.php' target='_blank'> <?= $lang['privacy_policy'] ?>.</a><br/>
 	<form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="consent" >
 		<button type="submit" class="btn btn-primary" value="Refuse" name="refuse" > <?= $lang['refuse'] ?></button>
 		<button type="submit" class="btn btn-primary" value="OK" name="accept" > OK</button>

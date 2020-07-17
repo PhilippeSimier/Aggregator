@@ -52,15 +52,137 @@ if(isset($_POST['btn_supp_receive'])){
 	}
 }
 
-
-
-if ($_SESSION['droits'] > 1){		
-		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ";
-}else{
-		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` where `CreatorId` = '".$_SESSION['login']."' order by `SendingDateTime` desc ";
-}
+// Si le formulaire clear receive à été soumis
+if(isset($_POST['btn_clear_receive'])){
 	
-$stmt = $bdd->query($sql);	
+	$sql = "TRUNCATE TABLE `inbox`";	
+	$bdd->exec($sql);
+	
+}
+
+// Fonction pour afficher le tableau des SMS envoyés
+function afficherSentitems(){
+		
+	global $bdd;
+	if ($_SESSION['droits'] > 1){		
+		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` order by `SendingDateTime` desc ";
+	}else{
+		$sql = "SELECT `SendingDateTime`,`DestinationNumber`,`TextDecoded`,`CreatorId`,`ID` FROM `sentitems` where `CreatorId` = '".$_SESSION['login']."' order by `SendingDateTime` desc ";
+	}
+	
+	$stmt = $bdd->query($sql);	
+																	
+	while ($message =  $stmt->fetchObject()){
+		echo "<tr>\n    <td><input type='checkbox' class='array_sent' name='array_sent[$message->ID]' value='$message->ID' ></td>\n";
+		echo "    <td>" . $message->SendingDateTime . "</td>\n";
+		echo "    <td>" . $message->DestinationNumber . "</td>\n";
+		echo "    <td>" . Str::reduire($message->TextDecoded) . "</td>\n";
+		echo "    <td>" . $message->CreatorId . "</td>\n</tr>\n";
+	}
+}
+
+// Fonction pour afficher le tableau des SMS recus
+function afficherInbox(){
+
+	global $bdd;
+	$sql = "SELECT `UpdatedInDB`,`ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ";
+											
+	$stmt = $bdd->query($sql);
+											
+	while ($message =  $stmt->fetchObject()){
+		echo "<tr>\n    <td><input type='checkbox' class='array_receive' name='array_receive[$message->ID]' value='$message->ID' ></td>\n";
+		echo "    <td>" . $message->UpdatedInDB . "</td>\n";
+		echo "    <td>" . $message->ReceivingDateTime . "</td>\n";
+		echo "    <td>" . $message->SenderNumber . "</td>\n";
+		echo "    <td>" . Str::reduire($message->TextDecoded) . "</td>\n";
+		echo "</tr>\n";
+	}	
+}
+
+// Fonction pour afficher les propriétés du modem GSM et du réseau GSM
+// 
+function afficherModem(){
+	
+	// Code des opérateurs Français
+	$operateur = array(
+    "20801" => "Orange France, GSM et UMTS (principal)",
+    "20802" => "Orange France, itinérance zones blanches",
+	"20803" => "MobiquiThings (full MVNO)",
+	"20804" => "Sisteer (MVNE, full MVNO)",
+	"20805" => "Globalstar Europe (Satellite)",
+	"20806" => "Globalstar Europe",
+	"20807" => "Globalstar Europe",
+	"20808" => "Completel (Full MVNO)",
+	"20809" => "Neuf Cégétel / SFR",
+	"20810" => "SFR, GSM/UMTS (principal)",
+	"20811" => "SFR, UMTS (Femtocell)",
+	"20812" => "Truphone France",
+	"20813" => "SFR, GSM/UMTS (zones blanches)",
+	"20814" => "RFF GSM-R (réseau privé)",
+	"20815" => "Free Mobile UMTS (principal)",
+	"20816" => "Free Mobile (Femtocells)",
+	"20817" => "Legos",
+	"20818" => "Usage ARCEP",
+	"20820" => "Bouygues Télécom, GSM/UMTS (principal)",
+	"20821" => "Bouygues Télécom (expérimental)",
+	"20822" => "Transatel (MVNE)",
+	"20823" => "Omea Telecom et Virgin Mobile (Full MVNO)",
+	"20824" => "Omea Telecom et Virgin Mobile (Full MVNO)",
+	"20825" => "Lycamobile et GT-Mobile (Full MVNO)",
+	"20826" => "NRJ Mobile (MVNO et Full MVNO)",
+	"20827" => "Coriolis telecom SAS",
+	"20828" => "Astrium SAS (satellite)",
+	"20829" => "International mobile Communication (Full MVNO)",
+	"20830" => "Symacom (Full MVNO)",
+	"20831" => "Mundio Mobile (MVNE)",
+	"20835" => "Free mobile",
+	"20836" => "Free mobile",
+	"20888" => "Bouygues Télécom, GSM/UMTS (zones blanches)",
+	"20889" => "Omea Telecom (Test)",
+	"20890" => "Association Images et réseaux (Test)",
+	"20891" => "Orange France (test)",
+	"20892" => "Association Plate-forme Telecom (Test)"
+	);
+	
+	$MCC = array(
+	"204" => "Pays-Bas",
+	"206" => "Belgique",
+	"208" => "France",
+	"214" => "Espagne",
+	"222" => "Italie",
+	"228" => "Suisse",
+	"232" => "Autriche",
+	"262" => "Allemagne",
+	"288" => "Danemark",
+	"290" => "Danemark"	
+	);
+	
+	global $bdd;
+	$sql = "SELECT * FROM `phones` WHERE 1";
+	$stmt = $bdd->query($sql);
+	$modem = $stmt->fetchObject();
+	if ($modem){
+		echo "<h5>Modem GSM</h5>";
+		echo "Date de démarrage : <span style='font-weight: bold;' >" . $modem->InsertIntoDB . "</span><br />";
+		echo "IMEI : <span style='font-weight: bold;' >" . $modem->IMEI . "</span><br />";
+		echo "MCC (Mobile Country Code) : " . substr ($modem->IMSI, 0, 3) . " - <span style='font-weight: bold;' >" . $MCC[substr ($modem->IMSI, 0, 3)] . "</span><br />";
+		echo "MNC (Mobile Network Code) : " . substr ($modem->IMSI, 3, 2) . " - <span style='font-weight: bold;' >" . $operateur[substr ($modem->IMSI, 0, 5)] . "</span><br />";
+		echo "MSIN (Mobile Subscriber Identification Number) : <span style='font-weight: bold;' >" . substr ($modem->IMSI, 5) . "</span><br />";
+		echo "<br />";
+		echo "<h5>Signal : ";
+		if ( $modem->Signal > 0 && $modem->Signal <= 18) 
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: red;'> {$modem->Signal} % Poor</span>";
+		if ( $modem->Signal > 18 && $modem->Signal <= 42) 
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: orange;'> {$modem->Signal} % Fair</span>";		
+		if ( $modem->Signal > 42 && $modem->Signal <= 60) 
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: yellow;'> {$modem->Signal} % Good</span>";
+		if ( $modem->Signal > 60) 
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: green;'> {$modem->Signal} % Excellent</span>";  
+	    echo "</h5><br />";
+	} else {
+		echo "<h5>Modem GSM absent !!</h5>";
+	}	
+}
 
 ?>
 
@@ -106,10 +228,10 @@ $stmt = $bdd->query($sql);
 			let options1 = {
                 dom: 'ptlf',
                 pagingType: "simple_numbers",
-                lengthMenu: [5, 10, 15, 20, 40],
+                lengthMenu: [5, 25, 50, 100],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"}, {type:"text"} , {type:"text"}],
 				"language": {
 					"url": "<?= $lang['dataTables'] ?>"
 				}
@@ -362,6 +484,11 @@ $stmt = $bdd->query($sql);
 				
 			});
 			
+			// Action sur le bouton supprimer SMS clear receive
+			$( "#btn_clear_receive" ).click(function() {
+				console.log("Bouton clear_receive cliqué");
+				
+			});
 		});	
 	
 		
@@ -396,19 +523,8 @@ $stmt = $bdd->query($sql);
 									
 								  </tr>
 								</thead>
-								<tbody>
-									
-									<?php
-																	
-										while ($message =  $stmt->fetchObject()){
-											echo "<tr>\n    <td><input type='checkbox' class='array_sent' name='array_sent[$message->ID]' value='$message->ID' ></td>\n";
-											echo "    <td>" . $message->SendingDateTime . "</td>\n";
-											echo "    <td>" . $message->DestinationNumber . "</td>\n";
-											echo "    <td>" . Str::reduire($message->TextDecoded) . "</td>\n";
-											echo "    <td>" . $message->CreatorId . "</td>\n</tr>\n";
-											
-										}
-									?>
+								<tbody>									
+									<?php afficherSentitems(); ?>
 								</tbody>
 							</table>
 							
@@ -430,36 +546,24 @@ $stmt = $bdd->query($sql);
 									<thead>
 									  <tr>
 										<th><input type='checkbox' name='all_receive' value='all_receive' id='all_receive' ></th>
+										<th>Date update BD</th>
 										<th><?= $lang['date_of_receipt'] ?></th>
-										<th><?= $lang['to']?></th>
+										<th><?= $lang['from']?></th>
 										<th>Message</th>														
 									  </tr>
 									</thead>
-									<tbody>
-										
-										<?php
-											
-											$sql = "SELECT `ReceivingDateTime`,`SenderNumber`,`TextDecoded`,`ID` FROM `inbox` order by `ReceivingDateTime` desc ";
-											
-											$stmt = $bdd->query($sql);
-											
-											while ($message =  $stmt->fetchObject()){
-												echo "<tr>\n    <td><input type='checkbox' class='array_receive' name='array_receive[$message->ID]' value='$message->ID' ></td>\n";
-												echo "    <td>" . $message->ReceivingDateTime . "</td>\n";
-												echo "    <td>" . $message->SenderNumber . "</td>\n";
-												echo "    <td>" . Str::reduire($message->TextDecoded) . "</td>\n";
-												echo "</tr>\n";
-												
-											}
-										?>
+									<tbody>										
+										<?php  afficherInbox() ?>
 									</tbody>
 								</table>
 								
 								<button id="btn_lire_receive" type="button" class="btn btn-info"><?= $lang['read'] ?></button>
 								<button  type="button" class="btn btn-info btn_ecrire"><?= $lang['write'] ?></button>
-								<input id="btn_supp_receive" name="btn_supp_receive" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
-								
-							</form>	
+								<input id="btn_supp_receive" name="btn_supp_receive" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">	
+							</form>
+							<form method="post" id="clear_receive">	
+								<input type="submit" id="btn_clear_receive" name="btn_clear_receive" value="<?= $lang['clear'] ?>" class="btn btn-danger" readonly size="9">
+							</form>							
 						</div>
 						</div>
 					</div>
@@ -467,20 +571,8 @@ $stmt = $bdd->query($sql);
 				<div class="tab-pane fade" id="p2">
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">
-								<br /><br />
-								<?php
-									$sql = "SELECT * FROM `phones` WHERE 1";
-									$stmt = $bdd->query($sql);
-									$modem = $stmt->fetchObject();
-									if ($modem){
-											echo "<h5>Modem GSM</h5>";
-											echo "Date de démarrage : " . $modem->InsertIntoDB . "<br />";
-											echo "IMEI : " . $modem->IMEI . "<br />";
-											echo "Signal : " . $modem->Signal . "<br />";
-									} else {
-											echo "<h5>Modem GSM absent !!</h5>";
-									}	
-								?>
+							<br /><br />
+							<?php afficherModem() ?>
 						</div>
 					</div>	
 				</div>

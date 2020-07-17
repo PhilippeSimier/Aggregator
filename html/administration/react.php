@@ -173,7 +173,10 @@ $afficher = false;
 		}
 			
 		// Création du $select_actionable_id
-		$sql = "SELECT id,name FROM thinghttps ORDER BY id;";
+		if($_SESSION['droits'] > 1)
+			$sql = "SELECT id,name FROM thinghttps ORDER BY id;";
+		else
+		    $sql = "SELECT id,name FROM thinghttps where user_id = {$_SESSION['id']} ORDER BY id;";
 		$stmt = $bdd->query($sql);
 		$select_actionable_id = array();
 		while ($thingHttp = $stmt->fetchObject()){

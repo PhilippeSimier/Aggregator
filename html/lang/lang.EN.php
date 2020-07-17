@@ -136,6 +136,7 @@ $lang['to'] = "To";
 $lang['from'] = "From";
 $lang['sent'] = "Sent";
 $lang['received'] = "Received";
+$lang['clear'] = "Clear all";
 
 /* Reacts */
 $lang['user'] = "User";
