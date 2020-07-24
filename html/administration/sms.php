@@ -169,15 +169,18 @@ function afficherModem(){
 		echo "MNC (Mobile Network Code) : " . substr ($modem->IMSI, 3, 2) . " - <span style='font-weight: bold;' >" . $operateur[substr ($modem->IMSI, 0, 5)] . "</span><br />";
 		echo "MSIN (Mobile Subscriber Identification Number) : <span style='font-weight: bold;' >" . substr ($modem->IMSI, 5) . "</span><br />";
 		echo "<br />";
-		echo "<h5>Signal : ";
+		echo "<h5>Force du signal : ";
+		// Dans les réseaux GSM, l'ASU correspond au RSSI (received signal strength indicator).
+		$ASU = $modem->Signal/3;
+		$rssi = 2*$ASU -113; 
 		if ( $modem->Signal > 0 && $modem->Signal <= 18) 
-		   echo "<span  style='font-size: x-large; font-weight: bold; color: red;'> {$modem->Signal} % Poor</span>";
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: red;'> ASU {$ASU} : rssi {$rssi} dBm : Poor</span>";
 		if ( $modem->Signal > 18 && $modem->Signal <= 42) 
-		   echo "<span  style='font-size: x-large; font-weight: bold; color: orange;'> {$modem->Signal} % Fair</span>";		
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: orange;'> ASU {$ASU} : rssi {$rssi} dBm : Fair</span>";		
 		if ( $modem->Signal > 42 && $modem->Signal <= 60) 
-		   echo "<span  style='font-size: x-large; font-weight: bold; color: yellow;'> {$modem->Signal} % Good</span>";
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: yellow;'> ASU {$ASU} : rssi {$rssi} dBm : Good</span>";
 		if ( $modem->Signal > 60) 
-		   echo "<span  style='font-size: x-large; font-weight: bold; color: green;'> {$modem->Signal} % Excellent</span>";  
+		   echo "<span  style='font-size: x-large; font-weight: bold; color: green;'> asu {$ASU} : rssi {$rssi} dBm : Excellent</span>";  
 	    echo "</h5><br />";
 	} else {
 		echo "<h5>Modem GSM absent !!</h5>";
