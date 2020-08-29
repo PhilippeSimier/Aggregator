@@ -48,12 +48,15 @@ function afficherThings($bdd){
 			$stmt = $bdd->query($sql);
 									
 			while ($thing =  $stmt->fetchObject()){
-				echo "<tr><td><input class='selection' type='checkbox' name='table_array[$thing->id]' value='$thing->id' ></td>";
-				echo "<td>" . Str::reduire($thing->name) . "</td>";
-				echo "<td>" . $thing->tag . "</td>";
-				echo "<td>" . $thing->status . "</td>";
-				echo "<td>" . $thing->login . "</td>";
-				echo "<td>" . $thing->local_ip_address . "</td>";
+				echo "<tr>\n";
+				echo "    <td><input class='selection' type='checkbox' name='table_array[{$thing->id}]' value='{$thing->id}' ></td>\n";
+				echo "    <td>" . Str::reduire($thing->name) . "</td>\n";
+				echo "    <td><a href='./channels?id={$thing->id}' title='Access channels for this thing'>{$thing->tag}</a></td>\n";
+				echo "    <td>{$thing->status}</td>\n";
+				echo "    <td>{$thing->login}</td>\n";
+				echo "    <td>{$thing->local_ip_address}</td>\n";
+				echo "    <td><a href='./comSigfox?id={$thing->idDevice}' title='Access Sigfox messages for this thing'>{$thing->idDevice}</a></td>\n";
+				echo "</tr>\n";
 			}	
 	}
 	catch (\PDOException $ex){
@@ -92,7 +95,7 @@ function afficherThings($bdd){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'asc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}],
 				"language": {
 					"url": "<?= $lang['dataTables'] ?>"
 				}
@@ -207,10 +210,11 @@ function afficherThings($bdd){
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
 							<th><?= $lang['name'] ?></th>
-							<th><?= $lang['tag'] ?></th>
+							<th><?= $lang['channels'] ?></th>
 							<th><?= $lang['access'] ?></th>
 							<th><?= $lang['author'] ?></th>
 							<th><?= $lang['Ip_address'] ?></th>
+							<th>Sigfox id</th>
 						  </tr>
 						</thead>
 						<tbody>

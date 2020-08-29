@@ -160,16 +160,16 @@ $afficher = false;
 			
 		// Création du select_channel_id
 		if($_SESSION['droits'] > 1)
-			$sql = "SELECT id,name FROM channels ORDER BY id;";
+			$sql = "SELECT id,name,tags FROM users_channels ORDER BY id;";
 		else
-			$sql = "SELECT id,name FROM users_channels where user_id = {$_SESSION['id']} ORDER BY id;";
+			$sql = "SELECT id,name,tags FROM users_channels where user_id = {$_SESSION['id']} ORDER BY id;";
 		
 		$stmt = $bdd->query($sql);
 
 		$select_channel_id = array();
 		$select_channel_id[''] = $lang['Choose_your_channel'];
 		while ($channel = $stmt->fetchObject()){
-			$select_channel_id[$channel->id] = $channel->name;
+			$select_channel_id[$channel->id] = $channel->tags . "/". $channel->name;
 		}
 			
 		// Création du $select_actionable_id

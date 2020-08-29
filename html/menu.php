@@ -72,7 +72,7 @@
 						echo "<a class='dropdown-item' href='{$racine}administration/thingHTTPs'>{$lang['ThingHTTPs']}</a>\n";
 						echo "<a class='dropdown-item' href='{$racine}administration/reacts'>{$lang['Reacts']}</a>\n";
 						echo "<a class='dropdown-item' href='{$racine}administration/sms'>SMS</a>\n";
-						echo "<a class='dropdown-item' href='{$racine}administration/messageSigfox'>Sigfox</a>\n";
+						
 					}	
 					else{
 						echo "<a class='dropdown-item' href='{$racine}administration/users'>{$lang['My_Account']}</a>\n";
@@ -81,7 +81,7 @@
 						echo "<a class='dropdown-item' href='{$racine}administration/thingHTTPs'>{$lang['ThingHTTPs']}</a>\n";
 						echo "<a class='dropdown-item' href='{$racine}administration/reacts'>{$lang['Reacts']}</a>\n";
 						echo "<a class='dropdown-item' href='{$racine}administration/sms'>SMS</a>\n";
-						echo "<a class='dropdown-item' href='{$racine}administration/messageSigfox'>Sigfox</a>\n";
+						
 					}	
 					
 				echo "<a class='dropdown-item' href='{$racine}administration/signout' id='nav-sign-in'>{$lang['Sign_Out']}</a>\n";

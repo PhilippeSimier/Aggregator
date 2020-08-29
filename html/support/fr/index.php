@@ -38,9 +38,24 @@
 	
 	<div class="container" >
 		<div style="min-height : 500px">	
-		<h1> Support </h1>
-		<p> </p>
-	
+		<h1>Plateforme de supervision de données </h1>
+		<p>La plateforme aggregator permet de collecter et de traiter les différentes mesures remontées par chaque transmetteur. 
+		Les données collectées sont structurées dans des canaux. Chaque canal peut contenir jusqu'à 8 grandeurs physiques.
+		C’est une plateforme web responsive design qui s’adapte automatiquement au terminal utilisé pour la consultation (PC, Tablette, Smartphone). 
+		Elle permet de récupérer et traiter les informations des différents capteurs connectés, quel que soit le réseau de transmission utilisé.</p>
+		
+		<p>La plateforme permet aujourd’hui la collecte de données en provenance de divers sources et typologies de réseaux : 
+		<ul>
+			<li>Réseaux Internet via API Rest </li>
+			<li>Réseaux mobiles via GPRS-3G-4G, </li>
+			<li>Ecosystème M2M via des messages SMS </li>
+			<li>Réseaux IoT LPWAN tels que SigFox</li>
+	    </ul>
+		
+		
+		<h1>Des alertes flexibles</h1>
+		<p>Elle permet également de créer des scénarios d’alerte avec l’envoi de SMS ou d’email.</p>
+		<p>Pour chaque champs d'un canal, elle permet de définir des alertes simplement suivant les valeurs mesurées et indiquez les correspondants à prévenir par SMS ou par mail.</p>
 		</div>
 		<?php require_once 'piedDePage.php'; ?>
 	</div>	

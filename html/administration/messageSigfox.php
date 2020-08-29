@@ -243,6 +243,7 @@ function afficherSigfox(){
 
 					<button id="btn_val" type="button" class="btn btn-secondary">Afficher les valeurs décodées</button>
 					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
+					<a href="https://backend.sigfox.com/auth/login" class="btn btn-info" role="button">Backend sigfox</a> 
 					</form>	
 				</div>
 			</div>

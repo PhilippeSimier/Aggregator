@@ -33,9 +33,15 @@
 				<div class="col-lg-12">
 					<h4>Vue d'ensemble des déclencheurs (réagir aux évènements)</h4>
 					<p>Réagissez lorsque les données d'un canal remplissent certaines conditions</p>
-					<p>les déclencheurs fonctionnent avec les actions HTTP, pour effectuer des actions lorsque les données d'un canal remplissent une certaine condition.
-					Vous pouvez configurer un déclencheur pour notifier un évenement par SMS ou Mail. 
-					Par exemple lorsque le poids d'une ruche chute soudainement, demandez à action HTTP d'envoyer un SMS contenant une description de l'évènement.</p></br>
+					<p>La figure ci-dessous décrit comment le moteur d'événements déclenche des alertes. Un événement est déclenché lorsque les données (ligne bleue) dépassent  le seuil. 
+					<p>Lorsque l'option <b>exécuter l'action uniquement la première fois</b> est sélectionnée Les données doivent retomber sous le seuil avant que ne se déclenche le prochain événement </p>. 
+					<img src="react_1.png" width="80%" />
+					<p>Lorsque l'option <b>Exécuter une action chaque fois que la condition est remplie</b> est sélectionnée, l'événement est déclenché cycliquement à la période sélectionnée, toutes les 10, 30 ou 60 minutes.</p> 
+					<img src="react_2.png" width="50%" />
+					<p>les déclencheurs fonctionnent avec les actions HTTP, pour effectuer des actions.
+					Vous pouvez configurer un déclencheur pour notifier un évenement ou une alerte par SMS ou Mail. 
+					Par exemple lorsque le poids d'une ruche chute soudainement, demandez à envoyer un SMS contenant une description de l'évènement.</p></br>
+					<p>** REMARQUE IMPORTANTE ** Les alertes SMS prennent en charge jusqu'à 140 caractères non accentués ou 70 caractères accentués. En cas de dépassement, le corps du message sera coupé à cette longueur.</p>
 					<p></p>
 					<h4>Configurer un déclencheur </h4>
 					<p>Sélectionner:

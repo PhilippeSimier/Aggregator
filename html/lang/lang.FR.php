@@ -109,6 +109,7 @@ $lang['Ip_address'] = "Adresse IP";
 
 /* channels */
 $lang['channel'] = "Canal";
+$lang['channels'] = "Canaux";
 $lang['write_API_Key'] = "Clé API";
 $lang['last_write_entry'] = "Date dernière entrée";
 $lang['last_entry_id'] = "Nb Valeurs";

@@ -133,7 +133,17 @@ a {
     color: #8fd0df;
     text-decoration: none;
 }
-	
+
+/* style pour popover 
+a[data-toggle] {
+  text-decoration: none;
+}
+
+a[data-toggle]:hover {
+  cursor: help;
+}
+
+ fin du popover */	
 
 /* La règle  @font-face permet de définir les polices d'écriture 
    à utiliser pour afficher le texte de pages web. */

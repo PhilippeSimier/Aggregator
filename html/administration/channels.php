@@ -11,6 +11,8 @@ use Aggregator\Support\Str;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
+$thing_id = Api::verifier("id", FILTER_VALIDATE_INT);
+    
 
 // Si le formulaire a été soumis
 if(isset($_POST['btn_supprimer'])){
@@ -33,26 +35,36 @@ if(isset($_POST['btn_supprimer'])){
 	}
 }
 
-function afficherChannels($bdd){
+function afficherChannels(){
+	
+	global $bdd;
+	global $thing_id;
+	
     try{
 	    $sql = "SELECT * FROM `users_channels`";
-		if ($_SESSION['droits'] > 1)
+		if ($_SESSION['droits'] > 1){
 			$sql .= " where 1";	
+		    if ( $thing_id != null ) 
+				$sql .= " AND `thing_id` = {$thing_id}";
+		}
 		else	
-			$sql .= " where user_id = '" . $_SESSION['id'] . "'";
+			$sql .= " where user_id = '{$_SESSION['id']}'";
+		    if ( $thing_id != null ) 
+				$sql .= " AND `thing_id` = {$thing_id}";
+			
 			$sql .= " order by `tags` ";
-									
+												
 			$stmt = $bdd->query($sql);
 									
 			while ($channel =  $stmt->fetchObject()){
-				echo "<tr><td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>";
-				echo "<td>" . $channel->id . "</td>";
-				echo "<td>" . $channel->name . "</td>";  
-				echo "<td>" . $channel->tags . "</td>";
-				echo "<td>" . $channel->write_api_key . "</td>";
-				echo "<td>" . $channel->last_entry_id . "</td>";
-				echo "<td>" . $channel->last_write_at . "</td>";
-				echo "</tr>";								
+				echo "<tr>\n";
+				echo "    <td><input class='selection' type='checkbox' name='table_array[$channel->id]' value='$channel->id' ></td>\n";
+				echo "    <td>{$channel->id}</td>\n";
+				echo "    <td>{$channel->tags}/{$channel->name}</td>\n";  
+				echo "    <td>{$channel->write_api_key}</td>\n";
+				echo "    <td>{$channel->last_entry_id}</td>\n";
+				echo "    <td>{$channel->last_write_at}</td>\n";
+				echo "</tr>\n";								
 			}
 	}
 	catch (\PDOException $ex) 
@@ -92,7 +104,7 @@ function afficherChannels($bdd){
                 lengthMenu: [5, 10, 15, 20, 40],
                 pageLength: 10,
                 order: [[1, 'desc']],
-				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}],
+				columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}, {type:"text"}, {type:"text"}],
 				"language": {
 					"url": "<?= $lang['dataTables'] ?>"
 				}
@@ -465,15 +477,14 @@ function afficherChannels($bdd){
 						  <tr>
 							<th><input type='checkbox' name='all' value='all' id='all' ></th>
 							<th>Id</th>
-							<th><?= $lang['name'] ?></th>
-							<th><?= $lang['tag'] ?></th>
+							<th><?php echo $lang['thing']."/".$lang['channel']; ?></th>
 							<th><?= $lang['write_API_Key'] ?></th>
 							<th><?= $lang['last_entry_id'] ?></th>
 							<th><?= $lang['last_write_entry'] ?></th>
 						  </tr>
 						</thead>
 						<tbody>
-							<?php afficherChannels($bdd); ?>
+							<?php afficherChannels(); ?>
 						</tbody>
 					</table>
 					

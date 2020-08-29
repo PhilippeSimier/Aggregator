@@ -22,7 +22,7 @@ if( !empty($_POST['envoyer'])){
     if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) {
 		try{
 			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-				$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+				$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class`, `idDevice` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
 							  , $_POST['user_id']
 							  , $_POST['latitude']
 							  , $_POST['longitude']
@@ -32,11 +32,12 @@ if( !empty($_POST['envoyer'])){
 							  , $bdd->quote($_POST['status'])
 							  , $bdd->quote($_POST['local_ip_address'])
 							  , $bdd->quote($_POST['class'])
+							  , $bdd->quote($_POST['idDevice'])
 							  ); 
 				$bdd->exec($sql);			
 			}
 			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-				$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s  WHERE `things`.`id` = %s;"
+				$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s, `idDevice` = %s   WHERE `things`.`id` = %s;"
 							  , $_POST['latitude']
 							  , $_POST['longitude']
 							  , $_POST['elevation']
@@ -46,6 +47,7 @@ if( !empty($_POST['envoyer'])){
 							  , $_POST['user_id']
 							  , $bdd->quote($_POST['local_ip_address'])
 							  , $bdd->quote($_POST['class'])
+							  , $bdd->quote($_POST['idDevice'])
 							  , $_POST['id']
 							  ); 
 				$bdd->exec($sql);				
@@ -96,7 +98,8 @@ else
 	    $thing->latitude = "48.847849";
 	    $thing->longitude = "2.335168";
 	    $thing->local_ip_address = "127.0.0.1 /24";
-		$thing->class = "objet";	   
+		$thing->class = "objet";
+		$thing->idDevice = "";
 	}
  
     // Création du selectUser
@@ -145,6 +148,8 @@ function afficherFormThing($thing, $selectUser){
 	echo Form::input( 'text', 'local_ip_address', $thing->local_ip_address, $options , $lang['Ip_address']);
 								
 	echo Form::select("class", $lang['classes'], $lang['class'], $thing->class);
+	echo Form::input( 'text', 'idDevice', $thing->idDevice, $options , "Sigfox id");
+	
 
 }
 ?>
