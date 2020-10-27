@@ -11,3 +11,6 @@ RewriteRule ^channels/([0-9]+)/feeds.([a-zA-Z]+)$   api/feeds.php?channelId=$1&t
 
 # Régle de réécriture pour channels windows
 RewriteRule ^channels/([0-9]+)/windows.([a-zA-Z]+)$   api/windows.php?channelId=$1&type=$2 [QSA]
+
+# nécessite l'activation  a2enmod headers
+Header edit Set-Cookie ^(.*)$ $1;SameSite=Strict

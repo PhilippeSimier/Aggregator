@@ -49,7 +49,7 @@
 	language.hightchart = <?= $lang['hightchart'] ?>;
 	language.xDateFormat = "<?= $lang['xDateFormat'] ?>";
 	
-	let urlAggregator = "https://www.thingspeak.com";
+	let urlAggregator = "https://api.thingspeak.com";
 	//let urlAggregator =   "http://touchardinforeseau.servehttp.com/Ruche";
 	
     

@@ -78,11 +78,11 @@ $(document).ready(function () {
 		
 		
 		let url = urlAggregator + '/channels/' + channelNumber + '/feeds.json?offset=0&results=434';
-		console.log('url : ' + url);
+		
 		if (key !== ""){
-			url += '&key=' + key + '&callback=?';
+			url += '&key=' + key;// + '&callback=?';
 		}else{
-			url += '&callback=?';
+			//url += '&callback=?';
 		}		
         $.getJSON(url, function (data)
         {
@@ -131,9 +131,11 @@ $(document).ready(function () {
                 createChart();
             }
         })
-                .fail(function () {
-                    alert('getJSON request failed! ');
-                });
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+			console.log( "Request Failed: " + err );
+			alert('Request failed: ' + err);
+        });
     }
 
     /**
@@ -468,9 +470,9 @@ function loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoad
 	
 	let url = urlAggregator + '/channels/' + channelNumber + '/feeds.json?offset=0&start=2018-01-20T00:00:00&end=' + end;
 	if (key !== ""){
-		url += '&key=' + key + '&callback=?';
+		url += '&key=' + key; // + '&callback=?';
 	}else{
-		url += '&callback=?';
+		//url += '&callback=?';
 	}
 	
 	console.log('url : ' + url);
