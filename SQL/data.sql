@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb5
+-- version 4.6.6deb4+deb9u2
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost:3306
--- Généré le :  Mar 27 Octobre 2020 à 18:12
--- Version du serveur :  10.3.23-MariaDB-0+deb10u1
--- Version de PHP :  7.3.19-1~deb10u1
+-- Généré le :  Mar 27 Octobre 2020 à 22:29
+-- Version du serveur :  10.1.47-MariaDB-0+deb9u1
+-- Version de PHP :  7.0.33-0+deb9u10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -55,7 +55,7 @@ CREATE TABLE `channels` (
   `id` int(11) NOT NULL,
   `thing_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
-  `description` text DEFAULT NULL,
+  `description` text,
   `field1` varchar(50) NOT NULL,
   `field2` varchar(50) NOT NULL,
   `field3` varchar(50) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `channels` (
   `write_api_key` varchar(50) DEFAULT NULL,
   `last_write_at` timestamp NULL DEFAULT NULL,
   `last_entry_id` int(11) DEFAULT NULL,
-  `public_flag` tinyint(1) NOT NULL DEFAULT 1,
+  `public_flag` tinyint(1) NOT NULL DEFAULT '1',
   `idDevice` varchar(10) DEFAULT NULL,
   `type` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -104,7 +104,7 @@ CREATE TABLE `failed_logins` (
   `login` varchar(25) NOT NULL,
   `password` varchar(128) NOT NULL,
   `ip_address` varchar(50) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -124,7 +124,7 @@ CREATE TABLE `feeds` (
   `field6` float DEFAULT NULL,
   `field7` float DEFAULT NULL,
   `field8` float DEFAULT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(255) DEFAULT NULL,
   `latitude` decimal(15,10) DEFAULT NULL,
   `longitude` decimal(15,10) DEFAULT NULL,
@@ -193,7 +193,7 @@ CREATE TABLE `reacts` (
   `name` varchar(50) NOT NULL,
   `react_type` varchar(10) NOT NULL DEFAULT 'numeric',
   `run_interval` int(11) DEFAULT NULL,
-  `run_on_insertion` tinyint(1) NOT NULL DEFAULT 0,
+  `run_on_insertion` tinyint(1) NOT NULL DEFAULT '0',
   `last_run_at` timestamp NULL DEFAULT NULL,
   `channel_id` int(11) DEFAULT NULL,
   `field_number` int(11) DEFAULT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE `reacts` (
   `actionable_type` varchar(15) NOT NULL DEFAULT 'Thinghttp',
   `action_value` float DEFAULT NULL,
   `latest_value` float DEFAULT NULL,
-  `run_action_every_time` tinyint(1) NOT NULL DEFAULT 0
+  `run_action_every_time` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -232,7 +232,7 @@ CREATE TABLE `sigfox` (
   `id` int(11) NOT NULL,
   `idDevice` varchar(25) NOT NULL,
   `seqNumber` int(11) DEFAULT NULL,
-  `time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `data` varchar(60) NOT NULL,
   `type` int(3) DEFAULT NULL,
   `field1` int(11) DEFAULT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE `sigfox` (
 
 CREATE TABLE `sigfox_events` (
   `id` int(11) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `sourceId` varchar(10) NOT NULL,
   `eventType` varchar(20) NOT NULL,
   `severity` varchar(20) NOT NULL,
@@ -286,7 +286,7 @@ CREATE TABLE `thinghttps` (
   `body` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `parse` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -353,18 +353,18 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `telNumber` varchar(20) DEFAULT NULL,
   `User_API_Key` varchar(50) NOT NULL,
-  `Created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `sign_in_count` int(10) NOT NULL DEFAULT 0,
+  `Created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sign_in_count` int(10) NOT NULL DEFAULT '0',
   `last_sign_in_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `current_sign_in_at` timestamp NULL DEFAULT NULL,
   `time_zone` varchar(25) NOT NULL DEFAULT 'UTC',
-  `quotaSMS` int(11) NOT NULL DEFAULT 140,
-  `delaySMS` int(11) NOT NULL DEFAULT 15,
-  `allow` tinyint(1) NOT NULL DEFAULT 1,
-  `droits` int(11) NOT NULL DEFAULT 1,
+  `quotaSMS` int(11) NOT NULL DEFAULT '140',
+  `delaySMS` int(11) NOT NULL DEFAULT '15',
+  `allow` tinyint(1) NOT NULL DEFAULT '1',
+  `droits` int(11) NOT NULL DEFAULT '1',
   `reset_password_token` varchar(128) DEFAULT NULL,
   `language` varchar(50) NOT NULL DEFAULT 'FR',
-  `cookieConsent` tinyint(1) NOT NULL DEFAULT 0
+  `cookieConsent` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -372,7 +372,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `encrypted_password`, `password_salt`, `email`, `telNumber`, `User_API_Key`, `Created_at`, `sign_in_count`, `last_sign_in_at`, `current_sign_in_at`, `time_zone`, `quotaSMS`, `delaySMS`, `allow`, `droits`, `reset_password_token`, `language`, `cookieConsent`) VALUES
-(0, 'root', '5cd8817d8fdb26fb7dd1d433500b50db51b8e925a2709de97a89abb6b41906a9', 'M06K292ANH0Z5DA0G603', 'philaure@wanadoo.fr', '0689744235', 'RDIK9LVVYEYZYZER', '2019-08-11 10:42:44', 618, '2020-10-20 09:40:47', '2020-10-23 21:56:15', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR', 1),
+(0, 'root', '5cd8817d8fdb26fb7dd1d433500b50db51b8e925a2709de97a89abb6b41906a9', 'M06K292ANH0Z5DA0G603', 'philaure@wanadoo.fr', '0689744235', 'RDIK9LVVYEYZYZER', '2019-08-11 10:42:44', 619, '2020-10-23 21:56:15', '2020-10-27 20:11:53', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR', 1),
 (1, 'touchard', 'f786d8bab1d85e1be8ccf62d7adb58f503b6a605c4859f985e4f7dc092aec425', '3O6HAE3T7D3TCX661E8E', 'philippe.simier@ac-nantes.fr', '0689744235', 'RC8IK9LVVYEYZNSM', '2019-06-18 11:40:56', 15, '2020-01-23 07:45:44', '2020-05-07 17:37:30', 'Europe/Paris', 140, 15, 1, 1, NULL, 'FR', 0),
 (2, 'philippe', '089f509603f388d3509b303e340c56db29b6774f69a816d073f5be67bde6e5dd', 'ZGNGYYXORKXMLVWW98FZ', 'philippe.simier@ac-nantes.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '2019-06-18 11:40:56', 80, '2020-08-22 08:28:21', '2020-08-25 08:56:57', 'Europe/Paris', 140, 15, 1, 1, NULL, 'EN', 0),
 (8, 'toto', '31f7a65e315586ac198bd798b6629ce4903d0899476d5741a9f32e2e521b6a66', NULL, '', '', 'O7VZJ5LOABU', '2020-01-24 09:24:01', 61, '2020-06-16 17:02:52', '2020-06-20 07:21:51', 'Europe/Paris', 250, 1, 1, 1, NULL, 'EN', 0);
@@ -422,8 +422,16 @@ CREATE TABLE `vue_channels` (
 ,`latitude` decimal(9,6)
 ,`longitude` decimal(9,6)
 ,`elevation` float
-,`tag` varchar(50)
+,`field1` varchar(50)
+,`field2` varchar(50)
+,`field3` varchar(50)
+,`field4` varchar(50)
+,`field5` varchar(50)
+,`field6` varchar(50)
+,`field7` varchar(50)
+,`field8` varchar(50)
 ,`public_flag` tinyint(1)
+,`tag` varchar(50)
 ,`last_entry_id` int(11)
 );
 
@@ -456,13 +464,13 @@ CREATE TABLE `windows` (
   `id` int(11) NOT NULL,
   `channel_id` int(11) NOT NULL,
   `position` int(11) NOT NULL,
-  `html` text DEFAULT NULL,
+  `html` text,
   `col` int(11) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `content_id` int(11) NOT NULL,
   `content_type` varchar(20) NOT NULL,
-  `options` text DEFAULT NULL,
-  `public_flag` tinyint(1) NOT NULL DEFAULT 1
+  `options` text,
+  `public_flag` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -485,7 +493,7 @@ INSERT INTO `windows` (`id`, `channel_id`, `position`, `html`, `col`, `title`, `
 --
 DROP TABLE IF EXISTS `login_things`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `login_things`  AS  select `things`.`id` AS `id`,`users`.`login` AS `login`,`things`.`name` AS `name`,`things`.`tag` AS `tag`,`things`.`status` AS `status`,`things`.`idDevice` AS `idDevice`,`things`.`local_ip_address` AS `local_ip_address` from (`things` join `users`) where `things`.`user_id` = `users`.`id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `login_things`  AS  select `things`.`id` AS `id`,`users`.`login` AS `login`,`things`.`name` AS `name`,`things`.`tag` AS `tag`,`things`.`status` AS `status`,`things`.`idDevice` AS `idDevice`,`things`.`local_ip_address` AS `local_ip_address` from (`things` join `users`) where (`things`.`user_id` = `users`.`id`) ;
 
 -- --------------------------------------------------------
 
@@ -494,7 +502,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `login_
 --
 DROP TABLE IF EXISTS `users_channels`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_channels`  AS  select `channels`.`id` AS `id`,`channels`.`thing_id` AS `thing_id`,`channels`.`name` AS `name`,`things`.`tag` AS `tags`,`channels`.`write_api_key` AS `write_api_key`,`channels`.`last_entry_id` AS `last_entry_id`,`channels`.`last_write_at` AS `last_write_at`,`users`.`id` AS `user_id`,`users`.`login` AS `login` from ((`channels` join `things`) join `users`) where `channels`.`thing_id` = `things`.`id` and `things`.`user_id` = `users`.`id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_channels`  AS  select `channels`.`id` AS `id`,`channels`.`thing_id` AS `thing_id`,`channels`.`name` AS `name`,`things`.`tag` AS `tags`,`channels`.`write_api_key` AS `write_api_key`,`channels`.`last_entry_id` AS `last_entry_id`,`channels`.`last_write_at` AS `last_write_at`,`users`.`id` AS `user_id`,`users`.`login` AS `login` from ((`channels` join `things`) join `users`) where ((`channels`.`thing_id` = `things`.`id`) and (`things`.`user_id` = `users`.`id`)) ;
 
 -- --------------------------------------------------------
 
@@ -503,7 +511,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_
 --
 DROP TABLE IF EXISTS `users_things`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_things`  AS  select `things`.`id` AS `id`,`things`.`name` AS `name`,`things`.`idDevice` AS `idDevice`,`users`.`User_API_Key` AS `USER_API_Key`,`things`.`tag` AS `tag` from (`things` join `users`) where `things`.`user_id` = `users`.`id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_things`  AS  select `things`.`id` AS `id`,`things`.`name` AS `name`,`things`.`idDevice` AS `idDevice`,`users`.`User_API_Key` AS `USER_API_Key`,`things`.`tag` AS `tag` from (`things` join `users`) where (`things`.`user_id` = `users`.`id`) ;
 
 -- --------------------------------------------------------
 
@@ -512,7 +520,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `users_
 --
 DROP TABLE IF EXISTS `vue_channels`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `vue_channels`  AS  select `channels`.`id` AS `id`,`channels`.`name` AS `name`,`channels`.`description` AS `description`,`things`.`latitude` AS `latitude`,`things`.`longitude` AS `longitude`,`things`.`elevation` AS `elevation`,`things`.`tag` AS `tag`,`channels`.`public_flag` AS `public_flag`,`channels`.`last_entry_id` AS `last_entry_id` from (`channels` join `things`) where `channels`.`thing_id` = `things`.`id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `vue_channels`  AS  select `channels`.`id` AS `id`,`channels`.`name` AS `name`,`channels`.`description` AS `description`,`things`.`latitude` AS `latitude`,`things`.`longitude` AS `longitude`,`things`.`elevation` AS `elevation`,`channels`.`field1` AS `field1`,`channels`.`field2` AS `field2`,`channels`.`field3` AS `field3`,`channels`.`field4` AS `field4`,`channels`.`field5` AS `field5`,`channels`.`field6` AS `field6`,`channels`.`field7` AS `field7`,`channels`.`field8` AS `field8`,`channels`.`public_flag` AS `public_flag`,`things`.`tag` AS `tag`,`channels`.`last_entry_id` AS `last_entry_id` from (`things` join `channels`) where (`things`.`id` = `channels`.`thing_id`) ;
 
 -- --------------------------------------------------------
 
@@ -521,7 +529,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `vue_ch
 --
 DROP TABLE IF EXISTS `vue_reacts`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `vue_reacts`  AS  select `reacts`.`id` AS `id`,`reacts`.`react_type` AS `react_type`,`users`.`login` AS `login`,`reacts`.`name` AS `name`,`channels`.`name` AS `channelCheck`,`channels`.`id` AS `channelId`,`reacts`.`field_number` AS `field_number`,`reacts`.`condition` AS `condition`,`reacts`.`condition_value` AS `condition_value`,`thinghttps`.`name` AS `actionName` from (((`users` join `channels`) join `reacts`) join `thinghttps`) where `channels`.`id` = `reacts`.`channel_id` and `reacts`.`actionable_id` = `thinghttps`.`id` and `users`.`id` = `reacts`.`user_id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ruche`@`%` SQL SECURITY DEFINER VIEW `vue_reacts`  AS  select `reacts`.`id` AS `id`,`reacts`.`react_type` AS `react_type`,`users`.`login` AS `login`,`reacts`.`name` AS `name`,`channels`.`name` AS `channelCheck`,`channels`.`id` AS `channelId`,`reacts`.`field_number` AS `field_number`,`reacts`.`condition` AS `condition`,`reacts`.`condition_value` AS `condition_value`,`thinghttps`.`name` AS `actionName` from (((`users` join `channels`) join `reacts`) join `thinghttps`) where ((`channels`.`id` = `reacts`.`channel_id`) and (`reacts`.`actionable_id` = `thinghttps`.`id`) and (`users`.`id` = `reacts`.`user_id`)) ;
 
 --
 -- Index pour les tables exportées
@@ -624,7 +632,7 @@ ALTER TABLE `channels`
 -- AUTO_INCREMENT pour la table `failed_logins`
 --
 ALTER TABLE `failed_logins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT pour la table `feeds`
 --
