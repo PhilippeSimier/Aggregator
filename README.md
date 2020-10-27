@@ -24,7 +24,7 @@ Procédure d'installation du serveur ***Aggregator*** sur OS ***Linux Debian 9**
     root@serveur:~# mkdir -p /var/www/html/aggregator
     root@serveur:~# cp -a Aggregator/html/* /var/www/html/aggregator/
     root@serveur:~# cp Aggregator/html/.htaccess /var/www/html/aggregator/.htaccess
-    root@serveur:~# mysql -u admin -ptouchard72  data  <Aggregator/SQL/data.sql
+    root@serveur:~# mysql -u ruche -ptouchard72  data  <Aggregator/SQL/data.sql
 
 
 
@@ -55,5 +55,27 @@ Redémarrer le service ***apache2***
 
     root@serveur:~# service apache2 restart
 
+## Remplir les tables de fuseaux horaires
+La procédure d'installation de MySQL crée les tables de fuseau horaire, **mais ne les charge pas**. Utilisez la ligne de commande suivante.
+
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
+laissez le mot de passe vide (appuyer sur enter)
+Vous pouvez voir un avertissement comme ci-dessous, mais ne vous inquiétez pas à ce sujet.
+
+    Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.
+
+### Changelog
+
+ **27/10/2020 :** Ajout du README . 
+ 
+ 
+> **Notes :**
 
 
+> - Licence : **licence publique générale** ![enter image description here](https://img.shields.io/badge/licence-GPL-green.svg)
+> - Auteur **Philippe SIMIER - Lycée Touchard Le Mans**
+>  ![enter image description here](https://img.shields.io/badge/built-passing-green.svg)
+<!-- TOOLBOX 
+
+Génération des badges : https://shields.io/
+Génération de ce fichier : https://stackedit.io/editor#
