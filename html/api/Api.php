@@ -181,7 +181,20 @@ class Api
 		return "";
 	}
 	
+	// Fonction pour remplacer les valeurs null par nan
+    public static function nan($valeur, $precision){
+	if($valeur == null)
+		return "nan";
+	else 
+		$format = "%.". $precision ."f";
+	    return sprintf($format, $valeur);
+    }
 
+    // Fonction pour mettre la date UTC au format yyyy-mm-ddThh-mm-ssZ
+    public static function formatDate($date){
+		$dt = new \DateTime($date);
+        return $dt->format('Y-m-d\TH-i-s\Z');
+	}
 	
 
 }	
