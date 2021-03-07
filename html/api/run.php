@@ -1,7 +1,9 @@
 <?php
 
-	require_once('/var/www/html/Aggregator/definition.inc.php');
-	require_once('/var/www/html/Aggregator/api/Api.php');
+	require_once(__DIR__ ."/../definition.inc.php");
+	require_once(__DIR__ ."/Api.php");
+	require_once(__DIR__ ."/Channel.class.php");
+	
 	
 	use Aggregator\Support\Api;
 	

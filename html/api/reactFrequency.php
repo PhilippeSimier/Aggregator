@@ -6,11 +6,12 @@
     utilisation  : php reactFrequency.php 10    (execute les reacts dont la fréquence d'éxécution est définit sur 10 minutes)
 
     installation dans crontab sur DMZ EDITOR=nano crontab -e
+	la variable  __DIR__ permet de récupérer le chemin du fichier que l’on execute.
 **/
 
-	require_once('/var/www/html/Aggregator/definition.inc.php');
-	require_once('/var/www/html/Aggregator/api/Api.php');
-	require_once('/var/www/html/Aggregator/api/React.class.php');
+	require_once(__DIR__ . "/../definition.inc.php");
+	require_once(__DIR__ . '/Api.php');
+	require_once(__DIR__ . '/React.class.php');
 
 	use Aggregator\Support\Api;
 	use Aggregator\Support\React;
