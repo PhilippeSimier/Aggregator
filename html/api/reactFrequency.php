@@ -8,9 +8,9 @@
     installation dans crontab sur DMZ EDITOR=nano crontab -e
 **/
 
-	require_once('/var/www/Ruche/definition.inc.php');
-	require_once('/var/www/Ruche/api/Api.php');
-	require_once('/var/www/Ruche/api/React.class.php');
+	require_once('/var/www/html/Aggregator/definition.inc.php');
+	require_once('/var/www/html/Aggregator/api/Api.php');
+	require_once('/var/www/html/Aggregator/api/React.class.php');
 
 	use Aggregator\Support\Api;
 	use Aggregator\Support\React;

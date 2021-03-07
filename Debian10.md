@@ -115,7 +115,7 @@ Redémarrer le service apache2
     root@serveur:~# git clone https://github.com/PhilippeSimier/Aggregator.git
 
 ## Transfert des fichiers
-    root@serveur:~# mkdir -p /var/www/html/aggregator
+    root@serveur:~# mkdir -p /var/www/html/Aggregator
     root@serveur:~# cp -a Aggregator/html/* /var/www/html/aggregator/
     root@serveur:~# cp Aggregator/html/.htaccess /var/www/html/aggregator/.htaccess
     root@serveur:~# mysql -u ruche -ptouchard72  data  <Aggregator/SQL/data.sql
@@ -159,7 +159,15 @@ laissez le mot de passe vide (appuyer sur enter)
 Vous pouvez voir un avertissement comme ci-dessous, mais ne vous inquiétez pas à ce sujet.
 
     Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.
+## Crontab
+en tant qu'utilisateur root ajouter les cron jobs suivants
+``` bash
+crontab -e
 
+*/10 * * * * /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 10 > /dev/null 2>&1
+*/30 * * * * /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 30 > /dev/null 2>&1
+0 * * * *    /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 60 > /dev/null 2>&1
+```
 ### Changelog
 
  **29/10/2020 :** Ajout du README . 

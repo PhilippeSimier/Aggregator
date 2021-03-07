@@ -150,6 +150,20 @@ $lang['condition'] = "Condition";
 $lang['action'] = "Action perform";
 $lang['Has_not_been_updated_for'] = "Has not been updated for";
 
+/* TimeControl */
+$lang['timeControl'] = "Time Control";
+$lang['timeControls'] = "Time Controls";
+$lang['month'] = "month";
+$lang['dayWeek'] = "day Week";
+$lang['dayMonth'] = "day month";
+$lang['hour'] = "hour";
+$lang['actionable_type'] = "actionable type";
+$lang['sel_actionable_type'] = array('' => 'Choose your action', 
+                                     'thinghttps' => "ThingHTTP",
+									 'scripts' => "Script"
+									  );
+
+
 /* webcam */
 $lang['download_picture'] = "Download picture";
 
@@ -226,5 +240,15 @@ $lang['thingHTTP_aide'] = "<h3>ThingHTTP Settings</h3>
 ";
 
 $lang['cookieConsent'] = "We would like to use cookies to better understand your use of this website. More information about this and your rights as a user can be found in our"; 
-$lang['privacy_policy'] = "privacy policy";	
+$lang['privacy_policy'] = "privacy policy";
+
+$lang['script_aide'] = "<h3>Script Analysis</h3>
+<p>Explore data collected in a channel or scraped from a website</p>
+<ul>
+	<li>Find and remove bad data</li>
+	<li>Convert data to different units</li>
+	<li>Calculate new data</li>
+	<li>Build data models</li>
+</ul>
+<p>After analysis, you can write data to the channel or publish it to share your results.</p>";	
  ?>

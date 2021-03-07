@@ -64,6 +64,17 @@ Vous pouvez voir un avertissement comme ci-dessous, mais ne vous inquiétez pas 
 
     Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.
 
+## Crontab
+en tant qu'utilisateur root ajouter les cron jobs suivants
+``` bash
+crontab -e
+
+*/10 * * * * /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 10 > /dev/null 2>&1
+*/30 * * * * /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 30 > /dev/null 2>&1
+0 * * * *    /usr/bin/php /var/www/html/Aggregator/api/reactFrequency.php 60 > /dev/null 2>&1
+
+```
+
 ### Changelog
 
  **27/10/2020 :** Ajout du README . 

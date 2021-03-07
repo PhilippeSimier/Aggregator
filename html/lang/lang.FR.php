@@ -151,6 +151,19 @@ $lang['condition'] = "Condition";
 $lang['action'] = "Action à Effectuer";
 $lang['Has_not_been_updated_for'] = "N'a pas été mis à jour depuis";
 
+/* TimeControl */
+$lang['timeControl'] = "Tâche planifiée";
+$lang['timeControls'] = "Tâches planifiées";
+$lang['month'] = "mois";
+$lang['dayWeek'] = "jour semaine";
+$lang['dayMonth'] = "jour mois";
+$lang['hour'] = "heure";
+$lang['actionable_type'] = "type d'action";
+$lang['sel_actionable_type'] = array('' => 'Choisissez une action', 
+                                     'thinghttps' => "ThingHTTP",
+									 'scripts' => "Script"
+									  );
+
 /* webcam */
 $lang['download_picture'] = "Télécharger l'image";
 
@@ -229,7 +242,15 @@ $lang['cookieConsent'] = "Nous aimerions utiliser des cookies pour mieux compren
 $lang['privacy_policy'] = "politique de confidentialité";		
 
 
-
+$lang['script_aide'] = "<h3>Script pour Analyse</h3>
+<p>Explorer les données collectées dans un canal ou extraites d'un site Web</p>
+<ul>
+	<li>Trouvez et supprimez les mauvaises données</li>
+	<li>Convertir les données en différentes unités</li>
+	<li>Calculer de nouvelles données</li>
+	<li>Construire des modèles de données</li>
+</ul>
+<p>Après analyse, vous pouvez écrire les données sur un canal ou les publier pour partager vos résultats.</p>";	
 
 
 
