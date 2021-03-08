@@ -40,7 +40,7 @@ if( !empty($_POST['envoyer'])){
 				$id = $bdd->lastInsertId();
 				// Création du crontab
 				$ligne = "{$_POST['minute']} {$_POST['hour']} {$_POST['dayMonth']} {$_POST['month']} {$_POST['dayWeek']} ";
-				$ligne .= "/usr/bin/php /var/www/html/Aggregator/api/run.php {$_POST['actionable_id']} > /dev/null 2>&1";
+				$ligne .= "/usr/bin/php ".__DIR__."/../api/run.php {$_POST['actionable_id']} > /dev/null 2>&1";
 				
 				$result = $cron_manager->add_cronjob($ligne, $id);
 			}
@@ -61,7 +61,7 @@ if( !empty($_POST['envoyer'])){
 				$bdd->exec($sql);
 				// Modification du crontab
 				$ligne = "{$_POST['minute']} {$_POST['hour']} {$_POST['dayMonth']} {$_POST['month']} {$_POST['dayWeek']} ";
-				$ligne .= "/usr/bin/php /var/www/html/Aggregator/api/run.php {$_POST['actionable_id']} > /dev/null 2>&1";
+				$ligne .= "/usr/bin/php ". __DIR__ . "/../api/run.php {$_POST['actionable_id']} > /dev/null 2>&1";
 				$result = $cron_manager->remove_cronjob($_POST['id']);
 				$result = $cron_manager->add_cronjob($ligne, $_POST['id']);
 				
