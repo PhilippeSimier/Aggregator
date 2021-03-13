@@ -114,7 +114,8 @@ function afficherFormScript($selectUser){
 	global $script;
 	
 	$selectLanguage = array( 'shell' => "shell",
-							 'php' => "php"
+							 'php' => "php",
+							 'python' => "python"
 						    );
 	
 	// Création du tokenCSRF

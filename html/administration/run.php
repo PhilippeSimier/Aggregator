@@ -1,7 +1,7 @@
 <?php
 
     /** @file		      : administration/run.php
-	 *  @description      : Exécute le code shell ou php transmis dans la variable code
+	 *  @description      : Exécute le code transmis dans la variable code
 	 *  @author           : Philippe SIMIER Lycée Touchard Le Mans
 	 *	@version          : 1.0 du 04 mars 2021
 		
@@ -43,3 +43,27 @@
 		echo "Returned with status {$exitcode} and output:\n";
 		echo implode("\n", $output) ;
 	}
+	
+	if ($language === "python"){
+		
+		$filename = __DIR__ .'/../temp/code.py';
+		
+		if (!$handle = fopen($filename, 'w+')) {
+            echo "Impossible d'ouvrir le fichier ({$filename})";
+            exit;
+		}
+		
+		if (fwrite($handle, $code) === FALSE) {
+			echo "Impossible d'écrire dans le fichier ($filename)";
+			exit;
+		}	
+		
+		fclose($handle);
+		
+		exec("python3 ".__DIR__ ."/../temp/code.py 2>&1", $output, $exitcode);
+		echo "Returned with status {$exitcode} and output:\n";
+		echo implode("\n", $output) ;		
+		
+		unlink($filename);
+		
+	}	

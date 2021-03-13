@@ -27,21 +27,44 @@ class Channel
 		
 	}
 	
-	/** Methode to read feed
+	/** Methode to read data in a channel
+	 *  @param $field le nom du champ
+	 *  @param $nb le nombre de valeurs à lire	 
      *  @return array
      */	 
 	public function read($field, $nb){
 		
-		$sql = "SELECT `date`, {$field} as value FROM feeds WHERE id_channel = ". $this->id . " order by `date` desc limit {$nb}";
+		$sql = "SELECT `date`, {$field} as value FROM `feeds` WHERE id_channel = ". $this->id . " order by `date` desc limit {$nb}";
 		$stmt = $this->bdd->query($sql);
 		$result = [];
 		while ($feed =  $stmt->fetchObject()){
 			$result[] = $feed->value;
 		}
 		return $result;
-	}	
-	
+	}
 
+	/** Methode to write data in a channel
+     *  @return le nombre de lignes insérées
+     */	
+    public function write($field, $value){
+		$sql = sprintf("INSERT INTO `data`.`feeds` (`id_channel`, `%s`) VALUES ( %s, %s);"
+							  , $field
+							  , $this->id
+							  , $this->bdd->quote($value)
+							  );
+		$count = $this->bdd->exec($sql);
+		return $count;
+	}
+
+	/** Méthode pour calculer la moyenne
+	 *  @param $tab array	 
+     *  @return la somme des valeurs du tableau array.
+     */	 
+	public function avg($field, $nb){
+		$a = $this->read($field, $nb);
+		return array_sum($a) / count($a);
+    }
+	
 	// déclaration des propriétés
     private $property;
     private $bdd;	
