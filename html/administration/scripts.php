@@ -51,7 +51,9 @@ function afficherScripts(){
 				echo "    <td><input class='selection' type='checkbox' name='table_array[{$script->id}]' value='{$script->id}' ></td>\n";
 				echo "    <td>{$script->login}</td>\n";
 				echo "    <td>" . Str::reduire($script->name) . "</td>\n";
-				echo "    <td>{$script->language}</td>\n";				
+				echo "    <td>{$script->language}</td>\n";
+				echo "    <td>{$script->last_run_at}</td>\n";
+				echo "    <td>{$script->return_value}</td>\n";
 				echo "</tr>\n";
 			}	
 	}
@@ -94,7 +96,7 @@ function afficherScripts(){
         lengthMenu: [5, 10, 15, 20, 40],
         pageLength: 10,
         order: [[1, 'desc']],
-		columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}],
+		columns: [{orderable:false}, {type:"text"}, {type:"text"} , {type:"text"}, {type:"text"} , {type:"text"}],
 		"language": {
 			"url": "<?= $lang['dataTables'] ?>"
 			}
@@ -195,13 +197,13 @@ function afficherScripts(){
 			
 	<?php require_once '../menu.php'; ?>
 	
-	<div class="container" >
+	<div class="container" style="padding-top: 65px; max-width: 90%;" >
 		<div style="min-height : 500px">
-        	<div class="container" style="padding-top: 65px;">
+        	
 			<div class="row popin card">
 				
 				<div class="col-md-12 col-sm-12 col-xs-12">
-				<div  class="card-header" style=""><h4>Scripts Analysis</h4></div>
+					<div  class="card-header" style=""><h4>Scripts</h4></div>
 					<div class="table-responsive">
 						<form method="post" id="supprimer">
 						<table id="tableau"  class="display table table-striped">
@@ -209,8 +211,10 @@ function afficherScripts(){
 							  <tr>
 								<th><input type='checkbox' name='all' value='all' id='all' ></th>
 								<th><?= $lang['user'] ?></th>
-								<th><?= $lang['name'] ?></th>
+								<th><?= $lang['name'] ?></th>								
 								<th>Language</th>
+								<th>last run at</th>
+								<th>Output</th>
 							  </tr>
 							</thead>
 							<tbody>
@@ -222,9 +226,8 @@ function afficherScripts(){
 						<button id="btn_add"  type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
 						</form>	
 					</div>
-				</div>	
-			</div>	
-		</div>
+				</div>					
+			</div>
 		<?php require_once '../piedDePage.php'; ?>
 	</div>
 	

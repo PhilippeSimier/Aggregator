@@ -218,11 +218,51 @@ function afficherFormTimeControl($timeControl, $selectUser){
 							</div>	
 					</form>
 				</div>
+			</div>
+            <div class="col-md-7 col-sm-12 col-12">
+			    <div class="popin">
+					<h3>How to write a crontab schedule expression for :</h3>
+					<ul>
+						  <li><a href="#">every minute</a></li>
+						  <li><a href="#">every 1 minute</a></li>
+						  <li><a href="#">every 2 minutes</a></li>
+						  <li><a href="#">every even minute</a></li>
+						  <li><a href="#">every uneven minute</a></li>
+						  <li><a href="#">every 3 minutes</a></li>
+						  <li><a href="#">every 4 minutes</a></li>
+						  <li><a href="#">every 5 minutes</a></li>
+						  <li><a href="#">every five minutes</a></li>
+						  <li><a href="#">every 6 minutes</a></li>
+						  <li><a href="#">every 10 minutes</a></li>
+						  <li><a href="#">every 15 minutes</a></li>
+						  <li><a href="#">every fifteen minutes</a></li>
+						  <li><a href="#">every ten minutes</a></li>
+						  <li><a href="#">every quarter hour</a></li>
+						  <li><a href="#">every 20 minutes</a></li>
+						  <li><a href="#">every 30 minutes</a></li>
+						  <li><a href="#">every hour at 30 minutes</a></li>
+						  <li><a href="#">every half hour</a></li>
+						  <li><a href="#">every 60 minutes</a></li>
+						  <li><a href="#">every hour</a></li>
+						  <li><a href="#">every 1 hour</a></li>
+						  <li><a href="#">every 2 hours</a></li>
+						  <li><a href="#">every two hours</a></li>
+						  <li><a href="#">every even hour</a></li>
+						  <li><a href="#">every other hour</a></li>
+						  <li><a href="#">every 3 hours</a></li>
+						  <li><a href="#">every three hours</a></li>
+						  <li><a href="#">every 4 hours</a></li>
+						  <li><a href="#">every 6 hours</a></li>
+						  <li><a href="#">every six hours</a></li>
+						  <li><a href="#">every 8 hours</a></li>
+						  <li><a href="#">every 12 hours</a></li>
+						  <li><a href="#">hour range</a></li>
+						  <li><a href="#">between certain hours</a></li>
+					</ul>
+				</div>
 			</div>		
 		</div>
-		<div class="row">
-			
-		</div>
+
 		<?php require_once '../piedDePage.php'; ?>
 </div>
 	
