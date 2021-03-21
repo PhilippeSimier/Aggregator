@@ -55,11 +55,10 @@ class Channel
 		}
 		else
 		{	
-			$j = 0;
+			
 			for($i = 0; $i < count($arg); $i++){
-				$field[$j] = $arg[$i++];
-				$value[$j] = $arg[$i];
-				$j++;
+				$field[] = $arg[$i++];
+				$value[] = $arg[$i];
 			}
 		
 			// Création de la requête
