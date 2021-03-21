@@ -1,14 +1,15 @@
 <?php
 
-namespace Aggregator\Support;
-   
+namespace Aggregator; 
 
 class Channel
 {
    /**  Constructeur
-    *   @param $bdd une connexion à la base de données
+    *   @param $id du channel
 	*/
-   function __construct($bdd, $id) {
+   function __construct($id) {
+		
+		global $bdd;
 		$this->bdd = $bdd;
 		$this->id = $id;
 		
@@ -57,12 +58,52 @@ class Channel
 	}
 
 	/** Méthode pour calculer la moyenne
-	 *  @param $tab array	 
+	 *  @param $field le numero du champs
+	 *  @nb le nombre de valeur à lire
      *  @return la somme des valeurs du tableau array.
      */	 
 	public function avg($field, $nb){
 		$a = $this->read($field, $nb);
-		return array_sum($a) / count($a);
+		
+		if(count($a) !== 0) {
+			$avg = array_sum($a) / count($a);
+			return $avg;
+		}
+		else {
+			return NAN;
+		}
+    }
+	
+	/** Méthode pour obtenir la valeur minimale
+	 *  @param $field le numero du champs
+	 *  @nb le nombre de valeur à lire 
+     *  @return la somme des valeurs du tableau array.
+     */	
+	public function getMin($field, $nb){
+		$a = $this->read($field, $nb);
+		
+		if(count($a) !== 0) {
+			return min($a);
+		}
+		else {
+			return NAN;
+		}
+    }
+	
+	/** Méthode pour obtenir la valeur maximale
+	 *  @param $field le numero du champs
+	 *  @nb le nombre de valeur à lire 
+     *  @return la somme des valeurs du tableau array.
+     */	
+	public function getMax($field, $nb){
+		$a = $this->read($field, $nb);
+		
+		if(count($a) !== 0) {
+			return max($a);
+		}
+		else {
+			return NAN;
+		}
     }
 	
 	// déclaration des propriétés

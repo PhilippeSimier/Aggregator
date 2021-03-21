@@ -50,7 +50,7 @@ function afficherScripts(){
 				echo "<tr>\n";
 				echo "    <td><input class='selection' type='checkbox' name='table_array[{$script->id}]' value='{$script->id}' ></td>\n";
 				echo "    <td>{$script->login}</td>\n";
-				echo "    <td>" . Str::reduire($script->name) . "</td>\n";
+				echo "    <td><a href='script?id={$script->id}' title='Access code for this script'>" . Str::reduire($script->name) . "</a></td>\n";
 				echo "    <td>{$script->language}</td>\n";
 				echo "    <td>{$script->last_run_at}</td>\n";
 				echo "    <td>{$script->return_value}</td>\n";
