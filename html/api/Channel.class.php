@@ -65,7 +65,7 @@ class Channel
 			// Création de la requête
 			$sql = "INSERT INTO `data`.`feeds` (`id_channel` ";
 			foreach($field as $val){
-						$sql .= ",`" . $val . "`";
+						$sql .= ",`{$val}`";
 					}
 			$sql .= ") VALUES ( {$this->id}";
 			
