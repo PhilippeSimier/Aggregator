@@ -45,16 +45,38 @@ class Channel
 	}
 
 	/** Methode to write data in a channel
+	 *  @arguments le nom du champ suivi de sa valeur exemple 'field1', 45
      *  @return le nombre de lignes insérées
      */	
-    public function write($field, $value){
-		$sql = sprintf("INSERT INTO `data`.`feeds` (`id_channel`, `%s`) VALUES ( %s, %s);"
-							  , $field
-							  , $this->id
-							  , $this->bdd->quote($value)
-							  );
-		$count = $this->bdd->exec($sql);
-		return $count;
+    public function write(...$arg){
+		// Le nombre d'arguments doit être paire
+		if ((count($arg) % 2) != 0){
+			return 0;
+		}
+		else
+		{	
+			$j = 0;
+			for($i = 0; $i < count($arg); $i++){
+				$field[$j] = $arg[$i++];
+				$value[$j] = $arg[$i];
+				$j++;
+			}
+		
+			// Création de la requête
+			$sql = "INSERT INTO `data`.`feeds` (`id_channel` ";
+			foreach($field as $val){
+						$sql .= ",`" . $val . "`";
+					}
+			$sql .= ") VALUES ( {$this->id}";
+			
+			foreach($value as $val){
+						$sql .= "," . $this->bdd->quote($val);
+					}
+			$sql .= ")";
+			
+			$count = $this->bdd->exec($sql);
+			return $count;
+		}
 	}
 
 	/** Méthode pour calculer la moyenne
