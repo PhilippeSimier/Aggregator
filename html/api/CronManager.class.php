@@ -2,7 +2,7 @@
 
 namespace Aggregator\Support;
 /*
- * @author     : Philippe SIMIER
+ * @author     : Section SNIR Touchard Le Mans
  * @mail       : philaure@wanadoo.fr
  * @homepage   : https://philippes.ddns.net/
  * @version    : 1.0.0
