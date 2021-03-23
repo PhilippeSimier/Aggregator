@@ -34,6 +34,8 @@ $lang['My_Account'] = "Mon compte";
 $lang['docs_page'] = "Documentation Aggregator pour cette page";
 $lang['Data_visualisation'] = "Visualisation des données";
 $lang['Data_Analysis'] = "Analyse des données";
+$lang['Sounds'] = "Enregistrements sonors";
+$lang['Logbook'] = "Journal de bord";
 
 /* thingView */
 $lang['hightchart'] = '{
@@ -252,7 +254,17 @@ $lang['script_aide'] = "<h3>Script pour Analyse</h3>
 </ul>
 <p>Après analyse, vous pouvez écrire les données sur un canal ou les publier pour partager vos résultats.</p>";	
 
-
+$lang['time_control_aide']="<h3>Options des tâches planifiées</h3>
+                        <ul>
+                            <li>Nom de la tâche planifiée : Saisissez un nom unique pour votre tâche planifiée.</li>
+                            <li>Minute : de 00 à 59 ou * pour toutes les minutes </li>
+                            <li>Heure : de 0 à 23 ou * pour toutes les heures </li>
+                            <li>Jour du mois : 1 à 31 ou * pour tous les jours du mois </li>
+                            <li>Mois : de 1 à 12 ou * pour tous les mois </li>
+                            <li>Jour de la semaine : de 0 à 6 (Dimanche = 0),ou * pour tous les jours </li>
+                            <li>Type d'action : Sélectionnez Requête HTTP ou script à exécuter.</li>
+                            <li>Option : Sélectionnez le script à effectuer.</li>
+                        </ul>";
 
 
 
