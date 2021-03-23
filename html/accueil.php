@@ -108,7 +108,7 @@ function listerCom($id) {
     global $lang;
     global $bdd;
     try {
-        $sql = "SELECT count(*) as nb FROM blogs WHERE `thing_id`={$id}";
+        $sql = "SELECT count(*) as nb FROM `things` WHERE `blogStatus` = \"public\" AND `id`={$id}";
         $url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 
         if ($bdd->query($sql)->fetchObject()->nb > 0) {
@@ -134,10 +134,10 @@ function afficherArbre() {
         $reponse = $bdd->query($sql);
         while ($thing = $reponse->fetchObject()) {
             echo '<li class="folder-root ' . $thing->class . '">	<a href="#">' . $thing->name . '</a><ul>';
-            listerChannels($thing->id);
+            listerCom($thing->id);
+			listerChannels($thing->id);
             listerMatlabVisu($thing->id);
             listerSons($thing->id);
-            listerCom($thing->id);
             echo '</ul></li>';
         }
         $reponse->closeCursor();
