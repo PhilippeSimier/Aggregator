@@ -16,6 +16,12 @@ Procédure d'installation du serveur ***Aggregator*** sur OS ***Linux Debian 10*
     root@serveur:~# mysql -u ruche -ptouchard72
     show databases;
     quit
+## Installation du connecteur Mariadb Python
+```bash
+root@serveur:~# apt install python3-pip
+root@serveur:~# apt install libmariadb3 libmariadb-dev
+root@server:~# pip3 install mariadb
+```
 
 ## 2 Installation de php7
     
@@ -171,6 +177,7 @@ crontab -e
 ### Changelog
 
  **29/10/2020 :** Ajout du README . 
+  **24/03/2021 :** Ajout du connecteur mariadb python3 . 
  
  
 > **Notes :**
