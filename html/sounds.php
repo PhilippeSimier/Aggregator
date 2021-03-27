@@ -139,10 +139,6 @@ function AfficherSupprimer($thing) {
 							title: "Spectrogramme " + subtitle[0] + ".wav",
 							content: contenu ,
 						});
-					/*
-                    $("#modal-contenu").html(contenu);
-                    $("#ModalLongTitle").html("Spectrogramme " + subtitle[0] + ".wav");
-                    $("#ModalCenter").modal('show');*/
                     event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
                 }
 				
