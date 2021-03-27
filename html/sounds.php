@@ -51,7 +51,7 @@ function listeFichiersAudio($thing) {
                 echo "<td><input type='checkbox' name='delete[$value]' value='$value' ></td>\n";
                 echo "<td>{$dateCreate}</td>\n";
                 echo "<td><audio controls><source src=\"{$filename}\" type='audio/wav'></audio></td>\n";
-                echo "<td>{$type}</td>\n";
+                echo "<td><a class=\"info\" href=\"{$filename}\">{$type}</td>\n";
                 echo "<td><a class=\"spectro\" href=\"{$Spectrogramme}\">{$value}</a></td>\n";
                 echo "</tr>\n";
             }
@@ -120,23 +120,63 @@ function AfficherSupprimer($thing) {
                     cocherTout(this.checked);
                 });
 
-                $(".spectro").click(afficherModal);
-
-                function afficherModal(event) {
+                $(".spectro").click(afficherSpectro);
+				$(".info").click(afficherInfo);
+				
+                function afficherSpectro(event) {
                     let url = $(this).attr("href");
                     console.log(url);
-                    let contenu = "<div>";
-                    contenu += " <img src=\"" + url + "\" class=\"img-thumbnail\" alt=\"Spectrogramme\"> ";
-                    contenu += "</div>";
+                    
+                    contenu = " <img src=\"" + url + "\"  alt=\"Spectrogramme\"> ";
+                    
 
                     let title = url.split("/");
                     console.log(title);
                     let subtitle = title[3].split(".");
+					$.dialog({	
+							columnClass: 'col-md-10 col-sm-10 col-12',
+							theme: 'bootstrap',
+							title: "Spectrogramme " + subtitle[0] + ".wav",
+							content: contenu ,
+						});
+					/*
                     $("#modal-contenu").html(contenu);
                     $("#ModalLongTitle").html("Spectrogramme " + subtitle[0] + ".wav");
-                    $("#ModalCenter").modal('show');
+                    $("#ModalCenter").modal('show');*/
                     event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
                 }
+				
+				function afficherInfo(event) {
+					let url = $(this).attr("href");
+					let title = url.split("/");
+					
+					// Requête ajax pour obtenir les informations sur le fichier audio
+					let urlApi = "api/sound.php";
+					let query = "file=" + url + "&type=json";
+					console.log(urlApi);
+					$.getJSON( urlApi , query,  function( data  ) {
+					    
+						var items = [];
+						$.each( data, function( key, val ) {
+							items.push( "<tr><td><pre>" + val + "</pre></td></tr>" );
+						});
+						contenu  = "<div class=\"table-responsive\">";
+						contenu += "<table class='table display table-hover table-sm'>";
+						contenu += items.join( "" );
+						contenu += "</table>";
+						contenu += "</div>";
+						
+					    console.log(contenu);
+						$.dialog({	
+							columnClass: 'col-md-6 col-sm-10 col-12',
+							theme: 'bootstrap',
+							title: 'Informations',
+							content: contenu
+						});
+						
+				    });
+					event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
+				}
 
                 $("#btn_supp").click(function () {
                     console.log("Bouton Supprimer cliqué");
@@ -188,13 +228,14 @@ function AfficherSupprimer($thing) {
                 <div class="col-md-12 col-sm-12 col-xs-12">    
                     <div  class="card-header" style=""><h4>Enregistrements sonors</h4></div>
                     <form method="post" id="supprimer">
+						<div class="table-responsive">
                         <table id="tableau"  class="display table table-striped">
                             <thead>
                                 <tr>
                                     <th><input type='checkbox' name='all' value='all' id='all' ></th>
                                     <th>Date</th>
-                                    <th>Fichier</th>
-                                    <th>Type</th>
+                                    <th>Lecteur</th>
+                                    <th>Informations</th>
                                     <th>Spectrogramme</th>
 
                                 </tr>
@@ -204,6 +245,7 @@ function AfficherSupprimer($thing) {
                             </tbody>
 
                         </table>
+						</div>
                         <?php AfficherSupprimer($thing); ?>
                     </form>
                     
@@ -212,27 +254,7 @@ function AfficherSupprimer($thing) {
             <?php require_once 'piedDePage.php'; ?>
 
         </div>
-        <!--Fenêtre Modal pour spectro-->
-        <div class="modal" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenter" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1000px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="ModalLongTitle">Message !</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body" id="modal-contenu">
-                        ...
-                    </div>
-                    <div class="modal-footer">
-
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang['close'] ?></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--Fin de fenêtre Modal -->
+        
 
     </body>
 
