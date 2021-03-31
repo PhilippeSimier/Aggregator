@@ -152,19 +152,19 @@ function afficherFormTimeControl($timeControl, $selectUser) {
         echo Form::hidden("user_id", $timeControl->user_id);
     $options = array('class' => 'form-control');
 
-    $optionsMinute = array('class' => 'form-control', "pattern" => "^[0-5*]{1}[0-9/]*");
-    $optionsHeure = array('class' => 'form-control', "pattern" => "^[0-2*]{1}[0-9/]*");
+    $optionsMinute = array('class' => 'form-control', "pattern" => "^[0-5]{1}[0-9]*[,-]*\d{0,2}|[*]$|[*]\/[1-9]{1}[0-9]{0,1}$");
+    $optionsHeure = array('class' => 'form-control', "pattern" => "^[0-2*]{1}[0-9/-]*");
     $optionsdayMonth = array('class' => 'form-control', "pattern" => "^[1-3*]{1}[0-9]{0,1}");
-    $optionsMonth = array('class' => 'form-control', "pattern" => "^[0-9*]{1}[0-2]{0,1}"); /////
-    $optionsDayWeek = array('class' => 'form-control', "pattern" => "^[0-6*]{1}"); /////
+    $optionsMonth = array('class' => 'form-control', "pattern" => "^[0-9*]{1}[0-2]{0,1}");
+    $optionsDayWeek = array('class' => 'form-control', "pattern" => "^[0-6*]{1}");
 
-    $optionsName = array('class' => 'form-control', "required" => "required"); /////
-    echo Form::input('text', 'name', $timeControl->name, $optionsName, $lang['name']); /////
-    echo Form::input('text', 'minute', $timeControl->minute, $optionsMinute, 'minute'); //////
-    echo Form::input('text', 'hour', $timeControl->hour, $optionsHeure, $lang['hour']); /////
-    echo Form::input('text', 'dayMonth', $timeControl->dayMonth, $optionsdayMonth, $lang['dayMonth']); /////
-    echo Form::input('text', 'month', $timeControl->month, $optionsMonth, $lang['month']); ////
-    echo Form::input('text', 'dayWeek', $timeControl->dayWeek, $optionsDayWeek, $lang['dayWeek']); /////
+    $optionsName = array('class' => 'form-control', "required" => "required");
+    echo Form::input('text', 'name', $timeControl->name, $optionsName, $lang['name']);
+    echo Form::input('text', 'minute', $timeControl->minute, $optionsMinute, 'minute');
+    echo Form::input('text', 'hour', $timeControl->hour, $optionsHeure, $lang['hour']);
+    echo Form::input('text', 'dayMonth', $timeControl->dayMonth, $optionsdayMonth, $lang['dayMonth']);
+    echo Form::input('text', 'month', $timeControl->month, $optionsMonth, $lang['month']);
+    echo Form::input('text', 'dayWeek', $timeControl->dayWeek, $optionsDayWeek, $lang['dayWeek']);
     echo Form::select("actionable_type", $lang['sel_actionable_type'], $lang['actionable_type'], $timeControl->actionable_type);
     echo Form::select("actionable_id", $select_actionable_id, "perform", $timeControl->actionable_id);
 }
@@ -206,7 +206,7 @@ function afficherFormTimeControl($timeControl, $selectUser) {
                     if ((this.value < 0 || this.value > 23) && this.value !== '*') {
                         $.alert({
                             theme: 'bootstrap',
-                            title: 'Alert!',
+                            title: 'Alerte',
                             content: "Veuillez faire correspondre avec le format demandé entre 0 et 23 ou * "
                         });
                     }
@@ -217,7 +217,7 @@ function afficherFormTimeControl($timeControl, $selectUser) {
                     if (this.value < 0 || this.value > 6 && this.value !== '*') {
                         $.alert({
                             theme: 'bootstrap',
-                            title: 'Alert!',
+                            title: 'Alerte',
                             content: "Veuillez faire correspondre avec le format demandé entre 0 et 6 ou * "
                         });
                     }
@@ -228,8 +228,20 @@ function afficherFormTimeControl($timeControl, $selectUser) {
                     if (this.value < 1 || this.value > 31 && this.value !== '*') {
                         $.alert({
                             theme: 'bootstrap',
-                            title: 'Alert!',
+                            title: 'Alerte',
                             content: "Veuillez faire correspondre avec le format demandé entre 1 et 31 ou * "
+                        });
+
+                    }
+                });
+				
+				$("[name='month']").blur(function () {
+                    console.log(this.value);
+                    if (this.value < 1 || this.value > 12 && this.value !== '*') {
+                        $.alert({
+                            theme: 'bootstrap',
+                            title: 'Alerte',
+                            content: "Veuillez faire correspondre avec le format demandé entre 1 et 12 ou * "
                         });
 
                     }
