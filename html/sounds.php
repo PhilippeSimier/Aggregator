@@ -7,19 +7,26 @@ require_once('api/Str.php');
 require_once('lang/lang.conf.php');
 
 use Aggregator\Support\Api;
-use Aggregator\Support\Str;
 
 // connexion à la base
 $bdd = Api::connexionBD(BASE);
 
 // Si le formulaire a été soumis
+// On suprimme les fichiers demandés
 if (isset($_POST['btn_supprimer'])) {
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
-    return;
+    foreach ($_POST["delete"] as $value) {
+        $soundFile = $_POST["soundFolder"] . "/".$value;
+        $spectroFile = $Spectrogramme = substr($soundFile, 0, -3) . 'png';
+        if(is_file($soundFile)){
+            unlink($soundFile);
+        }
+        if(is_file($spectroFile)){
+            unlink($spectroFile);
+        }
+    }
 }
 
+// Création de l'objet thing
 $thing_id = Api::obtenir("id", FILTER_VALIDATE_INT);
 try {
     $sql = "SELECT * FROM `things` where id={$thing_id}";
@@ -57,6 +64,7 @@ function listeFichiersAudio($thing) {
             }
         }
     }
+    
 }
 
 // Fonction pour afficher le bouton supprimer
@@ -121,58 +129,58 @@ function AfficherSupprimer($thing) {
                 });
 
                 $(".spectro").click(afficherSpectro);
-				$(".info").click(afficherInfo);
-				
+                $(".info").click(afficherInfo);
+
                 function afficherSpectro(event) {
                     let url = $(this).attr("href");
                     console.log(url);
-                    
+
                     contenu = " <img src=\"" + url + "\"  alt=\"Spectrogramme\"> ";
-                    
+
 
                     let title = url.split("/");
                     console.log(title);
                     let subtitle = title[3].split(".");
-					$.dialog({	
-							columnClass: 'col-md-10 col-sm-10 col-12',
-							theme: 'bootstrap',
-							title: "Spectrogramme " + subtitle[0] + ".wav",
-							content: contenu ,
-						});
+                    $.dialog({
+                        columnClass: 'col-md-10 col-sm-10 col-12',
+                        theme: 'bootstrap',
+                        title: "Spectrogramme " + subtitle[0] + ".wav",
+                        content: contenu,
+                    });
                     event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
                 }
-				
-				function afficherInfo(event) {
-					let url = $(this).attr("href");
-					let title = url.split("/");
-					
-					// Requête ajax pour obtenir les informations sur le fichier audio
-					let urlApi = "api/sound.php";
-					let query = "file=" + url + "&type=json";
-					console.log(urlApi);
-					$.getJSON( urlApi , query,  function( data  ) {
-					    
-						var items = [];
-						$.each( data, function( key, val ) {
-							items.push( "<tr><td><pre>" + val + "</pre></td></tr>" );
-						});
-						contenu  = "<div class=\"table-responsive\">";
-						contenu += "<table class='table display table-hover table-sm'>";
-						contenu += items.join( "" );
-						contenu += "</table>";
-						contenu += "</div>";
-						
-					    console.log(contenu);
-						$.dialog({	
-							columnClass: 'col-md-6 col-sm-10 col-12',
-							theme: 'bootstrap',
-							title: 'Informations',
-							content: contenu
-						});
-						
-				    });
-					event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
-				}
+
+                function afficherInfo(event) {
+                    let url = $(this).attr("href");
+                    let title = url.split("/");
+
+                    // Requête ajax pour obtenir les informations sur le fichier audio
+                    let urlApi = "api/sound.php";
+                    let query = "file=" + url + "&type=json";
+                    console.log(urlApi);
+                    $.getJSON(urlApi, query, function (data) {
+
+                        var items = [];
+                        $.each(data, function (key, val) {
+                            items.push("<tr><td><pre>" + val + "</pre></td></tr>");
+                        });
+                        contenu = "<div class=\"table-responsive\">";
+                        contenu += "<table class='table display table-hover table-sm'>";
+                        contenu += items.join("");
+                        contenu += "</table>";
+                        contenu += "</div>";
+
+                        console.log(contenu);
+                        $.dialog({
+                            columnClass: 'col-md-6 col-sm-10 col-12',
+                            theme: 'bootstrap',
+                            title: 'Informations',
+                            content: contenu
+                        });
+
+                    });
+                    event.preventDefault();   // bloque l'action par défaut sur le lien cliqué
+                }
 
                 $("#btn_supp").click(function () {
                     console.log("Bouton Supprimer cliqué");
@@ -224,33 +232,34 @@ function AfficherSupprimer($thing) {
                 <div class="col-md-12 col-sm-12 col-xs-12">    
                     <div  class="card-header" style=""><h4>Enregistrements sonors</h4></div>
                     <form method="post" id="supprimer">
-						<div class="table-responsive">
-                        <table id="tableau"  class="display table table-striped">
-                            <thead>
-                                <tr>
-                                    <th><input type='checkbox' name='all' value='all' id='all' ></th>
-                                    <th>Date</th>
-                                    <th>Lecteur</th>
-                                    <th>Informations</th>
-                                    <th>Spectrogramme</th>
+                        <input type='hidden' name='soundFolder' value = '<?= $thing->soundFolder ?>' />
+                        <div class="table-responsive">
+                            <table id="tableau"  class="display table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><input type='checkbox' name='all' value='all' id='all' ></th>
+                                        <th>Date</th>
+                                        <th>Lecteur</th>
+                                        <th>Informations</th>
+                                        <th>Spectrogramme</th>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php listeFichiersAudio($thing); ?>
-                            </tbody>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php listeFichiersAudio($thing); ?>
+                                </tbody>
 
-                        </table>
-						</div>
+                            </table>
+                        </div>
                         <?php AfficherSupprimer($thing); ?>
                     </form>
-                    
+
                 </div>
             </div>
             <?php require_once 'piedDePage.php'; ?>
 
         </div>
-        
+
 
     </body>
 
