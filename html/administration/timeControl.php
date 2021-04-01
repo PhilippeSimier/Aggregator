@@ -151,10 +151,10 @@ function afficherFormTimeControl($timeControl, $selectUser) {
     else
         echo Form::hidden("user_id", $timeControl->user_id);
     $options = array('class' => 'form-control');
-
-    $optionsMinute = array('class' => 'form-control', "pattern" => "^[0-5]{1}[0-9]*[,-]*\d{0,2}|[*]$|[*]\/[1-9]{1}[0-9]{0,1}$");
-    $optionsHeure = array('class' => 'form-control', "pattern" => "^[0-2*]{1}[0-9/-]*");
-    $optionsdayMonth = array('class' => 'form-control', "pattern" => "^[1-3*]{1}[0-9]{0,1}");
+    // https://regex101.com/
+    $optionsMinute = array('class' => 'form-control', "pattern" => "^[0-5]{1}[0-9]*[,-]*\d{0,2}|^[*]$|[*]\/[1-9]{1}[0-9]{0,1}$");
+    $optionsHeure = array('class' => 'form-control', "pattern" => "^[0-9]{1,2}[,-]*\d{0,2}|^[*]$|[*]\/[0-9]{1,2}$");
+    $optionsdayMonth = array('class' => 'form-control', "pattern" => "^([*]|[1-2][0-9]{0,1}|3[01]{0,1}|[4-9])$");
     $optionsMonth = array('class' => 'form-control', "pattern" => "^[0-9*]{1}[0-2]{0,1}");
     $optionsDayWeek = array('class' => 'form-control', "pattern" => "^[0-6*]{1}");
 
@@ -187,31 +187,42 @@ function afficherFormTimeControl($timeControl, $selectUser) {
         <script src="../scripts/bootstrap.min.js"></script>
         <script>
             $(function () {
-                
+
+                function isNumeric(value) {
+                    return !isNaN(value - parseFloat(value));
+                }
+
+
                 $("[name='minute']").blur(function () {
                     console.log(this.value);
-                    if (this.value < 0 || this.value > 59 && this.value !== '*') {
-
+                    const pattern = new RegExp('^[0-5]{1}[0-9]*[,-]*\d{0,2}|^[*]$|[*]\/[1-9]{1}[0-9]{0,1}$');
+                    if (!pattern.test(this.value))
                         $.alert({
                             theme: 'bootstrap',
                             title: 'Alert!',
-                            content: "Veuillez faire correspondre avec le format demandé entre 0 et 59  ou * "
+                            content: "Veuillez faire correspondre avec le format crontab "
                         });
-                       
-                    }
                 });
-
                 $("[name='hour']").blur(function () {
                     console.log(this.value);
-                    if ((this.value < 0 || this.value > 23) && this.value !== '*') {
+                    const pattern = new RegExp('^[0-9]{1,2}[,-]*\d{0,2}|^[*]$|[*]\/[0-9]{1,2}$');
+                    if (!pattern.test(this.value)) {
                         $.alert({
                             theme: 'bootstrap',
                             title: 'Alerte',
-                            content: "Veuillez faire correspondre avec le format demandé entre 0 et 23 ou * "
+                            content: "Veuillez faire correspondre avec le format crontab "
                         });
                     }
-                });
+                    if (isNumeric(this.value) && (this.value > 23 || this.value < 0)) {
+                        $.alert({
+                            theme: 'bootstrap',
+                            title: 'Alerte',
+                            content: "Veuillez entrer une valeur comprise entre 0 et 23 "
+                        });
+                    }
 
+                });
+                
                 $("[name='dayWeek']").blur(function () {
                     console.log(this.value);
                     if (this.value < 0 || this.value > 6 && this.value !== '*') {
@@ -222,20 +233,20 @@ function afficherFormTimeControl($timeControl, $selectUser) {
                         });
                     }
                 });
-
+                
                 $("[name='dayMonth']").blur(function () {
                     console.log(this.value);
-                    if (this.value < 1 || this.value > 31 && this.value !== '*') {
+                    let pattern = new RegExp('^([*]|[1-2][0-9]{0,1}|3[01]{0,1}|[4-9])$');
+                    if (!pattern.test(this.value)) {
                         $.alert({
                             theme: 'bootstrap',
                             title: 'Alerte',
-                            content: "Veuillez faire correspondre avec le format demandé entre 1 et 31 ou * "
+                            content: "Veuillez faire correspondre avec le format demandé entre 0 et 31 ou * "
                         });
-
                     }
                 });
-				
-				$("[name='month']").blur(function () {
+                
+                $("[name='month']").blur(function () {
                     console.log(this.value);
                     if (this.value < 1 || this.value > 12 && this.value !== '*') {
                         $.alert({
@@ -243,12 +254,8 @@ function afficherFormTimeControl($timeControl, $selectUser) {
                             title: 'Alerte',
                             content: "Veuillez faire correspondre avec le format demandé entre 1 et 12 ou * "
                         });
-
                     }
                 });
-
-
-
             });
         </script>
 
