@@ -166,6 +166,13 @@ $lang['sel_actionable_type'] = array('' => 'Choisissez une action',
 									 'scripts' => "Script"
 									  );
 
+/* Blogs */
+$lang['blog'] = "Journal de bord";
+$lang['title'] = "Titre";
+$lang['subtitle']= "Sous-titre";
+$lang['comment']= "Commentaire";
+$lang['release_date'] = "Date de parution";
+
 /* webcam */
 $lang['download_picture'] = "Télécharger l'image";
 
