@@ -22,7 +22,7 @@ if (!empty($_POST['envoyer'])) {
                         , $bdd->quote($_POST['thing_id'])
                         , $bdd->quote($_POST['title'])
                         , $bdd->quote($_POST['subTitle'])
-                        , $bdd->quote($_POST['visitDate'])
+                        , $bdd->quote($_POST['date'].' '.$_POST['heure'])
                         , $bdd->quote($_POST['comment'])
                         , $bdd->quote($_POST['status'])
                 );
@@ -33,7 +33,7 @@ if (!empty($_POST['envoyer'])) {
                         , $bdd->quote($_POST['thing_id'])
                         , $bdd->quote($_POST['title'])
                         , $bdd->quote($_POST['subTitle'])
-                        , $bdd->quote($_POST['visitDate'])
+                        , $bdd->quote($_POST['date'].' '.$_POST['heure'])
                         , $bdd->quote($_POST['comment'])
                         , $bdd->quote($_POST['status'])
                         , $_POST['id']
@@ -49,7 +49,7 @@ if (!empty($_POST['envoyer'])) {
         // destruction du tokenCSRF
         unset($_SESSION['tokenCSRF']);
 
-        header("Location: blogs.php?id={$_POST['thing_id']}");
+        header("Location: ../blogs.php?id={$_POST['thing_id']}");
         return;
     }
 }
@@ -67,15 +67,21 @@ else {
             $blog = new stdClass();
             $blog->action = "insert";
             $blog->id = 0;
-            $blog->thing_id = 0;
+			if (isset($_GET['thingId'])){ $blog->thing_id = $_GET['thingId']; }
+            else { $blog->thing_id = 0; }
             $blog->title = "";
             $blog->subTitle = "";
-            $blog->visitDate = "";
+            $blog->visitDate = date("Y-m-d H:i:s");
             $blog->comment = "";
             $blog->status = "";
         }
-
-        // Création du selectThing
+		
+		
+        $dateTime = explode(" ", $blog->visitDate);
+		$blog->date = $dateTime[0];
+		$blog->heure = substr($dateTime[1],0,5);
+		
+		// Création du selectThing
 
         if ($_SESSION['droits'] > 1)
             $sql = "SELECT id,name FROM `things` ORDER BY id;";
@@ -93,7 +99,7 @@ else {
         return;
     }
 
-    function afficherFormBlog($blog, $selectThing) {
+    function afficherMetaBlog($blog, $selectThing) {
 
         global $lang;
         // Création du tokenCSRF
@@ -110,11 +116,26 @@ else {
         $options = array('class' => 'form-control');
         echo Form::input('text', 'title', $blog->title, $options, $lang['title']);
         echo Form::input('text', 'subTitle', $blog->subTitle, $options, $lang['subtitle']);
-        echo Form::textarea('comment', $blog->comment, $options, $lang['comment']);
-        echo Form::input('datetime-local', 'visitDate', $blog->visitDate, $options, "Date");
+		
+		echo Form::input('date', 'date', $blog->date, $options, "Date");
+		echo Form::input('time', 'heure', $blog->heure, $options, "Heure");
         echo Form::select("thing_id", $selectThing, $lang['thing'], $blog->thing_id);
         echo Form::select("status", $lang['sel_status'], $lang['status'], $blog->status);
     }
+	
+	function afficherFormBlog($blog){
+		
+		global $lang;
+		
+		echo '<textarea class="form-control" name="comment" id="comment" >';
+		echo $blog->comment;
+		echo '</textarea>';
+	
+	
+	}	
+	
+	
+	
 
 }
 ?>
@@ -125,41 +146,74 @@ else {
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <title><?= $lang['blog'] ?> - Aggregator</title>
-        <!-- Bootstrap CSS version 4.1.1 -->
-        <link rel="stylesheet" href="../css/bootstrap.min.css" >
-        <link rel="stylesheet" href="../css/ruche.css" />
+        
+		
+		<link rel="stylesheet" href="../css/ruche.css" />
+		
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="../scripts/bootstrap.min.js"></script>
-
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		
+		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+		
+		<script>
+			$(document).ready(function() {
+				$('#comment').summernote({
+				    toolbar: [
+					    ['style', ['style','bold', 'italic', 'underline', 'clear']],
+						['font', ['superscript', 'subscript']],
+						['fontsize', ['fontsize']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph']],
+						['table', ['table']],
+						['insert', ['link','picture','video']],
+						['view', ['codeview']],
+				    ],
+				    height: 400,
+					maxHeight: 450,
+					focus: true ,
+					placeholder: 'write here...',
+				    codemirror: { 
+					    theme: 'monokai'
+				    }
+				});
+			});
+		</script>
+		
     </head>
     <body>
 
 <?php require_once '../menu.php'; ?>
 
         <div class="container-fluid" style="padding-top: 65px;">
-            <div class="row">
-                <div class="col-md-6 col-sm-12 col-12">
-                    <div class="popin">
-                        <form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
-<?php afficherFormBlog($blog,$selectThing );	 ?>
+            <form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
+				<div class="row">
 
-                            <div class="form-group">
-                                </br>
-                                <button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
-                                <a  class="btn btn-info" role="button" href="blogs?id=<?= $blog->thing_id ?>"><?= $lang['Cancel'] ?></a>
-                            </div>	
-                        </form>
-                    </div>
-                </div>
+					<div class="col-md-4 col-sm-12 col-12">
+						<div class="popin">
+							
+								<?php afficherMetaBlog($blog,$selectThing ); ?>
 
-                <div class="col-md-6 col-sm-12 col-12">
-                    <div class="popin">
+								<div class="form-group">
+									</br>
+									<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+									<a  class="btn btn-info" role="button" href="../blogs?id=<?= $blog->thing_id ?>"><?= $lang['Cancel'] ?></a>
+								</div>	
+							
+						</div>
+					</div>
 
-                    </div>
-                </div>
-            </div>	
-
+					<div class="col-md-8 col-sm-12 col-12">
+						<div class="popin">
+								<?php afficherFormBlog( $blog ); ?>
+						</div>
+					</div>
+				
+				</div>	
+			</form>
 <?php require_once '../piedDePage.php'; ?>
         </div>
 

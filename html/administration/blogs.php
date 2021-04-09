@@ -161,7 +161,7 @@ if (isset($_POST['btn_supprimer'])) {
 
                 $("#btn_add").click(function () {
                     console.log("Bouton Ajouter cliqué");
-                    window.location = 'blog'
+                    window.location = 'blog?thingId=<?= $_GET["id"] ?>'
                 });
             });
 

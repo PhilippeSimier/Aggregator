@@ -111,8 +111,8 @@ function listerCom($id) {
         $sql = "SELECT count(*) as nb FROM `things` WHERE `blogStatus` = \"public\" AND `id`={$id}";
         $url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 
-        if ($bdd->query($sql)->fetchObject()->nb > 0) {
-            echo "<li  class='com'><a href='{$url}/administration/blogs?id={$id}'>{$lang['Logbook']}</a>\n";
+        if ($bdd->query($sql)->fetchObject()->nb > 0) {        
+			echo "<li  class='com'><a href='{$url}/blogs?id={$id}'>{$lang['Logbook']}</a>\n";				
             echo "</li>\n";
         }
     } catch (\PDOException $ex) {
@@ -124,12 +124,13 @@ function afficherArbre() {
     global $lang;
     global $bdd;
     try {
-        if (!isset($_SESSION['id']))
-            $sql = 'SELECT * FROM `things` where status = "public";';
-        else if ($_SESSION['droits'] == 1)
-            $sql = "SELECT * FROM `things` where user_id = " . $_SESSION['id'];
-        else   // C'est un administrateur qui est connecté
+        if (isset($_SESSION['droits']) && $_SESSION['droits'] == 1)
+			$sql = "SELECT * FROM `things` where user_id = " . $_SESSION['id'];
+            
+        else if (isset($_SESSION['droits']) && $_SESSION['droits'] > 1) // C'est un administrateur qui est connecté
             $sql = "SELECT * FROM `things`";
+        else   
+            $sql = 'SELECT * FROM `things` where status = "public";';
 
         $reponse = $bdd->query($sql);
         while ($thing = $reponse->fetchObject()) {
