@@ -169,7 +169,7 @@ $lang['sel_actionable_type'] = array('' => 'Choose your action',
 /* Blogs */
 $lang['blog'] = "Blog";
 $lang['title'] = "Title";
-$lang['subtitle']= "Subtitle";
+$lang['keyWord']= "Keywords";
 $lang['comment']= "Comment";
 $lang['release_date'] = "Release date";
 

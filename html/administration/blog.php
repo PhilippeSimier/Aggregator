@@ -18,10 +18,10 @@ if (!empty($_POST['envoyer'])) {
     if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) { // si le token est valide
         try {
             if (isset($_POST['action']) && ($_POST['action'] == 'insert')) {
-                $sql = sprintf("INSERT INTO `data`.`blogs` (`thing_id`, `title`, `subTitle`, `visitDate`, `comment`, `status`) VALUES ( %s, %s, %s, %s, %s, %s);"
+                $sql = sprintf("INSERT INTO `data`.`blogs` (`thing_id`, `title`, `keyWord`, `visitDate`, `comment`, `status`) VALUES ( %s, %s, %s, %s, %s, %s);"
                         , $bdd->quote($_POST['thing_id'])
                         , $bdd->quote($_POST['title'])
-                        , $bdd->quote($_POST['subTitle'])
+                        , $bdd->quote($_POST['keyWord'])
                         , $bdd->quote($_POST['date'].' '.$_POST['heure'])
                         , $bdd->quote($_POST['comment'])
                         , $bdd->quote($_POST['status'])
@@ -29,10 +29,10 @@ if (!empty($_POST['envoyer'])) {
                 $bdd->exec($sql);
             }
             if (isset($_POST['action']) && ($_POST['action'] == 'update')) {
-                $sql = sprintf("UPDATE `blogs` SET `thing_id` = %s, `title`=%s, `subTitle`=%s, `visitDate`=%s, `comment`=%s, `status`=%s WHERE `blogs`.`id` = %s;"
+                $sql = sprintf("UPDATE `blogs` SET `thing_id` = %s, `title`=%s, `keyWord`=%s, `visitDate`=%s, `comment`=%s, `status`=%s WHERE `blogs`.`id` = %s;"
                         , $bdd->quote($_POST['thing_id'])
                         , $bdd->quote($_POST['title'])
-                        , $bdd->quote($_POST['subTitle'])
+                        , $bdd->quote($_POST['keyWord'])
                         , $bdd->quote($_POST['date'].' '.$_POST['heure'])
                         , $bdd->quote($_POST['comment'])
                         , $bdd->quote($_POST['status'])
@@ -70,7 +70,7 @@ else {
 			if (isset($_GET['thingId'])){ $blog->thing_id = $_GET['thingId']; }
             else { $blog->thing_id = 0; }
             $blog->title = "";
-            $blog->subTitle = "";
+            $blog->keyWord = "";
             $blog->visitDate = date("Y-m-d H:i:s");
             $blog->comment = "";
             $blog->status = "";
@@ -115,7 +115,7 @@ else {
 
         $options = array('class' => 'form-control');
         echo Form::input('text', 'title', $blog->title, $options, $lang['title']);
-        echo Form::input('text', 'subTitle', $blog->subTitle, $options, $lang['subtitle']);
+        echo Form::input('text', 'keyWord', $blog->keyWord, $options, $lang['keyWord']);
 		
 		echo Form::input('date', 'date', $blog->date, $options, "Date");
 		echo Form::input('time', 'heure', $blog->heure, $options, "Heure");

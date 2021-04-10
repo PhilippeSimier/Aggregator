@@ -58,7 +58,7 @@ function afficherBlog($id){
 			echo "    <h2 class=\"blog-post-title\">{$comment->title}</h2>\n";
 			echo "    <p class=\"blog-post-meta\">{$date} par {$comment->login} ";
 			
-			echo "    <p>{$comment->subTitle}</p><hr>\n";
+			echo "    <p>{$comment->keyWord}</p><hr>\n";
 			echo "    <p>{$comment->comment} </p>\n";
 			echo "</div>\n";
 		}
