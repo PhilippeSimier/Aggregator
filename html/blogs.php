@@ -14,10 +14,14 @@ if (isset($_SESSION['time_zone']))
 else
 	$bdd = Api::connexionBD(BASE);
 
-function ajouterArticle(){
+$thing_id  = Api::obtenir("id", FILTER_VALIDATE_INT);
+$year      = Api::verifier("year", FILTER_VALIDATE_INT);
+
+
+function ajouterArticle($thing_id){
 		if(isset($_SESSION['login'])){
 			echo "<div class=\"alert alert-secondary\" style= \" border-color: gray; border-style: dashed; border-width: medium; border-radius: 8px; margin-top: 10px;\">\n";
-			echo "<p><a href=\"./administration/blog?thingId={$_GET["id"]}\">Que voulez-vous dire aujourd'hui ?</a></p>\n";
+			echo "<p><a href=\"./administration/blog?thingId={$thing_id}\">Que voulez-vous dire aujourd'hui ?</a></p>\n";
 			echo "</div>\n";
 		}
 }
@@ -37,14 +41,18 @@ function ajouterOutils($comment){
 	}
 }
 
-function afficherBlog($id){
+function afficherBlog($thing_id, $year){
 	global $bdd;
-	ajouterArticle();
+
+	ajouterArticle($thing_id);
 	try {
 				
-		$sql  = "SELECT * FROM `vue_blogs` WHERE `things_id` = {$id} ";
+		$sql  = "SELECT * FROM `vue_blogs` WHERE `things_id` = {$thing_id} ";
 		if(!isset($_SESSION['login'])) $sql .= " AND `status` = \"public\" ";
+		if( $year != NULL)               $sql .= " AND YEAR( `visitDate` ) = {$year} ";
 		$sql .= " ORDER BY `vue_blogs`.`visitDate` DESC";
+		if( $year == NULL)   $sql .= " LIMIT 10";
+		
 		$stmt = $bdd->query($sql);
 
 		while ($comment = $stmt->fetchObject()) {
@@ -66,6 +74,32 @@ function afficherBlog($id){
 		echo($ex->getMessage());
 	}
 }
+
+function afficherArchive($thing_id){
+    global $bdd;
+	
+	$sql = "SELECT `name` FROM `things` WHERE `id` = {$thing_id}";
+	$stmt = $bdd->query($sql);
+	$thing = $stmt->fetchObject();
+	
+	echo "<div class=\"popin\" >\n";
+	echo "    <h4>{$thing->name}</h4>\n";
+	echo "    <ul class=\"file-tree file-list \">\n";
+	
+	$year = date('Y');
+	for ($i = $year ; $i> $year-10 ; $i--){
+		$sql  = "SELECT count(*) as nb FROM `vue_blogs` where `things_id` = {$thing_id} AND YEAR( `visitDate` ) = \"{$i}\"";
+		$stmt = $bdd->query($sql);
+		$comment = $stmt->fetchObject();
+		if ( $comment->nb > 0){
+			echo "		<li  class='com'><a href=\"blogs?id={$thing_id}&year={$i}\">{$i}</a>\n";
+			echo "      <span class=\"badge badge-pill badge-light\">{$comment->nb}</span>\n";
+			echo "      </li>\n";
+		}
+	}
+	echo '   </ul>';
+	echo '</div>';		
+}	
 ?>
 
 <!DOCTYPE html>
@@ -180,17 +214,10 @@ function afficherBlog($id){
             <div style="min-height : 500px">
 			    <div class="row">
 					<div class="col-md-3 col-sm-12 col-xs-12">
-						<div class="popin" >
-							<h4>Archives</h4>
-							<ul class="file-tree ">
-								<li>2021</li>
-								<li>2020</li>
-								<li>2019</li>	
-							</ul>
-						</div>
+						<?php afficherArchive($thing_id) ?>
 					</div>
 					<div class="col-md-9 col-sm-12 col-12">
-						<?php afficherBlog($_GET["id"]) ?>
+						<?php afficherBlog($thing_id, $year) ?>
 					</div>
 				</div>
             </div>

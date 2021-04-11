@@ -12,7 +12,7 @@ use Aggregator\Support\Str;
 // connexion à la base
 $bdd = Api::connexionBD(BASE, $_SESSION['time_zone']);
 
-$id  = Api::verifier("id", FILTER_VALIDATE_INT);
+$id  = Api::obtenir("id", FILTER_VALIDATE_INT);
 
 $sql = "DELETE FROM `blogs` WHERE `blogs`.`id` = {$id}";
 $nb = $bdd->exec($sql);
