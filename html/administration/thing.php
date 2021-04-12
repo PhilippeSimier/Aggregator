@@ -22,7 +22,7 @@ if( !empty($_POST['envoyer'])){
     if ($_SESSION['tokenCSRF'] === $_POST['tokenCSRF']) {
 		try{
 			if(isset($_POST['action']) && ($_POST['action'] == 'insert')){
-				$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class`, `idDevice` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+				$sql = sprintf("INSERT INTO `data`.`things` (`user_id`, `latitude`, `longitude`, `elevation`, `name`, `tag`, `status`, `local_ip_address`, `class`, `idDevice`, `blogStatus` ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
 							  , $_POST['user_id']
 							  , $_POST['latitude']
 							  , $_POST['longitude']
@@ -33,11 +33,12 @@ if( !empty($_POST['envoyer'])){
 							  , $bdd->quote($_POST['local_ip_address'])
 							  , $bdd->quote($_POST['class'])
 							  , $bdd->quote($_POST['idDevice'])
+							  , $bdd->quote($_POST['blogStatus'])
 							  ); 
 				$bdd->exec($sql);			
 			}
 			if(isset($_POST['action']) && ($_POST['action'] == 'update')){
-				$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s, `idDevice` = %s   WHERE `things`.`id` = %s;"
+				$sql = sprintf("UPDATE `things` SET `latitude` = %s, `longitude` = %s, `elevation` = %s, `name` = %s, `tag` = %s, `status` = %s, `user_id` = %s, `local_ip_address` = %s, `class` = %s, `idDevice` = %s, `blogStatus` = %s   WHERE `things`.`id` = %s;"
 							  , $_POST['latitude']
 							  , $_POST['longitude']
 							  , $_POST['elevation']
@@ -48,6 +49,7 @@ if( !empty($_POST['envoyer'])){
 							  , $bdd->quote($_POST['local_ip_address'])
 							  , $bdd->quote($_POST['class'])
 							  , $bdd->quote($_POST['idDevice'])
+							  , $bdd->quote($_POST['blogStatus'])
 							  , $_POST['id']
 							  ); 
 				$bdd->exec($sql);				
@@ -100,6 +102,7 @@ else
 	    $thing->local_ip_address = "127.0.0.1 /24";
 		$thing->class = "objet";
 		$thing->idDevice = "";
+		$thing->blogStatus = "off";
 	}
  
     // Création du selectUser
@@ -130,7 +133,7 @@ function afficherFormThing($thing, $selectUser){
 	echo Form::hidden('id', $thing->id);
 	echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"] );
 								
-	if($_SESSION['droits'] > 1) //  un selecteur pour les administrateur
+	if($_SESSION['droits'] > 1) //  un selecteur pour les administrateurs
 		echo Form::select("user_id", $selectUser, $lang['user'], $thing->user_id);
 	else
 		echo Form::hidden("user_id", $thing->user_id );
@@ -149,6 +152,10 @@ function afficherFormThing($thing, $selectUser){
 								
 	echo Form::select("class", $lang['classes'], $lang['class'], $thing->class);
 	echo Form::input( 'text', 'idDevice', $thing->idDevice, $options , "Sigfox id");
+	echo Form::select("blogStatus", $lang['sel_blogStatus'], "Blog Status", $thing->blogStatus);
+	
+	
+	
 	
 
 }

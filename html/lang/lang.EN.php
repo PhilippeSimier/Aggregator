@@ -97,6 +97,7 @@ $lang['elevation'] = "Elevation";
 $lang['class'] = "Category";
 $lang['classes'] = array('ruche' => "beehive", 'objet' => 'thing', 'weather' => 'weather station');
 $lang['sel_status'] = array('private' => "private", 'public' => "public");
+$lang['sel_blogStatus'] = array('private' => "Privé", 'public' =>"Public", 'off' => "Off" );
 
 /* User formulaire */
 $lang['sel_language'] = array('FR' => "French", 'EN' => "English");

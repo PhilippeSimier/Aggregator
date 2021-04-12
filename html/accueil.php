@@ -108,7 +108,11 @@ function listerCom($id) {
     global $lang;
     global $bdd;
     try {
-        $sql = "SELECT count(*) as nb FROM `things` WHERE `blogStatus` = \"public\" AND `id`={$id}";
+        if (isset($_SESSION["login"]))
+			$sql = "SELECT count(*) as nb FROM `things` WHERE `blogStatus` != \"off\" AND `id`={$id}";
+		else
+			$sql = "SELECT count(*) as nb FROM `things` WHERE `blogStatus` = \"public\" AND `id`={$id}";
+		
         $url = '//' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 
         if ($bdd->query($sql)->fetchObject()->nb > 0) {        

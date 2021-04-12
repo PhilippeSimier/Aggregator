@@ -85,17 +85,19 @@ function afficherArchive($thing_id){
 	echo "<div class=\"popin\" >\n";
 	echo "    <h4>{$thing->name}</h4>\n";
 	echo "    <ul class=\"file-tree file-list \">\n";
-	
-	$year = date('Y');
-	for ($i = $year ; $i> $year-10 ; $i--){
-		$sql  = "SELECT count(*) as nb FROM `vue_blogs` where `things_id` = {$thing_id} AND YEAR( `visitDate` ) = \"{$i}\"";
+	try{
+		$sql  = "SELECT count(*) as nb, YEAR(`visitDate`) as year FROM `vue_blogs` where `things_id` = {$thing_id} GROUP BY year order by year DESC";
+		
 		$stmt = $bdd->query($sql);
-		$comment = $stmt->fetchObject();
-		if ( $comment->nb > 0){
-			echo "		<li  class='com'><a href=\"blogs?id={$thing_id}&year={$i}\">{$i}</a>\n";
+		
+		while ($comment = $stmt->fetchObject())
+		{
+			echo "		<li  class='com'><a href=\"blogs?id={$thing_id}&year={$comment->year}\">{$comment->year}</a>\n";
 			echo "      <span class=\"badge badge-pill badge-light\">{$comment->nb}</span>\n";
-			echo "      </li>\n";
+			echo "      </li>\n";		
 		}
+	}catch (\PDOException $ex) {
+		echo($ex->getMessage());
 	}
 	echo '   </ul>';
 	echo '</div>';		
