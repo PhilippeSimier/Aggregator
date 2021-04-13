@@ -108,13 +108,16 @@ else {
 
         echo Form::hidden('action', $blog->action);
         echo Form::hidden("tokenCSRF", $_SESSION["tokenCSRF"]);
+		echo Form::hidden("id", $blog->id);
 
         $options = array('class' => 'form-control', 'readonly' => null);
-        echo Form::input('int', 'id', $blog->id, $options, 'Id');
+        echo Form::input('text', 'author', $_SESSION["login"], $options, 'Auteur');
        
 
-        $options = array('class' => 'form-control');
+        $options = array('class' => 'form-control', 'required'=>'required');
         echo Form::input('text', 'title', $blog->title, $options, $lang['title']);
+		
+		$options = array('class' => 'form-control');
         echo Form::input('text', 'keyWord', $blog->keyWord, $options, $lang['keyWord']);
 		
 		echo Form::input('date', 'date', $blog->date, $options, "Date");
@@ -159,6 +162,9 @@ else {
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 		
+		<link rel="stylesheet" href="../css/jquery-confirm.min.css" />
+		<script src="../scripts/jquery-confirm.min.js"></script>	
+		
 		<script>
 			$(document).ready(function() {
 				$('#comment').summernote({
@@ -172,14 +178,28 @@ else {
 						['insert', ['link','picture','video']],
 						['view', ['codeview']],
 				    ],
-				    height: 400,
-					maxHeight: 450,
+				    height: 450,
+					maxHeight: 650,
 					focus: true ,
 					placeholder: 'write here...',
 				    codemirror: { 
 					    theme: 'monokai'
 				    }
 				});
+				
+				$("#ecrire").submit(function (e) {
+					console.log( "click", this);
+					if ($('#comment').summernote('isEmpty')) {
+						$.alert({
+							title: 'Alert!',
+							content: "L'article est vide"
+						});
+						e.preventDefault();
+						
+					}
+					
+				});	
+				
 			});
 		</script>
 		
@@ -189,7 +209,7 @@ else {
 <?php require_once '../menu.php'; ?>
 
         <div class="container-fluid" style="padding-top: 65px;">
-            <form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="configuration" >
+            <form class="form-horizontal" method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" name="ecrire" id="ecrire">
 				<div class="row">
 
 					<div class="col-md-4 col-sm-12 col-12">
@@ -199,7 +219,7 @@ else {
 
 								<div class="form-group">
 									</br>
-									<button type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
+									<button id="envoyer" type="submit" class="btn btn-primary" value="Valider" name="envoyer" > <?= $lang['Apply'] ?></button>
 									<a  class="btn btn-info" role="button" href="../blogs?id=<?= $blog->thing_id ?>"><?= $lang['Cancel'] ?></a>
 								</div>	
 							
