@@ -14,15 +14,15 @@
 
     $racine = './';
     $repertoire = array('administration' , 'support' );  // les répertoires de premier niveau du site
-	if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+	if  (Str::contains($_SERVER["REQUEST_URI"], $repertoire)){
 		$racine = '../';
 	}
 	$repertoire = array('administration/support', 'support/fr', 'support/en');      // les répertoires de second niveau du site
-    if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+    if  (Str::contains($_SERVER["REQUEST_URI"], $repertoire)){
 		$racine = '../../';
 	}
 	$repertoire = array('administration/support/fr', 'administration/support/en');      // les répertoires de troisième niveau du site
-    if  (Str::contains($_SERVER['PHP_SELF'], $repertoire)){
+    if  (Str::contains($_SERVER["REQUEST_URI"], $repertoire)){
 		$racine = '../../../';
 	}
 

@@ -77,8 +77,9 @@
 						<li><b>Mots clés</b>,  associez votre article à une ou plusieurs catégories; les mots clés sont séparés par une virgule</li>
 						<li><b>Date</b>, vous pouvez modifier la date de publication de l'article grâce à plusieurs options. Vous pouvez le publier immédiatement, 
 						                 mais aussi le programmer et l'antidater.</li> 
-						<li><b>Objet</b>, Permet de choisir le journal de bord d'une ruche auquel l'article appartient; <li>				 
-						<li><b>Status</b>, indique l'état de l'article. Cliquez sur "privé" pour l'enregistrer dans vos brouillons ou sur "public" pour le publier.</li>
+						<li><b>Objet</b>, Permet de choisir le journal de bord d'une ruche auquel l'article appartient; </li>				 
+						<li><b>Status</b>, indique l'état de l'article. Cliquez sur "privé" pour l'enregistrer dans vos brouillons ou sur "public" pour le publier. 
+						Les articles du journal sont principalement destinés à être visible par tous, mais pour une raison ou une autre vous pouvez vouloir restreindre la lecture à vous seul.</li>
 						</ul>
 					</p>
 					<br/>

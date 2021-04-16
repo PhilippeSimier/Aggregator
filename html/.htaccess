@@ -9,8 +9,14 @@ RewriteRule ^channels/([0-9]+).([a-zA-Z]+)$   api/channels.php?channelId=$1&type
 # Régle de réécriture pour channels feeds
 RewriteRule ^channels/([0-9]+)/feeds.([a-zA-Z]+)$   api/feeds.php?channelId=$1&type=$2 [QSA]
 
+# Régle de réécriture pour proxy
+RewriteRule ^proxy/channels/([0-9]+)/feeds.([a-zA-Z]+)$   proxy.php?channelId=$1&type=$2 [QSA]
+
 # Régle de réécriture pour channels windows
 RewriteRule ^channels/([0-9]+)/windows.([a-zA-Z]+)$   api/windows.php?channelId=$1&type=$2 [QSA]
 
 # nécessite l'activation  a2enmod headers
 Header edit Set-Cookie ^(.*)$ $1;SameSite=Strict
+
+ErrorDocument 404 /Aggregator/erreur.php
+
