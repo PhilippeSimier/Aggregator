@@ -18,7 +18,7 @@ $messageEn = "Maybe this page moved? Got deleted? Is hiding out in quarantine? N
     <link rel="stylesheet" href="/Aggregator/css/bootstrap.min.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	
-	<script src="./scripts/bootstrap.min.js"></script>
+	<script src="/Aggregator/scripts/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/Aggregator/css/bootstrap.min.css" >
     <link rel="stylesheet" href="/Aggregator/css/ruche.css" />
 	

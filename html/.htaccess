@@ -18,5 +18,6 @@ RewriteRule ^channels/([0-9]+)/windows.([a-zA-Z]+)$   api/windows.php?channelId=
 # nécessite l'activation  a2enmod headers
 Header edit Set-Cookie ^(.*)$ $1;SameSite=Strict
 
+Options -Indexes
 ErrorDocument 404 /Aggregator/erreur.php
-
+ErrorDocument 403 /Aggregator/erreur.php
