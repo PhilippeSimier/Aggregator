@@ -202,6 +202,10 @@ $lang['select_condition'] = array(	'gt' => "est supérieur à",
 $lang['select_react_type'] = array ('0' => "Exécuter l'action uniquement la première fois que la condition est remplie",
                                     '1' => "Exécuter une action chaque fois que la condition est remplie");
 
+/* import export */
+$lang['upload_CSV']    = "Téléchargez un fichier CSV pour importer des données dans ce canal.";
+$lang['download_CSV']  = "Téléchargez tous les flux de ce canal au format CSV.";
+
 //------------Aide pour les formulaires ---------------//
 $lang['react_aide'] = "<h3>Options du déclencheur</h3>
 <ul>
@@ -275,7 +279,11 @@ $lang['time_control_aide']="<h3>Options des tâches planifiées</h3>
                         </ul>";
 
 
-
+$lang['importexport_aide'] = "<h3>Aide</h3>
+					<hr>
+					<h5>Import</h5>
+					<p>Le format correct pour l'importation de données est fourni dans ce fichier de modèle d'importation CSV. 
+					Utilisez les noms de champ field1, field2, etc., au lieu des noms de champ personnalisés.</p>";	
 
 
 

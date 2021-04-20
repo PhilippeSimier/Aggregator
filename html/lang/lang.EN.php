@@ -203,6 +203,10 @@ $lang['select_condition'] = array('gt' => 'is greater than',
 $lang['select_react_type'] = array('0' => 'Run action only the first time the condition is met',
     '1' => 'Run action each time condition is met');
 
+/* import export */
+$lang['upload_CSV'] = "Upload a CSV file to import data into this channel.";
+$lang['download_CSV']  = "Download all of this Channel's feeds in CSV format.";
+
 //------------Aide pour les formulaires ---------------//
 $lang['react_aide'] = "<h3>React Settings</h3>
 <ul>
@@ -274,4 +278,10 @@ $lang['time_control_aide'] = "<h3>Options des tâches planifiées</h3>
                             <li>Type d'action : Sélectionnez Requête HTTP ou script à exécuter </li>
                             <li>Option : Sélectionnez le script à effectuer.</li>
                         </ul>";
+						
+$lang['importexport_aide'] = "<h3>Aide</h3>
+					<hr>
+					<h5>Import</h5>
+					<p>The correct format for data import is provided in this CSV Import Template File. 
+					Use the field names field1, field2, and so on, instead of custom field names.</p>";					
 ?>

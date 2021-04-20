@@ -1,10 +1,29 @@
 <?php session_start(); 
 
-$message = "";
-if ($_SERVER["REDIRECT_STATUS"] == "404" ){
-	$message = "Peut-être que cette page a été déplacée? A-t'elle été supprimée? est-elle cachée en quarantaine? Ou en premier lieu n'a t'elle jamais existée?";
-}
-$messageEn = "Maybe this page moved? Got deleted? Is hiding out in quarantine? Never existed in the first place?";
+	if (isset($_SERVER["REDIRECT_STATUS"])){
+		$error =$_SERVER["REDIRECT_STATUS"]; 
+	}else{
+		$error = "inconnue";
+	}	
+	switch ($error) {
+		case 404:
+			$message = "Peut-être que cette page a été déplacée? A-t'elle été supprimée? est-elle cachée en quarantaine? Ou en premier lieu n'a t'elle jamais existée?";
+			$messageEn = "Maybe this page moved? Got deleted? Is hiding out in quarantine? Never existed in the first place?";
+			break;
+		case 403:
+			$message = "Vous n'êtes pas autorisé à accéder à cette page.";
+			break;
+		case 500;
+			$message = "le serveur a rencontré une condition inattendue qui l’a empêché de répondre à la requête.";
+			break;
+		default:
+			$message = "";	
+	}	
+
+
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -49,7 +68,7 @@ $messageEn = "Maybe this page moved? Got deleted? Is hiding out in quarantine? N
 					
 					<div class="msg popin">
 					<h1>Oups un problème !</h1>
-					<p>Vous venez de rencontrer une erreur HTTP <b><?= $_SERVER["REDIRECT_STATUS"] ?></b> pour la page <b><?= $_SERVER["REQUEST_URI"] ?></b>.</p>
+					<p>Vous venez de rencontrer une erreur HTTP <b><?= $error ?></b> pour la page <b><?= $_SERVER["REQUEST_URI"] ?></b></p>
 					<p><?= $message ?></p>
 					</div>
 					

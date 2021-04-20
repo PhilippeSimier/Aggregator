@@ -21,3 +21,5 @@ Header edit Set-Cookie ^(.*)$ $1;SameSite=Strict
 Options -Indexes
 ErrorDocument 404 /Aggregator/erreur.php
 ErrorDocument 403 /Aggregator/erreur.php
+ErrorDocument 500 /Aggregator/erreur.php
+

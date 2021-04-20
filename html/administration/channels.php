@@ -218,8 +218,8 @@ function afficherChannels(){
 					});
 				}
 				if(checkbox_val.length == 1){
-					console.log("../api/feeds.php?channelId="+ checkbox_val[0] + "&type=csv");
-					window.location = "../api/feeds.php?channelId="+ checkbox_val[0] + "&type=csv";
+					console.log("importExport.php?id="+ checkbox_val[0]);
+					window.location = "importExport.php?id="+ checkbox_val[0];
 				}
 			});
 			
@@ -492,7 +492,7 @@ function afficherChannels(){
 					<button id="btn_add" type="button" class="btn btn-secondary"><?= $lang['add'] ?></button>
 					<button id="btn_key" type="button" class="btn btn-warning"><?= $lang['generate_New_API_Key'] ?></button>
 					<button id="btn_val" type="button" class="btn btn-secondary"><?= $lang['view_last_values'] ?></button>
-					<button id="btn_csv" type="button" class="btn btn-secondary"><?= $lang['download_CSV'] ?></button>
+					<button id="btn_csv" type="button" class="btn btn-secondary">Data Import/Export</button>
 					<button id="btn_clear" type="button" class="btn btn-danger"><?= $lang['clear_all_feed'] ?></button>
 					<input id="btn_supp" name="btn_supprimer" value="<?= $lang['delete'] ?>" class="btn btn-danger" readonly size="9">
 					</form>	
