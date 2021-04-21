@@ -11,12 +11,18 @@ use Aggregator\Support\Api;
 use Aggregator\Support\Str;
 use Aggregator\Support\Form;
 
-$bdd = Api::connexionBD(BASE);
+
 
 // Lecture des paramètres obligatoires
 $id = Api::obtenir("id", FILTER_VALIDATE_INT);
+// Lecture des paramètres facultatifs
+$time_zone = Api::facultatif("time_zone", "+00:00");
+
+$bdd = Api::connexionBD(BASE, $time_zone);
+
 $feedback = "";
 $feedbackDisplay = "none";
+$feedbackStyle = "";
 
 // Si des données  sont soumises on les enregistre dans la table data.feeds ---------
 if( !empty($_POST['envoyer'])){
@@ -114,7 +120,7 @@ if( !empty($_POST['envoyer'])){
                   	continue;
             }
 			
-			$date = substr($created_at, 0, -4);
+			$date = substr($created_at, 0, 19);
 			
 			// Exécution de la requéte préparée
 			try{
@@ -149,22 +155,40 @@ if( !empty($_POST['envoyer'])){
 	}
 }
 
-
-
 function afficherFormImport($id){
 	
 	global $lang;
 	// Création du tokenCSRF
 	$tokenCSRF = STR::genererChaineAleatoire(32);
 	$_SESSION['tokenCSRF'] = $tokenCSRF;
-		
+			
 	echo Form::hidden( 'action', 'import');
 	echo Form::hidden( 'tokenCSRF', $_SESSION["tokenCSRF"] );
     echo Form::hidden( 'MAX_FILE_SIZE', '8000000');
     echo Form::hidden( 'id', $id);	
 	$options = array( 'class' => 'form-control', 'required' => 'required');
 	echo Form::input( 'file', 'datacsv', '', $options, "Fichier");
+	
+	$timeZone['select_time_zone'] = array(
+	'-08:00' => '(GMT -07:00) Los_Angeles - Pacific Time (US&Canada)',
+	'-07:00' => '(GMT -07:00) Denver - Mountain Time (US&Canada)',
+	'-06:00' => '(GMT -06:00) Chicago - Central Time (US&Canada)',
+	'-05:00' => '(GMT -05:00) New_York - Eastern Time (US&Canada)',
+	'-04:00' => '(GMT -04:00) Halifax - Atlantique Time (Canada)',
+	'-03:00' => '(GMT -03:00) Brasilia - America/Sao_Paulo',
+	'-02:00' => '(GMT -02:00) Atlantic/South_Georgia',
+	'-01:00' => '(GMT -01:00) Atlantic/Cape_Verde',
+	'+00:00' => '(GMT +00:00) UTC',
+    '+01:00' => '(GMT +01:00) Paris - Europe/Moscow',
+    '+02:00' => '(GMT +02:00) Athens - Europe/Athens',
+	'+03:00' => '(GMT +03:00) Moscow - Europe/Moscow',
+	'+04:00' => '(GMT +04:00) Volgograd - ',
+	'+05:00' => '(GMT +05:00) Karachi');
+	
+	echo Form::select("time_zone", $timeZone['select_time_zone'] , "Time zone", "+00:00" );
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
