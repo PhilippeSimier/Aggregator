@@ -20,8 +20,12 @@
 	unset($_SESSION['language']);
 
 	
-	$erreur = "";
 	$bdd = Api::connexionBD(BASE);
+	$erreur = "";
+	if(isset($_SESSION['erreur'])){
+		$erreur  = $_SESSION['erreur'];
+        unset($_SESSION['erreur']);
+	}
 	
 	// Si le formulaire a été soumis
 	if(isset($_POST['B1'])){
@@ -29,7 +33,6 @@
 		$token   = Api::obtenir("token");
 		$md5     = Api::obtenir("md5");
 		$login   = Api::obtenir("login"); 
-		$retour  = Api::facultatif("retour","");
 	
 		if($token !== $_SESSION['token']){
 			Api::envoyerErreur(403, "Authorization Required", "Erreur interne token invalide !!" );		
@@ -60,19 +63,18 @@
 			$_SESSION['time_zone']   = $utilisateur->time_zone;
 			$_SESSION['droits'] 	 = $utilisateur->droits;
 			$_SESSION['language'] 	 = $utilisateur->language;
-			$_SESSION['language'] 	 = $utilisateur->language;
 			$_SESSION['cookieConsent'] = $utilisateur->cookieConsent;
        
 			// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
 	        try{
-				$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
+				$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = {$utilisateur->id} " ;
 				$stmt = $bdd->query($sql);
 			
-				$sql = "UPDATE `users` SET `current_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = $utilisateur->id LIMIT 1; " ;
+				$sql = "UPDATE `users` SET `current_sign_in_at` = CURRENT_TIMESTAMP  WHERE `users`.`id` = {$utilisateur->id} " ;
 				$stmt = $bdd->query($sql);
 
 				// Incrémentation du compteur de session
-				$sql = "UPDATE `users` SET `sign_in_count` = `sign_in_count`+1 WHERE `users`.`id` = $utilisateur->id LIMIT 1" ;
+				$sql = "UPDATE `users` SET `sign_in_count` = `sign_in_count`+1 WHERE `users`.`id` = {$utilisateur->id} " ;
 				$stmt = $bdd->query($sql);
 			}
 			catch (\PDOException $ex) 
@@ -81,12 +83,12 @@
 			}
 			
 			// sélection de la page de retour
-			if ($retour!== ""){
-				header("Location: " . $_POST['retour'] );
+			if (isset($_SESSION['request_uri'])){
+				header("Location: " . $_SESSION['request_uri'] );
 				exit;
 			}
 			else{
-				header("Location: ../index.php");
+				header("Location: ../accueil.php");
 				exit;
 			}
 		}
@@ -168,12 +170,12 @@
 					
 						<div class="form-group">
 							<label for="login" class="font-weight-bold"><?= $lang['User login'] ?> :</label>
-							<input type="text"  name="login" class="form-control"  required="">
+							<input type="text"  name="login" class="form-control"  required="required">
 						</div>
 						
 						<div class="form-group">
 							<label for="password" class="font-weight-bold"><?= $lang['Password'] ?> :</label>
-							<input type="password" name="passe" class="form-control" required="">
+							<input type="password" name="passe" class="form-control" required="required">
 						</div>
 						<br />
 						<input   id="Valider" class="btn btn-primary" value="<?= $lang['Validate'] ?>" name="B1"   readonly size="9">		
