@@ -28,7 +28,7 @@
 	}
 	
 	// Si le formulaire a été soumis
-	if(isset($_POST['B1'])){
+	if(isset($_POST['envoyer'])){
 		
 		$token   = Api::obtenir("token");
 		$md5     = Api::obtenir("md5");
@@ -65,6 +65,14 @@
 			$_SESSION['language'] 	 = $utilisateur->language;
 			$_SESSION['cookieConsent'] = $utilisateur->cookieConsent;
        
+	    // si l'index remember est présent création d'un cookie auth crypté
+	    if (isset($_POST['remember'])){
+			// le contenu du cookie
+			$auth = $utilisateur->id . '-'. sha1( $utilisateur->login . $utilisateur->User_API_Key . $_SERVER['REMOTE_ADDR']);
+			$retour = setcookie("auth", $auth , time() + 3600 * 24 * 3 , '/' , $_SERVER["HTTP_HOST"] , false, true); 
+				
+		}	
+	   
 			// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
 	        try{
 				$sql = "UPDATE `users` SET `last_sign_in_at` = `current_sign_in_at`  WHERE `users`.`id` = {$utilisateur->id} " ;
@@ -162,7 +170,7 @@
 				
 				  <?php echo '<p style="color: #ff0000;">' . $erreur . '</p>'; ?>
 				
-				<form method="POST" action="<?= $_SERVER['SCRIPT_NAME'] ?>"  name="form2" id="form2">
+				<form method="POST"   name="form2" id="form2">
 					
 					<input type='hidden' name='md5' />
 					<input type='hidden' name='retour' value = "<?php if (isset($_GET["retour"])) echo $_GET["retour"]; ?>" />
@@ -177,8 +185,15 @@
 							<label for="password" class="font-weight-bold"><?= $lang['Password'] ?> :</label>
 							<input type="password" name="passe" class="form-control" required="required">
 						</div>
+						
+						<div class="form-group form-check">
+							
+							<input type="checkbox" name="remember" class="form-check-input" >
+							<label for="remember" class="font-weight-bold">Se souvenir de moi</label>
+						</div>
 						<br />
-						<input   id="Valider" class="btn btn-primary" value="<?= $lang['Validate'] ?>" name="B1"   readonly size="9">		
+						
+						<input   id="Valider" class="btn btn-primary" value="<?= $lang['Validate'] ?>" name="envoyer"   readonly size="9">		
 				</form>
 				</div>
 			</div>

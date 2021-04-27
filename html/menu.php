@@ -13,6 +13,7 @@
 	
     use Aggregator\Support\Str;
 
+
     $racine = './';
 	$nb = substr_count($_SERVER["REQUEST_URI"], '/');	
 	if($nb > 2){
@@ -22,7 +23,7 @@
 		}		
 	}
 	
-	
+
 	
 	// Menu à droite
 	function navbar_right(){
