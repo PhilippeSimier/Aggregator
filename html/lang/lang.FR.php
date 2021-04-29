@@ -36,6 +36,8 @@ $lang['Data_visualisation'] = "Visualisation des données";
 $lang['Data_Analysis'] = "Analyse des données";
 $lang['Sounds'] = "Enregistrements sonores";
 $lang['Logbook'] = "Journal de bord";
+$lang['incorrect'] = "Incorrectes! Vérifiez vos identifiant et mot de passe.";
+$lang['keep_me'] = "Maintenir ma connexion sur cet ordinateur";
 
 /* thingView */
 $lang['hightchart'] = '{

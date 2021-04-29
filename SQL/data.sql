@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost:3306
--- Généré le :  Mer 21 Avril 2021 à 11:46
+-- Généré le :  Jeu 29 Avril 2021 à 14:19
 -- Version du serveur :  10.3.27-MariaDB-0+deb10u1
 -- Version de PHP :  7.3.27-1~deb10u1
 
@@ -73,32 +73,11 @@ CREATE TABLE `channels` (
   `status` varchar(11) DEFAULT NULL,
   `write_api_key` varchar(50) DEFAULT NULL,
   `last_write_at` timestamp NULL DEFAULT NULL,
-  `last_entry_id` int(11) DEFAULT NULL,
+  `last_entry_id` int(11) DEFAULT 0,
   `public_flag` tinyint(1) NOT NULL DEFAULT 1,
   `idDevice` varchar(25) DEFAULT NULL,
   `type` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Contenu de la table `channels`
---
-
-INSERT INTO `channels` (`id`, `thing_id`, `name`, `description`, `field1`, `field2`, `field3`, `field4`, `field5`, `field6`, `field7`, `field8`, `status`, `write_api_key`, `last_write_at`, `last_entry_id`, `public_flag`, `idDevice`, `type`) VALUES
-(539387, 1, 'Weather', 'The Weather Station\r\nfrom Tessé ...', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Illuminance (Lux)', 'Dew point (°C)', 'Corrected Weight (Kg)', '', '', '8TA0YDI5T5NLCSVV', '2021-03-06 17:47:06', 63, 1, NULL, NULL),
-(552430, 1, 'Moyenne Journalière', '', 'temp mini', 'temp moy', 'pression', 'humidité', '', '', '', '', '', '1DRM9KB2WNY3U9', '2021-04-21 08:36:16', 948, 1, NULL, NULL),
-(556419, 1, 'Battery ', '', 'Voltage (V)', 'Current (A)', 'Power (W)', 'State Of Charge (%)', 'Capacity (Ah)', '', '', '', '', '7VX28B24FEE50ZTO', '2020-07-27 16:15:25', 2, 1, NULL, NULL),
-(558210, 12, 'Mesures', '', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Illuminance (lux)', 'dew point (°C)', '', '', '', '3RPCCIIT1JJHM25A', '2020-07-27 16:02:22', 216, 1, 'C32B57', 1),
-(566173, 2, 'Mesures', 'Canal de mesure principal pour la ruche Danemark', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', '', '', '', 'NWIA1TIPGT1L9S39', '2020-05-15 20:00:06', 15934, 1, NULL, NULL),
-(569228, 12, 'Derived weight', '', 'derived weight (Kg/h)', '', '', '', '', '', '', '', '', 'OH5D06IUTUJ7ZAV9', NULL, NULL, 1, NULL, NULL),
-(602082, 10, 'Battery ', '', 'Tension (V)', 'Courant (A)', 'Puissance (W)', 'SOC (%)', '', '', '', '', '', 'BUNNFRUOOIJ4HM7X', '2021-03-06 17:47:06', 203, 1, NULL, NULL),
-(622253, 1, 'Le Mans - Weather', NULL, 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Wind speed (m/s)', 'Wind direction (°)', 'dew point (°C)', '', '', '', 'CPO5W1BNMG44EVC1', '2020-05-15 20:00:03', 243, 1, NULL, NULL),
-(684316, 2, 'Derived weight', '', 'derived weight (Kg/h)', '', '', '', '', '', '', '', '', '3EVVIU67Z14GDQHU', NULL, NULL, 1, NULL, NULL),
-(752839, 3, 'Mesures', 'Canal de mesures principal de la ruche France', 'Weight (kg)', 'Temperature (°C)', 'Pressure (kPa)', 'Humidity (%)', 'Illuminance (lux)', 'Dew point (°C)', 'Corrected Weight (kg)', '', '', 'OES0BIVP60Q61248', '2020-05-15 20:00:06', 15131, 1, NULL, NULL),
-(752841, 10, 'Derived  Weight ', '', 'derived weight (Kg/h)', '', '', '', '', '', '', '', '', 'AVKOTCZ049Z420QC', '2021-04-19 09:27:53', 14422, 1, NULL, NULL),
-(752843, 10, 'Mesures', '', 'Weight (Kg)', 'Temperature (°C)', 'Pressure (hPa)', 'Humidity (%)', 'Illuminance (Lux)', 'Dew point (°C)', 'Corrected Weight (Kg)', '', '', 'MEUSWB77H6MMRFHD', '2021-03-06 17:47:06', 192, 1, NULL, NULL),
-(788567, 3, 'Derived weight', '', 'derived weight (Kg/h)', '', '', '', '', '', '', '', '', '3RSFQ81I81H1RBSN', NULL, NULL, 1, NULL, NULL),
-(788572, 1, 'test sigfox', 'Canal pour test sigfox', 'grandeur1', 'grandeur2', 'grandeur3', 'grandeur4', 'grandeur5', 'grandeur6', '', '', '', 'BXOUOB931F', '2021-04-19 08:04:00', 946, 1, NULL, NULL),
-(1289006, 19, 'Mesures', '', 'Température (°C)', 'Pression (hPa)', 'Humidité (%)', 'Eclairement (lux)', '', '', '', '', '', 'QJY6HCY0J04', '2021-04-18 22:36:50', 11973, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -142,7 +121,7 @@ CREATE TABLE `feeds` (
 -- Déclencheurs `feeds`
 --
 DELIMITER $$
-CREATE TRIGGER `after_insert_feeds` AFTER INSERT ON `feeds` FOR EACH ROW UPDATE `channels` SET `last_entry_id`= (SELECT count(*) FROM `feeds` WHERE `id_channel` = NEW.id_channel) , `last_write_at`=NOW() WHERE `id` = NEW.id_channel
+CREATE TRIGGER `after_insert_feeds` AFTER INSERT ON `feeds` FOR EACH ROW UPDATE `channels` SET `last_entry_id` =  `last_entry_id`+ 1, `last_write_at`= NOW() WHERE `id` = NEW.id_channel
 $$
 DELIMITER ;
 
@@ -318,7 +297,8 @@ INSERT INTO `things` (`id`, `user_id`, `latitude`, `longitude`, `elevation`, `na
 (6, 0, '47.995532', '0.202465', 49.3, 'Webcam', 'Webcam', 'private', '172.18.58.253 /24', 'objet', NULL, NULL, 'off'),
 (10, 8, '48.144852', '0.358803', 91.2, 'Ruche Muguet', 'Muguet', 'public', '192.168.1.9 /24', 'ruche', 'C32B3A', NULL, 'private'),
 (12, 2, '48.005115', '0.196022', 76.7, 'Ruche Oizé', 'Oizé', 'private', '172.18.58.220 /24', 'objet', 'C32B57', NULL, 'private'),
-(19, 2, '47.811618', '0.109063', 81.5, 'Home inside', 'Home', 'private', '127.0.0.1 /24', 'objet', '', NULL, 'off');
+(19, 2, '47.811618', '0.109063', 81.5, 'Home inside', 'Home', 'private', '127.0.0.1 /24', 'objet', '', NULL, 'off'),
+(20, 18, '48.847849', '2.335168', 44, 'demo', 'demo', 'private', '127.0.0.1 /24', 'objet', '', NULL, 'off');
 
 -- --------------------------------------------------------
 
@@ -373,10 +353,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `encrypted_password`, `password_salt`, `email`, `telNumber`, `User_API_Key`, `Created_at`, `sign_in_count`, `last_sign_in_at`, `current_sign_in_at`, `time_zone`, `quotaSMS`, `delaySMS`, `allow`, `droits`, `reset_password_token`, `language`, `cookieConsent`) VALUES
-(0, 'root', '5cd8817d8fdb26fb7dd1d433500b50db51b8e925a2709de97a89abb6b41906a9', 'M06K292ANH0Z5DA0G603', 'philaure@wanadoo.fr', '0689744235', 'RDIK9LVVYEYZYZER', '2019-08-11 10:42:44', 749, '2021-04-21 06:48:23', '2021-04-21 07:44:42', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR', 1),
-(1, 'touchard', 'f786d8bab1d85e1be8ccf62d7adb58f503b6a605c4859f985e4f7dc092aec425', '3O6HAE3T7D3TCX661E8E', 'philippe.simier@ac-nantes.fr', '0689744235', 'RC8IK9LVVYEYZNSM', '2019-06-18 11:40:56', 62, '2021-04-18 14:34:57', '2021-04-18 16:21:18', 'Europe/Paris', 140, 15, 1, 1, NULL, 'FR', 1),
-(2, 'philippe', '089f509603f388d3509b303e340c56db29b6774f69a816d073f5be67bde6e5dd', 'ZGNGYYXORKXMLVWW98FZ', 'philippe.simier@ac-nantes.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '2019-06-18 11:40:56', 84, '2021-04-16 20:48:46', '2021-04-20 11:48:54', 'Europe/Paris', 140, 15, 1, 1, NULL, 'EN', 1),
-(8, 'vincent', 'bfb3c1c9c8d378a3770918bf6b54eb9d8841d48bb67606dc308edbdbd5a1bb8b', 'A14C6EYC5IHEYEQOHX7J', '', '', 'O3RLHW8AA8QRAY', '2020-01-24 09:24:01', 63, '2021-02-20 09:31:09', '2021-04-04 07:54:23', 'Europe/Paris', 250, 10, 1, 1, NULL, 'EN', 0);
+(0, 'root', '5cd8817d8fdb26fb7dd1d433500b50db51b8e925a2709de97a89abb6b41906a9', 'M06K292ANH0Z5DA0G603', 'philaure@wanadoo.fr', '0689744235', 'RDIK9LVVYEYZYZER', '2019-08-11 10:42:44', 845, '2021-04-29 10:51:52', '2021-04-29 10:55:05', 'Europe/Paris', 140, 15, 1, 2, NULL, 'FR', 1),
+(1, 'touchard', 'f786d8bab1d85e1be8ccf62d7adb58f503b6a605c4859f985e4f7dc092aec425', '3O6HAE3T7D3TCX661E8E', 'philippe.simier@ac-nantes.fr', '0689744235', 'RC8IK9LVVYEYZNSM', '2019-06-18 11:40:56', 62, '2021-04-18 14:34:57', '2021-04-18 16:21:18', 'Europe/Paris', 140, 15, 1, 1, NULL, 'FR', 0),
+(2, 'philippe', '089f509603f388d3509b303e340c56db29b6774f69a816d073f5be67bde6e5dd', 'ZGNGYYXORKXMLVWW98FZ', 'philippe.simier@ac-nantes.fr', '+33689744235', '9L0V9YXONAUJ0QRH', '2019-06-18 11:40:56', 115, '2021-04-29 07:09:25', '2021-04-29 10:06:36', 'Europe/Paris', 140, 15, 1, 1, NULL, 'EN', 1),
+(8, 'vincent', 'bfb3c1c9c8d378a3770918bf6b54eb9d8841d48bb67606dc308edbdbd5a1bb8b', 'A14C6EYC5IHEYEQOHX7J', '', '', 'O3RLHW8AA8QRAY', '2020-01-24 09:24:01', 66, '2021-04-25 18:35:09', '2021-04-28 09:30:05', 'Europe/Paris', 250, 10, 1, 1, NULL, 'EN', 1),
+(18, 'demo', '69831133bbc1866a95a1936c24639aae210e6e85eb3734ef62854ad0b2a3de77', 'Q3L5MUF0QQZ5B7ZAJOV9', NULL, NULL, '5U8K1ZQPICT2O', '2021-04-27 19:37:32', 2, '2021-04-27 19:38:17', '2021-04-27 19:50:09', 'UTC', 140, 15, 1, 1, NULL, 'FR', 0);
 
 -- --------------------------------------------------------
 
@@ -725,12 +706,12 @@ ALTER TABLE `channels`
 -- AUTO_INCREMENT pour la table `failed_logins`
 --
 ALTER TABLE `failed_logins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT pour la table `feeds`
 --
 ALTER TABLE `feeds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46225;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49072;
 --
 -- AUTO_INCREMENT pour la table `Matlab_Visu`
 --
@@ -745,7 +726,7 @@ ALTER TABLE `reacts`
 -- AUTO_INCREMENT pour la table `scripts`
 --
 ALTER TABLE `scripts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT pour la table `sigfox`
 --
@@ -765,7 +746,7 @@ ALTER TABLE `thinghttps`
 -- AUTO_INCREMENT pour la table `things`
 --
 ALTER TABLE `things`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT pour la table `timeControls`
 --
@@ -775,7 +756,7 @@ ALTER TABLE `timeControls`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT pour la table `windows`
 --

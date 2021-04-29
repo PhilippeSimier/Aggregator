@@ -14,7 +14,7 @@ $lang['edit_settings'] = "Settings";
 $lang['delete'] = "Delete";
 $lang['Cancel'] = "Cancel";
 $lang['Apply'] = "Apply";
-$lang['Validate'] = "Valider";
+$lang['Validate'] = "Validate";
 $lang['close'] = "Close";
 $lang['display'] = "Display";
 $lang['refuse'] = "Refuse";
@@ -36,6 +36,8 @@ $lang['Data_visualisation'] = "Data visualisation";
 $lang['Data_Analysis'] = "Data Analysis";
 $lang['Sounds'] = "Sound recordings";
 $lang['Logbook'] = "LogBook";
+$lang['incorrect'] = "Incorrect! Check your username and password.";
+$lang['keep_me'] = "Keep me logged in on this computer";
 
 /* thingView */
 $lang['hightchart'] = '{

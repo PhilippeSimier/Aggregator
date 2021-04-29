@@ -17,7 +17,7 @@
 	unset($_SESSION['ID_user']);
 	unset($_SESSION['email']);
 	unset($_SESSION['droits']);
-	unset($_SESSION['language']);
+	
 
 	
 	$bdd = Api::connexionBD(BASE);
@@ -30,11 +30,11 @@
 	// Si le formulaire a été soumis
 	if(isset($_POST['envoyer'])){
 		
-		$token   = Api::obtenir("token");
+		$tokenCSRF   = Api::obtenir("tokenCSRF");
 		$md5     = Api::obtenir("md5");
 		$login   = Api::obtenir("login"); 
 	
-		if($token !== $_SESSION['token']){
+		if($tokenCSRF !== $_SESSION['tokenCSRF']){
 			Api::envoyerErreur(403, "Authorization Required", "Erreur interne token invalide !!" );		
 		}
 		
@@ -62,7 +62,7 @@
 			$_SESSION['User_API_Key']= $utilisateur->User_API_Key;
 			$_SESSION['time_zone']   = $utilisateur->time_zone;
 			$_SESSION['droits'] 	 = $utilisateur->droits;
-			$_SESSION['language'] 	 = $utilisateur->language;
+			$_SESSION['language'] 	 = strtolower($utilisateur->language);
 			$_SESSION['cookieConsent'] = $utilisateur->cookieConsent;
        
 	    // si l'index remember est présent création d'un cookie auth crypté
@@ -123,7 +123,7 @@
 						,$bdd->quote($login));
 					$stmt = $bdd->query($sql);	
 				}else{	
-					$erreur = "Incorrectes! Vérifiez vos identifiant et mot de passe.";
+					$erreur = $lang['incorrect'];
 				}
 			}
 			catch (\PDOException $ex) 
@@ -133,9 +133,8 @@
 		}		
 	}
 	
-	$token =  Str::genererChaineAleatoire(20);
-	//Mémorisation du token dans la variable de session
-	$_SESSION['token'] 	 =  $token;
+	$tokenCSRF =  Str::genererChaineAleatoire(25);
+	$_SESSION['tokenCSRF'] 	 =  $tokenCSRF;
 ?>
 
 <!DOCTYPE html>
@@ -173,8 +172,8 @@
 				<form method="POST"   name="form2" id="form2">
 					
 					<input type='hidden' name='md5' />
-					<input type='hidden' name='retour' value = "<?php if (isset($_GET["retour"])) echo $_GET["retour"]; ?>" />
-					<input type='hidden' name='token' value = "<?php echo $token; ?>" />
+					
+					<input type='hidden' name='tokenCSRF' value = "<?php echo $tokenCSRF; ?>" />
 					
 						<div class="form-group">
 							<label for="login" class="font-weight-bold"><?= $lang['User login'] ?> :</label>
@@ -189,7 +188,7 @@
 						<div class="form-group form-check">
 							
 							<input type="checkbox" name="remember" class="form-check-input" >
-							<label for="remember" class="font-weight-bold">Se souvenir de moi</label>
+							<label for="remember" class="font-weight-bold"><?= $lang['keep_me'] ?></label>
 						</div>
 						<br />
 						
