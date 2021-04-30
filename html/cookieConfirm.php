@@ -13,7 +13,7 @@
 	// si pas de session et pas de cookie lang on determine la langue de l'utilisteur à partir de HTTP_ACCEPT_LANGUAGE 
 	if( !isset($_SESSION['language']) && !isset($_COOKIE['lang']) ){
 		$lang = Str::getLanguage($_SERVER['HTTP_ACCEPT_LANGUAGE']); 
-		$retour = setcookie("lang", $lang , time() + 3600 * 24 * 365 , '/' , $_SERVER["HTTP_HOST"] , false, true);
+		$retour = setcookie("lang", $lang , time() + 3600 * 24 * 365 , PATH , $_SERVER["HTTP_HOST"] , false, true);
 		$_SESSION['language'] = $lang;
     }
 	
@@ -32,7 +32,7 @@
 		if ($key === $auth[1]){
 			// Le cookie est valide création de la session et prolongation du cookie
 			$auth = $utilisateur->id . '-'. sha1( $utilisateur->login . $utilisateur->User_API_Key . $_SERVER['REMOTE_ADDR']);			
-			$retour = setcookie("auth", $auth , time() + 3600 * 24 * 3 , '/' , $_SERVER["HTTP_HOST"] , false, true);
+			$retour = setcookie("auth", $auth , time() + 3600 * 24 * NBDAY , PATH , $_SERVER["HTTP_HOST"] , false, true);
 			
 			$_SESSION['last_access']   = time();
 			$_SESSION['ipaddr']		   = $_SERVER['REMOTE_ADDR'];
@@ -46,7 +46,7 @@
 		}
 		else{
 			// Le cookie est invalide on le détruit
-			$retour = setcookie("auth" , '', time() - 42000 , '/' , $_SERVER["HTTP_HOST"] , false, true); 
+			$retour = setcookie("auth" , '', time() - 42000 , PATH , $_SERVER["HTTP_HOST"] , false, true); 
 		}			
 	}
 	
@@ -68,7 +68,7 @@
 
 		$params = session_get_cookie_params();
 		setcookie(session_name(), '', time() - 42000 , $params["path"], $params["domain"], $params["secure"], $params["httponly"] );
-		setcookie("auth" , '', time() - 42000 , '/' , $_SERVER["HTTP_HOST"] , false, true); 
+		setcookie("auth" , '', time() - 42000 , PATH , $_SERVER["HTTP_HOST"] , false, true); 
 	
         unset($_SESSION['login']);
 		header("Location: index.php");

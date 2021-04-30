@@ -22,6 +22,7 @@
 	
 	$bdd = Api::connexionBD(BASE);
 	$erreur = "";
+	$login = "";
 	if(isset($_SESSION['erreur'])){
 		$erreur  = $_SESSION['erreur'];
         unset($_SESSION['erreur']);
@@ -69,7 +70,7 @@
 	    if (isset($_POST['remember'])){
 			// le contenu du cookie
 			$auth = $utilisateur->id . '-'. sha1( $utilisateur->login . $utilisateur->User_API_Key . $_SERVER['REMOTE_ADDR']);
-			$retour = setcookie("auth", $auth , time() + 3600 * 24 * 3 , '/' , $_SERVER["HTTP_HOST"] , false, true); 
+			$retour = setcookie("auth", $auth , time() + 3600 * 24 * NBDAY , PATH , $_SERVER["HTTP_HOST"] , false, true); 
 				
 		}	
 	   
@@ -167,7 +168,7 @@
 				<div class="popin">
 				<h2><?= $lang['Sign_in'] ?></h2>
 				
-				  <?php echo '<p style="color: #ff0000;">' . $erreur . '</p>'; ?>
+				  
 				
 				<form method="POST"   name="form2" id="form2">
 					
@@ -177,13 +178,15 @@
 					
 						<div class="form-group">
 							<label for="login" class="font-weight-bold"><?= $lang['User login'] ?> :</label>
-							<input type="text"  name="login" class="form-control"  required="required">
+							<input type="text"  name="login" class="form-control"  required="required" value="<?= $login ?>">
 						</div>
 						
 						<div class="form-group">
 							<label for="password" class="font-weight-bold"><?= $lang['Password'] ?> :</label>
 							<input type="password" name="passe" class="form-control" required="required">
 						</div>
+						
+						<?php echo '<p style="color: #ff0000;">' . $erreur . '</p>'; ?>
 						
 						<div class="form-group form-check">
 							

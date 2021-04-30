@@ -1,7 +1,7 @@
 <?php
 /**----------------------------------------------------------------------------------
     @fichier  cookieConsent.php							    		
-    @auteur   Philippe SIMIER (Touchard Washington le Mans)
+    @auteur   SNIR (Touchard Washington le Mans)
     @date     Avril 2020
     @version  v2.0 - Second release						
     @details  Consentement aux cookies pour le site web Aggregator 

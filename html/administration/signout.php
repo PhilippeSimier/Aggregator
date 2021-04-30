@@ -1,4 +1,5 @@
 <?php
+	require_once('../definition.inc.php');
 	session_start();
 
 	
@@ -7,7 +8,7 @@
 	
 	$params = session_get_cookie_params();
 	setcookie(session_name(), '', time() - 42000 , $params["path"], $params["domain"], $params["secure"], $params["httponly"] );
-	$retour = setcookie("auth" , '', time() - 42000 , '/' , $_SERVER["HTTP_HOST"] , false, true); 
+	$retour = setcookie("auth" , '', time() - 42000 , PATH , $_SERVER["HTTP_HOST"] , false, true); 
     
 
 	// On supprime les variables de session
