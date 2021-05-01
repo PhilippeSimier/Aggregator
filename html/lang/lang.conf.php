@@ -32,4 +32,5 @@
 		
 	$lang_file = 'lang.' . strtoupper($langue) . '.php';
  	include_once "{$racine}lang/{$lang_file}";
+	
 ?>

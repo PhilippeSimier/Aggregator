@@ -3,8 +3,14 @@
 session_start();
 $_SESSION['request_uri'] = $_SERVER["REQUEST_URI"];
 
+function ErrorPersonnalise($errno, $errstr, $errfile, $errline){
+    echo "Erreur numéro [$errno], ligne [$errline], du fichier $errfile :  $errstr";
+	die();
+}
+set_error_handler("ErrorPersonnalise");
 
-if(!isset($_SESSION['last_access']) || !isset($_SESSION['ipaddr']) || !isset($_SESSION['login']))
+
+if(!isset($_SESSION['last_access']) || !isset($_SESSION['ipaddr']) || !isset($_SESSION['login']) )
 {
     header("Location: index.php" );
     return;
@@ -15,9 +21,9 @@ if(!isset($_SESSION['last_access']) || !isset($_SESSION['ipaddr']) || !isset($_S
 if(time()-$_SESSION['last_access'] > 3600)
 {
     unset($_SESSION['last_access']);
-    unset($_SESSION['login']);
+    unset($_SESSION['id']);
     unset($_SESSION['ipaddr']);
-	$_SESSION['erreur'] = "Session expirée";
+	$_SESSION['erreur'] = "Your session has timed out. Please log in again.";
     header("Location: index.php");
     return;
 }
@@ -26,11 +32,12 @@ if(time()-$_SESSION['last_access'] > 3600)
 if($_SERVER['REMOTE_ADDR']!=$_SESSION['ipaddr'])
 {
     unset($_SESSION['last_access']);
-    unset($_SESSION['login']);
+    unset($_SESSION['id']);
     unset($_SESSION['ipaddr']);
 	$_SESSION['erreur'] = "IP address changed";
     header("Location: index.php");
     return;
 }
+
 $_SESSION['last_access']=time();
 ?>

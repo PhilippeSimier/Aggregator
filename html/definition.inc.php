@@ -14,11 +14,10 @@
 	// Définition de la précision d'affichage
 	define ("PRECISION",3);
 	
-	// Cookies Nb de jours et path
+	// Cookies Nb de jours de validité et path
 	define ("NBDAY",60);
 	define ("PATH","/Aggregator/");
-	
-	
+		
 	// Définition de l'utilisateur smtp
 	define ("SMTPUSER", "philippe.simier.pro@gmail.com");
 	define ("SMTPPWD", "Jelbroet2020!");

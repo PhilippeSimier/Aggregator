@@ -1,7 +1,8 @@
 <?php
 	// page d'authentification pour la partie sécurisée du site
 	// cette page affiche un formulaire avec deux champs (login et passe)
-	// et un bouton pour soumettre au script 
+	// Une checkbox se souvenir de moi
+	// et un bouton pour soumettre 
 
 	require_once('../definition.inc.php');
 	require_once('../api/Api.php');
@@ -12,21 +13,34 @@
 	use Aggregator\Support\Str;
 	
 	session_start();
-	unset($_SESSION['identite']);
-	unset($_SESSION['login']);
-	unset($_SESSION['ID_user']);
-	unset($_SESSION['email']);
+	
+	unset($_SESSION['id']);
 	unset($_SESSION['droits']);
 	
 
 	
 	$bdd = Api::connexionBD(BASE);
-	$erreur = "";
-	$login = "";
+	
+	$erreur = "";	
 	if(isset($_SESSION['erreur'])){
 		$erreur  = $_SESSION['erreur'];
         unset($_SESSION['erreur']);
 	}
+	
+	$login = "";
+	$loginRO = "";
+	if(isset($_SESSION['login'])){
+		$login  = $_SESSION['login'];
+		$loginRO = "readonly";
+        unset($_SESSION['login']);
+	}
+	
+	if(isset($_COOKIE['auth'])){
+		$kmsi = "checked";
+	}else{
+		$kmsi = "";
+	}	
+	
 	
 	// Si le formulaire a été soumis
 	if(isset($_POST['envoyer'])){
@@ -72,6 +86,8 @@
 			$auth = $utilisateur->id . '-'. sha1( $utilisateur->login . $utilisateur->User_API_Key . $_SERVER['REMOTE_ADDR']);
 			$retour = setcookie("auth", $auth , time() + 3600 * 24 * NBDAY , PATH , $_SERVER["HTTP_HOST"] , false, true); 
 				
+		}else{
+			$retour = setcookie("auth", $auth , time() -42000 , PATH , $_SERVER["HTTP_HOST"] , false, true);
 		}	
 	   
 			// mise à jours de la date et heure de son passage dans le champ last_sign_in_at de la table users
@@ -92,6 +108,7 @@
 			}
 			
 			// sélection de la page de retour
+			
 			if (isset($_SESSION['request_uri'])){
 				header("Location: " . $_SESSION['request_uri'] );
 				exit;
@@ -178,7 +195,7 @@
 					
 						<div class="form-group">
 							<label for="login" class="font-weight-bold"><?= $lang['User login'] ?> :</label>
-							<input type="text"  name="login" class="form-control"  required="required" value="<?= $login ?>">
+							<input type="text"  name="login" class="form-control"  required="required" value="<?= $login ?>" <?= $loginRO ?> >
 						</div>
 						
 						<div class="form-group">
@@ -190,7 +207,7 @@
 						
 						<div class="form-group form-check">
 							
-							<input type="checkbox" name="remember" class="form-check-input" >
+							<input type="checkbox" name="remember" class="form-check-input" <?= $kmsi ?> >
 							<label for="remember" class="font-weight-bold"><?= $lang['keep_me'] ?></label>
 						</div>
 						<br />
