@@ -17,6 +17,8 @@ use Aggregator\Support\Form;
 $id = Api::obtenir("id", FILTER_VALIDATE_INT);
 // Lecture des paramètres facultatifs
 $time_zone = Api::facultatif("time_zone", "+00:00");
+$separator = Api::facultatif("separator", ",");
+
 
 $bdd = Api::connexionBD(BASE, $time_zone);
 
@@ -80,7 +82,7 @@ if( !empty($_POST['envoyer'])){
 		
 	    while (!feof($fp)) {    
 			$nb++;
-			$ligne =  fgetcsv($fp, 1024);
+			$ligne =  fgetcsv($fp, 1024, $separator);
 			if (!($ligne)){
 				$tabErreur .= "ligne {$nb} : fin de fichier <br>";             				
 				continue;
@@ -186,6 +188,13 @@ function afficherFormImport($id){
 	'+05:00' => '(GMT +05:00) Karachi');
 	
 	echo Form::select("time_zone", $timeZone['select_time_zone'] , "Time zone", "+00:00" );
+	
+	$separator = array(
+	',' => 'Virgule',
+	';' => 'Point-virgule',
+	'\t' => 'Tabulation');
+	
+	echo Form::select("separator", $separator , "Separator", "virgule" );
 }
 
 
