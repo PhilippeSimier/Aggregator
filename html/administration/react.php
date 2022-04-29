@@ -350,6 +350,7 @@ $afficher = false;
 								
 								echo "<div  id='numeric_nodata' >";
 								echo Form::hidden('field_number', '0');
+								echo Form::hidden('condition', ' ');	
 								$select_interval = array('10' =>"Every 10 minutes", 
 														 '30' =>"Every 30 minutes", 
 														 '60' =>"Every 60 minutes" );
